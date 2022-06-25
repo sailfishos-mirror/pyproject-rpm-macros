@@ -18,7 +18,7 @@ RPM_FILES_DELIMETERS = ' \n\t'
 # https://github.com/rpm-software-management/rpm/issues/1865
 # The original lists can be found here:
 # https://github.com/rpm-software-management/rpm/blob/master/scripts/brp-compress
-MANPAGE_EXTENSIONS = ['gz', 'Z', 'bz2', 'xz', 'lzma', 'zst', 'zstd']
+MANPAGE_EXTENSIONS = ['gz', 'Z', 'bz2', 'xz', 'lzma']
 MANDIRS = [
     '/man/man*',
     '/man/*/man*',
@@ -189,7 +189,7 @@ def normalize_manpage_filename(prefix, path):
         >>> normalize_manpage_filename(PosixPath('/usr'), BuildrootPath('/usr/share/doc/en/man/man1/getmac.1'))
         BuildrootPath('/usr/share/doc/en/man/man1/getmac.1*')
 
-        >>> normalize_manpage_filename(PosixPath('/usr'), BuildrootPath('/usr/share/man/man8/abc.8.zstd'))
+        >>> normalize_manpage_filename(PosixPath('/usr'), BuildrootPath('/usr/share/man/man8/abc.8.bz2'))
         BuildrootPath('/usr/share/man/man8/abc.8*')
 
         >>> normalize_manpage_filename(PosixPath('/usr'), BuildrootPath('/usr/kerberos/man/dir'))

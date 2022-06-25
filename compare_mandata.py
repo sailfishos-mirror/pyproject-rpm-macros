@@ -11,10 +11,14 @@ import sys
 
 from pathlib import PosixPath
 
-from pyproject_buildrequires import print_err
+# from pyproject_buildrequires import print_err
 from pyproject_save_files import prepend_mandirs, MANPAGE_EXTENSIONS
 
-
+# nb: we don't use functools.partial to be able to use pytest's capsys
+# see https://github.com/pytest-dev/pytest/issues/8900
+def print_err(*args, **kwargs):
+    kwargs.setdefault('file', sys.stderr)
+    print(*args, **kwargs)
 
 def read_brp_compress(filename):
 
@@ -27,9 +31,9 @@ def read_brp_compress(filename):
 
     # Get rid of ${PREFIX} when extracting the manpage directories
     mandirs = [
-        entry.replace('.${PREFIX}', '/PREFIX')
+        entry
         for entry in contents.split()
-        if entry.startswith('.${PREFIX}')
+        if entry.startswith("./usr")
     ]
 
     return manpage_exts, sorted(mandirs)
@@ -41,7 +45,7 @@ def compare_mandirs(brp_compress_mandirs):
     stored in pyproject_save_files.py
     '''
 
-    pyp_save_files_mandirs = sorted(prepend_mandirs(prefix='/PREFIX'))
+    pyp_save_files_mandirs = sorted(prepend_mandirs(prefix='./usr'))
     if brp_compress_mandirs == pyp_save_files_mandirs:
         return True
     else:

@@ -1,11 +1,10 @@
+%global python3_pkgversion 38
+
 Name:           pyproject-rpm-macros
 Summary:        RPM macros for PEP 517 Python packages
 License:        MIT
 
 %bcond tests 1
-# pytest-xdist and tox are not desired in RHEL
-%bcond pytest_xdist %{undefined rhel}
-%bcond tox_tests %{undefined rhel}
 
 # The idea is to follow the spirit of semver
 # Given version X.Y.Z:
@@ -13,30 +12,23 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.8.0
-Release:        2%{?dist}
+Version:        0.1.8.0
+Release:        1%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
 Source002:      macros.aaa-pyproject-srpm
 
 # Implementation files
-Source101:      pyproject_buildrequires.py
 Source102:      pyproject_save_files.py
-Source103:      pyproject_convert.py
 Source104:      pyproject_preprocess_record.py
-Source105:      pyproject_construct_toxenv.py
-Source106:      pyproject_requirements_txt.py
 Source107:      pyproject_wheel.py
 
 # Tests
-Source201:      test_pyproject_buildrequires.py
 Source202:      test_pyproject_save_files.py
-Source203:      test_pyproject_requirements_txt.py
 Source204:      compare_mandata.py
 
 # Test data
-Source301:      pyproject_buildrequires_testcases.yaml
 Source302:      pyproject_save_files_test_data.yaml
 Source303:      test_RECORD
 
@@ -48,34 +40,51 @@ URL:            https://src.fedoraproject.org/rpms/pyproject-rpm-macros
 
 BuildArch:      noarch
 
+BuildRequires:  python%{python3_pkgversion}-devel
+
 %if %{with tests}
-BuildRequires:  python3dist(pytest)
-%if %{with pytest_xdist}
-BuildRequires:  python3dist(pytest-xdist)
+BuildRequires:  %{py3_dist pytest}
+BuildRequires:  %{py3_dist pyyaml}
+BuildRequires:  %{py3_dist packaging}
+BuildRequires:  %{py3_dist pip}
+BuildRequires:  %{py3_dist setuptools}
+%if %{with tox}
+BuildRequires:  %{py3_dist tox-current-env} >= 0.0.6
 %endif
-BuildRequires:  python3dist(pyyaml)
-BuildRequires:  python3dist(packaging)
-BuildRequires:  python3dist(pip)
-BuildRequires:  python3dist(setuptools)
-%if %{with tox_tests}
-BuildRequires:  python3dist(tox-current-env) >= 0.0.6
-%endif
-BuildRequires:  python3dist(wheel)
-BuildRequires:  (python3dist(toml) if python3-devel < 3.11)
+BuildRequires:  %{py3_dist wheel}
+BuildRequires:  (%{py3_dist toml} if python%{python3_pkgversion}-devel < 3.11)
 %endif
 
 # We build on top of those:
-BuildRequires:  python-rpm-macros
-BuildRequires:  python-srpm-macros
-BuildRequires:  python3-rpm-macros
 Requires:       python-rpm-macros
 Requires:       python-srpm-macros
 Requires:       python3-rpm-macros
-Requires:       (pyproject-srpm-macros = %{?epoch:%{epoch}:}%{version}-%{release} if pyproject-srpm-macros)
+# This package is incompatible with python36.
+# We use rich dependencies to avoid creating implicit conflicts between
+# python3{8,9}-devel.
+Requires:       (python38-rpm-macros or python39-rpm-macros)
+Suggests:       (python38-rpm-macros if python38-devel)
+Suggests:       (python39-rpm-macros if python39-devel)
 
 # We use the following tools outside of coreutils
 Requires:       /usr/bin/find
 Requires:       /usr/bin/sed
+
+# These packages are pulled in unconditionally by %%pyproject_buildrequires
+# on Fedora, so we Require them here.
+Requires:       (python38-devel if python38-rpm-macros)
+Requires:       (python39-devel if python39-rpm-macros)
+
+Requires:       (python3.8dist(pip) if python38-rpm-macros)
+Requires:       (python3.9dist(pip) if python39-rpm-macros)
+
+Requires:       (python3.8dist(packaging) if python38-rpm-macros)
+Requires:       (python3.9dist(packaging) if python39-rpm-macros)
+
+# Needed by pip wheel
+Requires:       (python3.8dist(wheel) if python38-rpm-macros)
+Requires:       (python3.9dist(wheel) if python39-rpm-macros)
+
 
 %description
 These macros allow projects that follow the Python packaging specifications
@@ -90,6 +99,11 @@ They work for:
 
 These macros replace %%py3_build and %%py3_install,
 which only work with setup.py.
+
+This is a slimmed down version of the macros that are available in Fedora,
+in order to be compatible with el8's RPM version.
+Notably, %%tox and %%pyproject_buildrequires are absent, so buildrequirements
+must be manually specified. It is only compatible with python38 and python39.
 
 
 %package -n pyproject-srpm-macros
@@ -116,13 +130,8 @@ cp -p %{sources} .
 mkdir -p %{buildroot}%{_rpmmacrodir}
 mkdir -p %{buildroot}%{_rpmconfigdir}/redhat
 install -pm 644 macros.pyproject %{buildroot}%{_rpmmacrodir}/
-install -pm 644 macros.aaa-pyproject-srpm %{buildroot}%{_rpmmacrodir}/
-install -pm 644 pyproject_buildrequires.py %{buildroot}%{_rpmconfigdir}/redhat/
-install -pm 644 pyproject_convert.py %{buildroot}%{_rpmconfigdir}/redhat/
-install -pm 644 pyproject_save_files.py  %{buildroot}%{_rpmconfigdir}/redhat/
+install -pm 644 pyproject_save_files.py %{buildroot}%{_rpmconfigdir}/redhat/
 install -pm 644 pyproject_preprocess_record.py %{buildroot}%{_rpmconfigdir}/redhat/
-install -pm 644 pyproject_construct_toxenv.py %{buildroot}%{_rpmconfigdir}/redhat/
-install -pm 644 pyproject_requirements_txt.py %{buildroot}%{_rpmconfigdir}/redhat/
 install -pm 644 pyproject_wheel.py %{buildroot}%{_rpmconfigdir}/redhat/
 
 %check
@@ -144,12 +153,8 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 %files
 %{_rpmmacrodir}/macros.pyproject
-%{_rpmconfigdir}/redhat/pyproject_buildrequires.py
-%{_rpmconfigdir}/redhat/pyproject_convert.py
 %{_rpmconfigdir}/redhat/pyproject_save_files.py
 %{_rpmconfigdir}/redhat/pyproject_preprocess_record.py
-%{_rpmconfigdir}/redhat/pyproject_construct_toxenv.py
-%{_rpmconfigdir}/redhat/pyproject_requirements_txt.py
 %{_rpmconfigdir}/redhat/pyproject_wheel.py
 
 %doc README.md
