@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 %global pypi_name openqa_client
 Name:           python-%{pypi_name}
 Version:        4.0.0
@@ -9,17 +10,19 @@ URL:            https://github.com/os-autoinst/openQA-python-client
 Source0:        %{pypi_source}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
 
 %description
 This package uses tox.ini file with recursive deps (via the -r option).
 
 
-%package -n python3-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{pypi_name}
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{pypi_name}
 %{summary}.
 
 
@@ -35,10 +38,6 @@ sed -i -e 's., "setuptools-git"..g' pyproject.toml
 sed -i '/mock/d' tests.requires
 
 
-%generate_buildrequires
-%pyproject_buildrequires -t
-
-
 %build
 %pyproject_wheel
 
@@ -52,6 +51,6 @@ sed -i '/mock/d' tests.requires
 %tox
 
 
-%files -n python3-%{pypi_name} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.*
 %license COPYING

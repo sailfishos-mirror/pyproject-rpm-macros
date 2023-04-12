@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 Name:             python-distroinfo
 Version:          0.3.2
 Release:          0%{?dist}
@@ -8,21 +9,20 @@ Source0:          %{pypi_source distroinfo}
 BuildArch:        noarch
 
 BuildRequires:    pyproject-rpm-macros
-BuildRequires:    python3-devel
-BuildRequires:    python3-pytest
+BuildRequires:    python%{python3_pkgversion}-devel
+BuildRequires:    python%{python3_pkgversion}-pytest
+BuildRequires:    python%{python3_pkgversion}-setuptools
 BuildRequires:    git-core
 
 %description
 This package uses setuptools and pbr.
-It has setup_requires and tests that %%pyproject_buildrequires correctly
-handles that including runtime requirements.
 Run %%pyproject_check_import with top-level modules filtering.
 
 
-%package -n python3-distroinfo
+%package -n python%{python3_pkgversion}-distroinfo
 Summary:          %{summary}
 
-%description -n python3-distroinfo
+%description -n python%{python3_pkgversion}-distroinfo
 ...
 
 
@@ -30,10 +30,6 @@ Summary:          %{summary}
 %autosetup -p1 -n distroinfo-%{version}
 # we don't need pytest-runner
 sed -Ei "s/(, )?'pytest-runner'//" setup.py
-
-
-%generate_buildrequires
-%pyproject_buildrequires
 
 
 %build
@@ -50,6 +46,6 @@ sed -Ei "s/(, )?'pytest-runner'//" setup.py
 %pyproject_check_import -t
 
 
-%files -n python3-distroinfo -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-distroinfo -f %{pyproject_files}
 %doc README.rst AUTHORS
 %license LICENSE

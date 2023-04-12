@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 %global pypi_name entrypoints
 Name:           python-%{pypi_name}
 Version:        0.3
@@ -6,30 +7,25 @@ Summary:        Discover and load entry points from installed packages
 License:        MIT
 URL:            https://entrypoints.readthedocs.io/
 Source0:        %{pypi_source}
-
 BuildArch:      noarch
+
+BuildRequires:  pyproject-rpm-macros
+BuildRequires:  python%{python3_pkgversion}-devel
 
 %description
 This package contains one .py module
 Building this tests the flit build backend.
-This package also has no explicit BuildRequires for python or the macros,
-testing the minimal implementation of %%pyproject_buildrequires
-from pyproject-srpm-macros.
 
 
-%package -n python3-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{pypi_name}
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{pypi_name}
 %{summary}.
 
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
-
-
-%generate_buildrequires
-%pyproject_buildrequires
 
 
 %build
@@ -48,6 +44,6 @@ grep -E '/__pycache__/$' %{pyproject_files} && exit 1 || true
 grep -F '/__pycache__/' %{pyproject_files}
 
 
-%files -n python3-%{pypi_name} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
 %license LICENSE

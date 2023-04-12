@@ -1,3 +1,4 @@
+%global python3_pkgversion 39
 Name:           python-setuptools_scm
 Version:        6.0.1
 
@@ -8,7 +9,9 @@ URL:            https://github.com/pypa/setuptools_scm/
 Source0:        %{pypi_source setuptools_scm}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  /usr/bin/git
 
@@ -23,27 +26,18 @@ BuildRequires:  /usr/bin/git
 Here we test that %%pyproject_extras_subpkg works and generates
 setuptools_scm[toml] extra subpackage.
 
-We also check passing multiple -e flags to %%pyproject_buildrequires.
-The tox environments also have a dependency on an extra ("toml").
 
-
-%package -n python3-setuptools_scm
+%package -n python%{python3_pkgversion}-setuptools_scm
 Summary:        %{summary}
 
-%description -n python3-setuptools_scm
+%description -n python%{python3_pkgversion}-setuptools_scm
 ...
 
-%pyproject_extras_subpkg -n python3-setuptools_scm toml
+%pyproject_extras_subpkg -n python%{python3_pkgversion}-setuptools_scm toml
 
 
 %prep
 %autosetup -p1 -n setuptools_scm-%{version}
-
-
-%generate_buildrequires
-# Note that you should not run flake8-like linters in Fedora spec files,
-# here we do it solely to check the *ability* to use multiple toxenvs.
-%pyproject_buildrequires -e %{default_toxenv}-test %{?with_flake8:-e flake8}
 
 
 %build
@@ -56,6 +50,7 @@ Summary:        %{summary}
 
 
 %check
+%if 0
 # This tox should run all the toxenvs specified via -e in %%pyproject_buildrequires
 # We only run some of the tests (running all of them requires network connection and is slow)
 %tox -- -- -k test_version | tee toxlog
@@ -63,6 +58,7 @@ Summary:        %{summary}
 # Internal check for our macros: Assert both toxenvs were executed.
 grep -E 'py%{python3_version_nodots}-test: (OK|commands succeeded)' toxlog
 grep -E 'flake8: (OK|commands succeeded)' toxlog %{?!with_flake8:&& exit 1 || true}
+%endif
 
 # Internal check for our macros
 # making sure that %%{_pyproject_ghost_distinfo} has the right content
@@ -70,7 +66,7 @@ test -f %{_pyproject_ghost_distinfo}
 test "$(cat %{_pyproject_ghost_distinfo})" == "%ghost %{python3_sitelib}/setuptools_scm-%{version}.dist-info"
 
 
-%files -n python3-setuptools_scm -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-setuptools_scm -f %{pyproject_files}
 %doc README.rst
 %doc CHANGELOG.rst
 %license LICENSE

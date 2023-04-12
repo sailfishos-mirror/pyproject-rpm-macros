@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           python-getmac
 Version:        0.8.3
 Release:        0%{?dist}
@@ -7,7 +8,9 @@ URL:            https://github.com/GhostofGoes/getmac
 Source0:        %{pypi_source getmac}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
 
 
@@ -17,18 +20,14 @@ Test that manpages are correctly processed by %%pyproject_save_files '*' +auto.}
 
 %description %_description
 
-%package -n     python3-getmac
+%package -n     python%{python3_pkgversion}-getmac
 Summary:        %{summary}
 
-%description -n python3-getmac %_description
+%description -n python%{python3_pkgversion}-getmac %_description
 
 
 %prep
 %autosetup -p1 -n getmac-%{version}
-
-
-%generate_buildrequires
-%pyproject_buildrequires -r
 
 
 %build
@@ -46,5 +45,5 @@ Summary:        %{summary}
 test -f %{buildroot}%{_mandir}/man1/getmac.1*
 
 
-%files -n python3-getmac -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-getmac -f %{pyproject_files}
 

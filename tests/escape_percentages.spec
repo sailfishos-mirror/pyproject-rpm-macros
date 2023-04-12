@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           escape_percentages
 Version:        0
 Release:        0

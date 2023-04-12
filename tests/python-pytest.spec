@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 %global pypi_name pytest
 Name:           python-%{pypi_name}
 Version:        6.2.5
@@ -8,7 +9,11 @@ URL:            https://pytest.org
 Source0:        %{pypi_source}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-setuptools_scm
+BuildRequires:  python%{python3_pkgversion}-wheel
+BuildRequires:  python%{python3_pkgversion}-attrs
 BuildRequires:  pyproject-rpm-macros
 
 # no xmlschema packaged for EPEL 9 yet, cannot run tests on EPEL
@@ -26,10 +31,10 @@ Building this tests:
 - pyproject.toml with the setuptools backend and setuptools-scm
 - passing arguments into %%tox
 
-%package -n python3-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{pypi_name}
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{pypi_name}
 %{summary}.
 
 
@@ -40,10 +45,6 @@ sed -E -i '/mock|nose/d' setup.cfg
 # internal check for our macros: insert a subprocess echo to setup.py
 # to ensure it's not generated as BuildRequires
 echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> setup.py
-
-
-%generate_buildrequires
-%pyproject_buildrequires %{?with_tests:-x testing -t}
 
 
 %build
@@ -65,7 +66,7 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 %endif
 
 
-%files -n python3-%{pypi_name} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
 %doc CHANGELOG.rst
 %license LICENSE

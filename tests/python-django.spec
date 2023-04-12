@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           python-django
 Version:        3.0.7
 Release:        0%{?dist}
@@ -8,27 +9,25 @@ Source0:        %{pypi_source Django}
 BuildArch:      noarch
 
 BuildRequires:  pyproject-rpm-macros
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 
 %description
 This package contains lang files.
 Building this tests that lang files are marked with %%lang in filelist.
 
 
-%package -n python3-django
+%package -n python%{python3_pkgversion}-django
 Summary:        %{summary}
 
-%description -n python3-django
+%description -n python%{python3_pkgversion}-django
 ...
 
 
 %prep
 %autosetup -p1 -n Django-%{version}
 %py3_shebang_fix django/conf/project_template/manage.py-tpl django/bin/django-admin.py
-
-
-%generate_buildrequires
-%pyproject_buildrequires -R
 
 
 %build
@@ -54,7 +53,7 @@ sort django.lang djangojs.lang > expected.lang
 diff tested.lang expected.lang
 
 
-%files -n python3-django -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-django -f %{pyproject_files}
 %doc README.rst
 %license LICENSE
 %{_bindir}/django-admin

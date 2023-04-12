@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 Name:           python-flit-core
 Version:        3.0.0
 Release:        0%{?dist}
@@ -8,7 +9,7 @@ URL:            https://pypi.org/project/flit-core/
 Source0:        https://github.com/takluyver/flit/archive/%{version}/flit-%{version}.tar.gz
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
 BuildRequires:  pyproject-rpm-macros
 
 %description
@@ -17,22 +18,16 @@ Test a build with pyproject.toml backend-path = .
 flit-core builds with flit-core.
 
 
-%package -n python3-flit-core
+%package -n python%{python3_pkgversion}-flit-core
 Summary:        %{summary}
 
-%description -n python3-flit-core
+%description -n python%{python3_pkgversion}-flit-core
 ...
 
 
 %prep
 %autosetup -p1 -n flit-%{version}
 
-
-%generate_buildrequires
-cd flit_core
-# this runtime-requires pytoml which is no longer available in Fedora
-%pyproject_buildrequires -R
-cd ..
 
 %build
 cd flit_core
@@ -45,4 +40,4 @@ cd ..
 %pyproject_save_files flit_core
 
 
-%files -n python3-flit-core -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-flit-core -f %{pyproject_files}

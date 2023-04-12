@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 Name:           python-virtualenv
 Version:        20.19.0
 Release:        0%{?dist}
@@ -8,9 +9,9 @@ URL:            http://pypi.python.org/pypi/virtualenv
 Source:         %{pypi_source virtualenv}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
-BuildRequires:  python3-flaky
-BuildRequires:  python3-pytest
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-flaky
+BuildRequires:  python%{python3_pkgversion}-pytest
 
 %description
 This specfile was added as a regression test to
@@ -19,10 +20,10 @@ https://src.fedoraproject.org/rpms/pyproject-rpm-macros/pull-request/363
 It uses hatchling without %%pyproject_buildrequires -w.
 
 
-%package -n     python3-virtualenv
+%package -n     python%{python3_pkgversion}-virtualenv
 Summary:        %{summary}
 
-%description -n python3-virtualenv
+%description -n python%{python3_pkgversion}-virtualenv
 ...
 
 
@@ -34,10 +35,6 @@ sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.4/' \
        -e 's/filelock<4,>=3.4.1/filelock<4,>=3.3.1/' \
        -e 's/platformdirs<4,>=2.4/platformdirs<4,>=2.3/' \
     pyproject.toml
-
-
-%generate_buildrequires
-%pyproject_buildrequires
 
 
 %build
@@ -60,6 +57,6 @@ PIP_CERT=/etc/pki/tls/certs/ca-bundle.crt \
 %pytest -v -k test_main
 
 
-%files -n python3-virtualenv -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-virtualenv -f %{pyproject_files}
 %doc README.md
 %{_bindir}/virtualenv

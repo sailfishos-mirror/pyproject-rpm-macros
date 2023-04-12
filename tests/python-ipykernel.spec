@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           python-ipykernel
 Version:        5.2.1
 Release:        0%{?dist}
@@ -9,7 +10,9 @@ Source0:        https://github.com/ipython/ipykernel/archive/v%{version}/ipykern
 BuildArch:      noarch
 
 BuildRequires:  pyproject-rpm-macros
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 
 %description
 This package contains data files.
@@ -22,10 +25,10 @@ Run %%pyproject_check_import on installed package and exclude unwanted modules
   in the upstream metadata
 
 
-%package -n python3-ipykernel
+%package -n python%{python3_pkgversion}-ipykernel
 Summary:        %{summary}
 
-%description -n python3-ipykernel
+%description -n python%{python3_pkgversion}-ipykernel
 ...
 
 %prep
@@ -37,9 +40,6 @@ Summary:        %{summary}
 sed -i 's/install_requires=\[/install_requires=["ipython_genutils",/' setup.py
 
 
-%generate_buildrequires
-%pyproject_buildrequires -r
-
 %build
 %pyproject_wheel
 
@@ -50,7 +50,7 @@ sed -i 's/install_requires=\[/install_requires=["ipython_genutils",/' setup.py
 %check
 %pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.backend_inline'
 
-%files -n python3-ipykernel -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-ipykernel -f %{pyproject_files}
 %license COPYING.md
 %doc README.md
 

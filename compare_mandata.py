@@ -11,8 +11,8 @@ import sys
 
 from pathlib import PosixPath
 
-# from pyproject_buildrequires import print_err
 from pyproject_save_files import prepend_mandirs, MANPAGE_EXTENSIONS
+
 
 # nb: we don't use functools.partial to be able to use pytest's capsys
 # see https://github.com/pytest-dev/pytest/issues/8900

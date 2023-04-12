@@ -19,7 +19,6 @@
 %_pyproject_modules %{_builddir}/%{_pyproject_files_prefix}-pyproject-modules
 %_pyproject_ghost_distinfo %{_builddir}/%{_pyproject_files_prefix}-pyproject-ghost-distinfo
 %_pyproject_record %{_builddir}/%{_pyproject_files_prefix}-pyproject-record
-%_pyproject_buildrequires %{_builddir}/%{_pyproject_files_prefix}-pyproject-buildrequires
 
 # Avoid leaking %%{_pyproject_builddir} to pytest collection
 # https://bugzilla.redhat.com/show_bug.cgi?id=1935212

@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 Name:           python-setuptools
 # on the CI we test different version of setuptools on different Fedora versions
 # don't package software like this in Fedora please
@@ -22,7 +23,8 @@ Patch:          https://src.fedoraproject.org/rpms/python-setuptools/raw/6fc093d
 
 BuildArch:      noarch
 
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  gcc
 
@@ -40,14 +42,14 @@ This package tests 2 things:
  - TODO %%{pyproject_files} has escaped spaces (rhzb#1976363)
 
 
-%package -n     python3-setuptools
+%package -n     python%{python3_pkgversion}-setuptools
 Summary:        %{summary}
 
 # For users who might see ModuleNotFoundError: No module named 'pkg_resoureces'
-%py_provides    python3-pkg_resources
-%py_provides    python3-pkg-resources
+%py_provides    python%{python3_pkgversion}-pkg_resources
+%py_provides    python%{python3_pkgversion}-pkg-resources
 
-%description -n python3-setuptools
+%description -n python%{python3_pkgversion}-setuptools
 ...
 
 
@@ -64,10 +66,6 @@ sed -i pytest.ini -e 's/ --flake8//' \
                   -e 's/ --cov//'
 %endif
 
-
-
-%generate_buildrequires
-%pyproject_buildrequires -r %{?with_tests:-x testing}
 
 
 %build
@@ -105,6 +103,6 @@ echo '%%license %{python3_sitelib}/setuptools-%{version}.dist-info/LICENSE' > ex
 diff tested.license expected.license
 
 
-%files -n python3-setuptools -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-setuptools -f %{pyproject_files}
 %doc docs/* CHANGES.rst README.rst
 %{python3_sitelib}/distutils-precedence.pth

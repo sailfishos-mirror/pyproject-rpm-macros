@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           double-install
 Version:        0
 Release:        0%{?dist}
@@ -9,7 +10,10 @@ Source1:        https://github.com/pallets/markupsafe/archive/%{markupsafe_versi
 Source2:        %{pypi_source tldr %{tldr_version}}
 
 BuildRequires:  gcc
-BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools_scm
+BuildRequires:  python%{python3_pkgversion}-wheel
 
 %description
 This package tests that we can build and install 2 wheels at once.
@@ -20,14 +24,6 @@ One of them is "noarch" and one has an extension module.
 %setup -Tc
 tar xf %{SOURCE1}
 tar xf %{SOURCE2}
-
-
-%generate_buildrequires
-cd markupsafe-%{markupsafe_version}
-%pyproject_buildrequires -R
-cd ../tldr-%{tldr_version}
-%pyproject_buildrequires -R
-cd ..
 
 
 %build
@@ -46,13 +42,13 @@ cd ..
 
 %check
 # Internal check for the value of %%{pyproject_build_lib}
-%if 0%{?rhel} == 9
+%if 0%{?rhel} <= 9
 for dir in . markupsafe-%{markupsafe_version} tldr-%{tldr_version}; do
   (cd $dir && test "%{pyproject_build_lib}" == "$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib.%{python3_platform}-%{python3_version}):$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib)")
 done
 %else
 cd markupsafe-%{markupsafe_version}
-%if 0%{?fedora} == 36
+%if 0%{?rhel} <= 9
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{markupsafe_version}/build/lib.%{python3_platform}-%{python3_version}"
 %else
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{markupsafe_version}/build/lib.%{python3_platform}-cpython-%{python3_version_nodots}"

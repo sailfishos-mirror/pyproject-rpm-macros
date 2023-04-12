@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 %global pypi_name clikit
 Name:           python-%{pypi_name}
 Version:        0.3.1
@@ -10,26 +11,22 @@ Source0:        %{pypi_source}
 
 BuildArch:      noarch
 BuildRequires:  pyproject-rpm-macros
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-poetry
 
 %description
 Tests building with the poetry build backend.
 
 
-%package -n python3-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{pypi_name}
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{pypi_name}
 %{summary}.
 
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
-
-
-%generate_buildrequires
-# this runtime-requires pastel<0.2 which is no longer available in Fedora
-%pyproject_buildrequires -R
 
 
 %build
@@ -53,7 +50,7 @@ test ! $(find %{buildroot}%{python3_sitelib}/ | grep -E "\.dist-info/RECORD$")
 test ! $(find %{buildroot}%{python3_sitelib}/ | grep -E "\.dist-info/REQUESTED$")
 
 
-%files -n python3-%{pypi_name}
+%files -n python%{python3_pkgversion}-%{pypi_name}
 %doc README.md
 %license LICENSE
 %{python3_sitelib}/%{pypi_name}/

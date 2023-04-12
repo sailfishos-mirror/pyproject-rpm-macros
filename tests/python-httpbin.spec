@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           python-httpbin
 Version:        0.7.0
 Release:        0%{?dist}
@@ -7,7 +8,9 @@ URL:            https://github.com/Runscope/httpbin
 Source0:        %{url}/archive/v%{version}/httpbin-%{version}.tar.gz
 BuildArch:      noarch
 
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
 
 %if 0%{?fedora} >= 37 || 0%{?rhel} >= 10
@@ -27,10 +30,10 @@ Patch:          https://src.fedoraproject.org/rpms/python-httpbin/raw/0e4a7e2812
 This package buildrequires a package with extra: raven[flask].
 
 
-%package -n python3-httpbin
+%package -n python%{python3_pkgversion}-httpbin
 Summary:            %{summary}
 
-%description -n python3-httpbin
+%description -n python%{python3_pkgversion}-httpbin
 %{summary}.
 
 
@@ -45,10 +48,6 @@ sed -i /Content-Length/d test_httpbin.py
 
 # https://github.com/postmanlabs/httpbin/issues/647
 sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1))/def no\1/' test_httpbin.py
-
-%generate_buildrequires
-%pyproject_buildrequires %{?with_tests:-t}%{?!with_tests:-R}
-
 
 %build
 %pyproject_wheel
@@ -70,6 +69,6 @@ sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1
 %endif
 
 
-%files -n python3-httpbin -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-httpbin -f %{pyproject_files}
 %doc README*
 %license LICENSE*

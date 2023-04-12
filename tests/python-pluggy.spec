@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 %global pypi_name pluggy
 Name:           python-%{pypi_name}
 Version:        0.13.0
@@ -9,8 +10,12 @@ URL:            https://github.com/pytest-dev/pluggy
 Source0:        %{pypi_source}
 
 BuildArch:      noarch
+BuildRequires:  python%{python3_pkgversion}-pip
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-setuptools_scm
+BuildRequires:  python%{python3_pkgversion}-wheel
 BuildRequires:  pyproject-rpm-macros
-# we don't BR python3-devel here just for test purposes, but we recommend you do it
+# we don't BR python%{python3_pkgversion}-devel here just for test purposes, but we recommend you do it
 
 %description
 A pure Python library. The package contains tox.ini. Does not contain executables.
@@ -21,19 +26,15 @@ Building this tests:
 - pyproject.toml with the setuptools backend and setuptools-scm
 
 
-%package -n python3-%{pypi_name}
+%package -n python%{python3_pkgversion}-%{pypi_name}
 Summary:        %{summary}
 
-%description -n python3-%{pypi_name}
+%description -n python%{python3_pkgversion}-%{pypi_name}
 %{summary}.
 
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
-
-
-%generate_buildrequires
-%pyproject_buildrequires -t
 
 
 %build
@@ -47,9 +48,9 @@ Summary:        %{summary}
 
 
 %check
-%tox
+#tox
 
 
-%files -n python3-%{pypi_name} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
 %license LICENSE

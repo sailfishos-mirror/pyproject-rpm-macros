@@ -13,33 +13,39 @@
     tags:
     - classic
     tests:
-    - pytest:
-        dir: .
-        run: ./mocktest.sh python-pytest
-    - entrypoints:
-        dir: .
-        run: ./mocktest.sh python-entrypoints
+    # No python 3.X setuptools_scm
+    #- pytest:
+    #    dir: .
+    #    run: ./mocktest.sh python-pytest
+    # No python 3.X flit
+    #- entrypoints:
+    #    dir: .
+    #    run: ./mocktest.sh python-entrypoints
     - pluggy:
         dir: .
         run: ./mocktest.sh python-pluggy
-    - clikit:
-        dir: .
-        run: ./mocktest.sh python-clikit
-    - distroinfo:
-        dir: .
-        run: ./mocktest.sh python-distroinfo
+    # No python 3.X poetry
+    #- clikit:
+    #    dir: .
+    #    run: ./mocktest.sh python-clikit
+    # No python 3.X pbr
+    #- distroinfo:
+    #    dir: .
+    #    run: ./mocktest.sh python-distroinfo
     - tldr:
         dir: .
         run: ./mocktest.sh tldr
-    - openqa_client:
-        dir: .
-        run: ./mocktest.sh python-openqa_client
+    # No python 3.X tox
+    #- openqa_client:
+    #    dir: .
+    #    run: ./mocktest.sh python-openqa_client
     - httpbin:
         dir: .
         run: ./mocktest.sh python-httpbin
-    - ldap:
-        dir: .
-        run: ./mocktest.sh python-ldap
+    # No python 3.11 pyasn1
+    #- ldap:
+    #    dir: .
+    #    run: ./mocktest.sh python-ldap
     - isort:
         dir: .
         run: ./mocktest.sh python-isort
@@ -49,9 +55,10 @@
     - setuptools_scm:
         dir: .
         run: ./mocktest.sh python-setuptools_scm
-    - ipykernel:
-        dir: .
-        run: ./mocktest.sh python-ipykernel
+    # No python 3.X ipython
+    #- ipykernel:
+    #    dir: .
+    #    run: ./mocktest.sh python-ipykernel
     - zope:
         dir: .
         run: ./mocktest.sh python-zope-event
@@ -61,9 +68,6 @@
     - printrun:
         dir: .
         run: ./mocktest.sh printrun
-    - dns_lexicon:
-        dir: .
-        run: ./mocktest.sh python-dns-lexicon
     - flit_core:
         dir: .
         run: ./mocktest.sh python-flit-core
@@ -79,18 +83,17 @@
     - getmac:
         dir: .
         run: ./mocktest.sh python-getmac
-    - userpath:
-        dir: .
-        run: ./mocktest.sh python-userpath
+    # No python 3.X hatchling
+    #- userpath:
+    #    dir: .
+    #    run: ./mocktest.sh python-userpath
     - double_install:
         dir: .
         run: ./mocktest.sh double-install
-    - fake_requirements:
-        dir: .
-        run: ./mocktest.sh fake-requirements
-    - virtualenv:
-        dir: .
-        run: ./mocktest.sh python-virtualenv
+    # No python3-flaky on EL8 at the moment
+    #- virtualenv:
+    #    dir: .
+    #    run: ./mocktest.sh python-virtualenv
     - escape_percentages:
         dir: .
         run: rpmbuild -ba escape_percentages.spec

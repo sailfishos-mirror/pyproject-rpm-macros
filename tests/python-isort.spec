@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 %global modname isort
 
 Name:               python-%{modname}
@@ -9,7 +10,9 @@ License:            MIT
 URL:                https://github.com/timothycrosley/%{modname}
 Source0:            %{url}/archive/%{version}-2/%{modname}-%{version}-2.tar.gz
 BuildArch:          noarch
-BuildRequires:      python3-devel
+BuildRequires:      python%{python3_pkgversion}-devel
+BuildRequires:      python%{python3_pkgversion}-setuptools
+BuildRequires:      python%{python3_pkgversion}-wheel
 BuildRequires:      pyproject-rpm-macros
 
 %description
@@ -17,19 +20,15 @@ This package contains executables.
 Building this tests that executables are not listed when +auto is not used
 with %%pyproject_save_files.
 
-%package -n python3-%{modname}
+%package -n python%{python3_pkgversion}-%{modname}
 Summary:            %{summary}
 
-%description -n python3-%{modname}
+%description -n python%{python3_pkgversion}-%{modname}
 %{summary}.
 
 
 %prep
 %autosetup -n %{modname}-%{version}-2
-
-
-%generate_buildrequires
-%pyproject_buildrequires
 
 
 %build
@@ -50,7 +49,7 @@ test -d %{buildroot}%{python3_sitelib}/%{modname}-%{version}.dist-info/
 grep -F %{_bindir}/%{modname} %{pyproject_files} && exit 1 || true
 
 
-%files -n python3-%{modname} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
 %license LICENSE
 %{_bindir}/%{modname}

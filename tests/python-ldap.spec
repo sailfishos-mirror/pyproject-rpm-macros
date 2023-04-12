@@ -1,3 +1,4 @@
+%global python3_pkgversion 3.11
 Name:           python-ldap
 Version:        3.3.0
 Release:        0%{?dist}
@@ -10,7 +11,10 @@ Source0:        %{pypi_source}
 # Fedora has this patch to make it build, but the tests will fail anyway
 Patch0:         https://src.fedoraproject.org/rpms/python-ldap/raw/a237d9b212bd1581e07f4f1a8f54c26a7190843c/f/python-ldap-always-use-ldap-library.patch
 
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-wheel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-pytest
 BuildRequires:  pyproject-rpm-macros
 
 BuildRequires:  cyrus-sasl-devel
@@ -31,10 +35,10 @@ Building this tests:
 - building an extension module via %%pyproject_buildrequires -w
 
 
-%package -n     python3-ldap
+%package -n     python%{python3_pkgversion}-ldap
 Summary:        %{summary}
 
-%description -n python3-ldap
+%description -n python%{python3_pkgversion}-ldap
 %{summary}
 
 
@@ -45,13 +49,8 @@ Summary:        %{summary}
 rm Tests/t_ldapobject.py Tests/t_cext.py Tests/t_edit.py Tests/t_ldap_sasl.py Tests/t_ldap_syncrepl.py Tests/t_slapdobject.py Tests/t_bind.py Tests/t_ldap_options.py Tests/t_ldap_schema_subentry.py
 
 
-%generate_buildrequires
-# -w is not required with this package, but we test that we can use it anyway
-%pyproject_buildrequires -t -w
-
-
 %build
-#%%pyproject_wheel -- this is done via %%pyproject_buildrequires -w
+%pyproject_wheel
 
 # Internal check that we can import the built extension modules from %%{pyproject_build_lib}
 %{python3} -c 'import _ldap' && exit 1 || true
@@ -65,7 +64,7 @@ PYTHONPATH=%{pyproject_build_lib} %{python3} -c 'import _ldap'
 
 
 %check
-%tox
+%pytest
 
 # Internal check if the instalation outputs expected files
 test -d %{buildroot}%{python3_sitearch}/__pycache__/
@@ -94,16 +93,14 @@ grep -E '/site-packages/__pycache__$' %{pyproject_files} && exit 1 || true
 grep -E '/site-packages/__pycache__/$' %{pyproject_files} && exit 1 || true
 
 # Internal check for the value of %%{pyproject_build_lib} in an archful package
-%if 0%{?rhel} == 9
+%if 0%{?rhel} <= 9
 test "%{pyproject_build_lib}" == "$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib.%{python3_platform}-%{python3_version})"
-%elif 0%{?fedora} == 36
-test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/build/lib.%{python3_platform}-%{python3_version}"
 %else
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/build/lib.%{python3_platform}-cpython-%{python3_version_nodots}"
 %endif
 
 
-%files -n python3-ldap -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-ldap -f %{pyproject_files}
 %license LICENCE
 %doc CHANGES README TODO Demo
 # Explicitly listed files can be combined with automation

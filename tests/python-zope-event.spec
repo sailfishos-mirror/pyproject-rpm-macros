@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           python-zope-event
 Version:        4.2.0
 Release:        0%{?dist}
@@ -8,24 +9,23 @@ Source0:        %{pypi_source zope.event}
 BuildArch:      noarch
 
 BuildRequires:  pyproject-rpm-macros
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
 
 %description
 This package contains .pth files.
 Building this tests that .pth files are not listed when +auto is not used
 with %%pyproject_save_files.
 
-%package -n python3-zope-event
+%package -n python%{python3_pkgversion}-zope-event
 Summary:       %{summary}
 
-%description -n python3-zope-event
+%description -n python%{python3_pkgversion}-zope-event
 ...
 
 %prep
 %setup -q -n zope.event-%{version}
-
-%generate_buildrequires
-%pyproject_buildrequires
 
 %build
 %pyproject_wheel
@@ -40,7 +40,7 @@ Summary:       %{summary}
 test ! $(find %{buildroot}%{python3_sitelib}/ | grep -E "\.dist-info/RECORD$")
 test ! $(find %{buildroot}%{python3_sitelib}/ | grep -E "\.dist-info/REQUESTED$")
 
-%files -n python3-zope-event -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-zope-event -f %{pyproject_files}
 %doc README.rst
 %license LICENSE.txt
 

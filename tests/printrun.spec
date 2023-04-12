@@ -1,3 +1,4 @@
+%global python3_pkgversion 38
 Name:           printrun
 Version:        2.0.0~rc6
 %global upstream_version 2.0.0rc6
@@ -11,7 +12,10 @@ Source0:        https://github.com/kliment/Printrun/archive/%{name}-%{upstream_v
 Patch0:         https://github.com/kliment/Printrun/pull/1101.patch
 
 BuildRequires:  pyproject-rpm-macros
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python%{python3_pkgversion}-setuptools
+BuildRequires:  python%{python3_pkgversion}-wheel
+BuildRequires:  python%{python3_pkgversion}-Cython
 BuildRequires:  gcc
 
 %description
@@ -21,10 +25,6 @@ Building this tests that lang files are marked with %%lang in filelist.
 
 %prep
 %autosetup -p1 -n Printrun-printrun-%{upstream_version}
-
-
-%generate_buildrequires
-%pyproject_buildrequires -R
 
 
 %build
