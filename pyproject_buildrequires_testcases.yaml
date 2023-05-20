@@ -986,3 +986,40 @@ Self-referencing extras (maze):
     python3dist(rightdep)
     python3dist(startdep)
   result: 0
+
+config_settings_control:
+  include_runtime: false
+  config_settings:
+  pyproject.toml: |
+    [build-system]
+    build-backend = "test_backend"
+    backend-path = ["."]
+  test_backend.py: |
+    def get_requires_for_build_wheel(config_settings=None):
+        if not (config_settings is None or isinstance(config_settings, dict)):
+            raise TypeError
+        if config_settings and "test-config-setting" in config_settings:
+            return ["test-config-setting"]
+        return ["test-no-config-setting"]
+  expected: |
+    python3dist(test-no-config-setting)
+  result: 0
+
+config_settings:
+  include_runtime: false
+  config_settings:
+    test-config-setting: ""
+  pyproject.toml: |
+    [build-system]
+    build-backend = "test_backend"
+    backend-path = ["."]
+  test_backend.py: |
+    def get_requires_for_build_wheel(config_settings=None):
+        if not (config_settings is None or isinstance(config_settings, dict)):
+            raise TypeError
+        if config_settings and "test-config-setting" in config_settings:
+            return ["test-config-setting"]
+        return ["test-no-config-setting"]
+  expected: |
+    python3dist(test-config-setting)
+  result: 0

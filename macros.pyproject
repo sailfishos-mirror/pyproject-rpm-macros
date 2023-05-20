@@ -26,11 +26,11 @@
 # The value is read and used by the %%pytest and %%tox macros:
 %_set_pytest_addopts %global __pytest_addopts --ignore=%{_pyproject_builddir}
 
-%pyproject_wheel() %{expand:\\\
+%pyproject_wheel(C:) %{expand:\\\
 %_set_pytest_addopts
 mkdir -p "%{_pyproject_builddir}"
 CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}" TMPDIR="%{_pyproject_builddir}" \\\
-%{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_wheel.py %{_pyproject_wheeldir}
+%{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_wheel.py %{?**} %{_pyproject_wheeldir}
 }
 
 
@@ -140,7 +140,7 @@ fi
 
 
 # Note: Keep the options in sync with this macro from macros.aaa-pyproject-srpm
-%pyproject_buildrequires(rRxtNwe:) %{expand:\\\
+%pyproject_buildrequires(rRxtNwe:C:) %{expand:\\\
 %_set_pytest_addopts
 # The _auto_set_build_flags feature does not do this in %%generate_buildrequires section,
 # but we want to get an environment consistent with %%build:

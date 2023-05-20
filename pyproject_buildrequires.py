@@ -14,6 +14,7 @@ import pathlib
 import zipfile
 
 from pyproject_requirements_txt import convert_requirements_txt
+from pyproject_wheel import parse_config_settings_args
 
 
 # Some valid Python version specifiers are not supported.
@@ -67,7 +68,7 @@ def guess_reason_for_invalid_requirement(requirement_str):
 class Requirements:
     """Requirement gatherer. The macro will eventually print out output_lines."""
     def __init__(self, get_installed_version, extras=None,
-                 generate_extras=False, python3_pkgversion='3'):
+                 generate_extras=False, python3_pkgversion='3', config_settings=None):
         self.get_installed_version = get_installed_version
         self.output_lines = []
         self.extras = set()
@@ -81,6 +82,7 @@ class Requirements:
 
         self.generate_extras = generate_extras
         self.python3_pkgversion = python3_pkgversion
+        self.config_settings = config_settings
 
     def add_extras(self, *extras):
         self.extras |= set(e.strip() for e in extras)
@@ -269,7 +271,7 @@ def get_backend(requirements):
 def generate_build_requirements(backend, requirements):
     get_requires = getattr(backend, 'get_requires_for_build_wheel', None)
     if get_requires:
-        new_reqs = get_requires()
+        new_reqs = get_requires(config_settings=requirements.config_settings)
         requirements.extend(new_reqs, source='get_requires_for_build_wheel')
         requirements.check(source='get_requires_for_build_wheel')
 
@@ -303,7 +305,7 @@ def generate_run_requirements_hook(backend, requirements):
             'Use the provisional -w flag to build the wheel and parse the metadata from it, '
             'or use the -R flag not to generate runtime dependencies.'
         )
-    dir_basename = prepare_metadata('.')
+    dir_basename = prepare_metadata('.', config_settings=requirements.config_settings)
     with open(dir_basename + '/METADATA') as metadata_file:
         name, requires = package_name_and_requires_from_metadata_file(metadata_file)
         for key, req in requires.items():
@@ -327,7 +329,11 @@ def generate_run_requirements_wheel(backend, requirements, wheeldir):
     wheel = find_built_wheel(wheeldir)
     if not wheel:
         import pyproject_wheel
-        returncode = pyproject_wheel.build_wheel(wheeldir=wheeldir, stdout=sys.stderr)
+        returncode = pyproject_wheel.build_wheel(
+            wheeldir=wheeldir,
+            stdout=sys.stderr,
+            config_settings=requirements.config_settings,
+        )
         if returncode != 0:
             raise RuntimeError('Failed to build the wheel for %pyproject_buildrequires -w.')
         wheel = find_built_wheel(wheeldir)
@@ -415,7 +421,7 @@ def generate_requires(
     *, include_runtime=False, build_wheel=False, wheeldir=None, toxenv=None, extras=None,
     get_installed_version=importlib.metadata.version,  # for dep injection
     generate_extras=False, python3_pkgversion="3", requirement_files=None, use_build_system=True,
-    output,
+    output, config_settings=None,
 ):
     """Generate the BuildRequires for the project in the current directory
 
@@ -426,7 +432,8 @@ def generate_requires(
     requirements = Requirements(
         get_installed_version, extras=extras or [],
         generate_extras=generate_extras,
-        python3_pkgversion=python3_pkgversion
+        python3_pkgversion=python3_pkgversion,
+        config_settings=config_settings,
     )
 
     try:
@@ -516,6 +523,12 @@ def main(argv):
         metavar='REQUIREMENTS.TXT',
         help=('Add buildrequires from file'),
     )
+    parser.add_argument(
+        '-C',
+        dest='config_settings',
+        action='append',
+        help='Configuration settings to pass to the PEP 517 backend',
+    )
 
     args = parser.parse_args(argv)
 
@@ -550,6 +563,7 @@ def main(argv):
             requirement_files=args.requirement_files,
             use_build_system=args.use_build_system,
             output=args.output,
+            config_settings=parse_config_settings_args(args.config_settings),
         )
     except Exception:
         # Log the traceback explicitly (it's useful debug info)

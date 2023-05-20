@@ -94,6 +94,9 @@
     - escape_percentages:
         dir: .
         run: ./mocktest.sh escape_percentages
+    - config-settings-test:
+        dir: .
+        run: ./mocktest.sh config-settings-test
     required_packages:
     - mock
     - rpmdevtools

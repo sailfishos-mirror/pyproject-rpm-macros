@@ -63,6 +63,7 @@ def test_data(case_name, capfd, tmp_path, monkeypatch):
             requirement_files=requirement_files,
             use_build_system=use_build_system,
             output=output,
+            config_settings=case.get('config_settings'),
         )
     except SystemExit as e:
         assert e.code == case['result']
