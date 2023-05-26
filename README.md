@@ -163,6 +163,43 @@ The `%pyproject_buildrequires` macro also accepts the `-r` flag for backward com
 it means "include runtime dependencies" which has been the default since version 0-53.
 
 
+Passing config settings to build backends
+-----------------------------------------
+
+The `%pyproject_buildrequires` and `%pyproject_wheel` macros accept a `-C` flag
+to pass [configuration settings][config_settings] to the build backend.
+Options take the form of `-C KEY`, `-C KEY=VALUE`, or `-C--option-with-dashes`.
+Pass `-C` multiple times to specify multiple options.
+This option is equivalent to pip's `--config-settings` flag.
+These are passed on to PEP 517 hooks' `config_settings` argument as a Python
+dictionary.
+
+The `%pyproject_buildrequires` macro passes these options to the
+`get_requires_for_build_wheel` and `prepare_metadata_for_build_wheel` hooks.
+Passing `-C` to `%pyproject_buildrequires` is incompatible with `-N` which does
+not call these hooks at all.
+
+The `%pyproject_wheel` macro passes these options to the `build_wheel` hook.
+
+Consult the project's upstream documentation and/or the corresponding build
+backend's documentation for more information.
+Note that some projects don't use config settings at all
+and other projects may only accept config settings for one of the two steps.
+
+Note that the current implementation of the macros uses `pip` to build wheels.
+On some systems (notably on RHEL 9 with Python 3.9),
+`pip` is too old to understand `--config-settings`.
+Using the `-C` option for `%pyproject_wheel` (or `%pyproject_buildrequires -w`)
+is not supported there and will result to an error like:
+
+    Usage:   
+      /usr/bin/python3 -m pip wheel [options] <requirement specifier> ...
+      ...
+    no such option: --config-settings
+
+[config_settings]: https://peps.python.org/pep-0517/#config-settings
+
+
 Running tox based tests
 -----------------------
 
