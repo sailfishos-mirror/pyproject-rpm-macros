@@ -202,19 +202,15 @@ class Requirements:
 def toml_load(opened_binary_file):
     try:
         # tomllib is in the standard library since 3.11.0b1
-        import tomllib as toml_module
-        load_from = opened_binary_file
+        import tomllib
     except ImportError:
         try:
-            # note: we could use tomli here,
-            # but for backwards compatibility with RHEL 9, we use toml instead
-            import toml as toml_module
-            load_from = io.TextIOWrapper(opened_binary_file, encoding='utf-8')
+            import tomli as tomllib
         except ImportError as e:
             print_err('Import error:', e)
             # already echoed by the %pyproject_buildrequires macro
             sys.exit(0)
-    return toml_module.load(load_from)
+    return tomllib.load(opened_binary_file)
 
 
 def get_backend(requirements):
