@@ -12,6 +12,9 @@ from importlib.metadata import Distribution
 # From RPM's build/files.c strtokWithQuotes delim argument
 RPM_FILES_DELIMETERS = ' \n\t'
 
+# See the comment in the macro that wraps this script
+RPM_PERCENTAGES_COUNT = int(os.getenv('RPM_PERCENTAGES_COUNT', '2'))
+
 # RPM hardcodes the lists of manpage extensions and directories,
 # so we have to maintain separate ones :(
 # There is an issue for RPM to provide the lists as macros:
@@ -441,13 +444,13 @@ def escape_rpm_path(path):
         '"/usr/lib/python3.9/site-packages/setuptools/script (dev).tmpl"'
 
         >>> escape_rpm_path('/usr/share/data/100%valid.path')
-        '/usr/share/data/100%%%%%%%%valid.path'
+        '/usr/share/data/100%%valid.path'
 
         >>> escape_rpm_path('/usr/share/data/100 % valid.path')
-        '"/usr/share/data/100 %%%%%%%% valid.path"'
+        '"/usr/share/data/100 %% valid.path"'
 
         >>> escape_rpm_path('/usr/share/data/1000 %% valid.path')
-        '"/usr/share/data/1000 %%%%%%%%%%%%%%%% valid.path"'
+        '"/usr/share/data/1000 %%%% valid.path"'
 
         >>> escape_rpm_path('/usr/share/data/spaces and "quotes"')
         Traceback (most recent call last):
@@ -461,10 +464,7 @@ def escape_rpm_path(path):
     """
     orig_path = path = str(path)
     if "%" in path:
-        # Escaping by 8 %s has been verified in RPM 4.16 and 4.17, but probably not stable
-        # See this thread http://lists.rpm.org/pipermail/rpm-list/2021-June/002048.html
-        # On the CI, we build tests/escape_percentages.spec to verify this assumption
-        path = path.replace("%", "%" * 8)
+        path = path.replace("%", "%" * RPM_PERCENTAGES_COUNT)
     if any(symbol in path for symbol in RPM_FILES_DELIMETERS):
         if '"' in path:
             # As far as we know, RPM cannot list such file individually

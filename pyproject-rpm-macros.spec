@@ -163,6 +163,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Wed May 31 2023 Miro Hrončok <mhroncok@redhat.com> - 1.8.1-1
 - On Python older than 3.11, use tomli instead of deprecated toml
+- Fix literal %% handling in %%{pyproject_files} on RPM 4.19
 
 * Tue May 23 2023 Miro Hrončok <mhroncok@redhat.com> - 1.8.0-2
 - Rebuilt for ELN dependency changes
