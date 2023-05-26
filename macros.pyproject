@@ -158,6 +158,7 @@ fi
 %{-e:%{error:The -N and -e options are mutually exclusive}}
 %{-t:%{error:The -N and -t options are mutually exclusive}}
 %{-w:%{error:The -N and -w options are mutually exclusive}}
+%{-C:%{error:The -N and -C options are mutually exclusive}}
 }
 %{-e:%{expand:%global toxenv %(%{__python3} -s %{_rpmconfigdir}/redhat/pyproject_construct_toxenv.py %{?**})}}
 echo 'pyproject-rpm-macros'  # first stdout line matches the implementation in macros.aaa-pyproject-srpm
