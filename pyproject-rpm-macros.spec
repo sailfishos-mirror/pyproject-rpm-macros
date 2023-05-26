@@ -61,7 +61,7 @@ BuildRequires:  python3dist(setuptools)
 BuildRequires:  python3dist(tox-current-env) >= 0.0.6
 %endif
 BuildRequires:  python3dist(wheel)
-BuildRequires:  (python3dist(tomli) if python3-devel < 3.11)
+BuildRequires:  (python3dist(tomli) if python3 < 3.11)
 %endif
 
 # We build on top of those:
