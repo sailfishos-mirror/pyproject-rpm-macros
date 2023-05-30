@@ -41,7 +41,7 @@ As a replacement for the macro for the setuptools backend on Fedora 37+, you can
 or $PWD/build/lib.%%{python3_platform}-cpython-%%{python3_version_nodots} for packages with extension modules.
 Other build backends and older distributions may need different paths.
 See https://lists.fedoraproject.org/archives/list/python-devel@lists.fedoraproject.org/thread/HMLOPAU3RZLXD4BOJHTIPKI3I4U6U7OE/ for details.
-}%{global __pyproject_build_lib_warned 1}}%{expand:\\\
+}%global __pyproject_build_lib_warned 1}%{expand:\\\
 $(
 pyproject_build_lib=()
 if [ -d build/lib.%{python3_platform}-cpython-%{python3_version_nodots} ]; then
