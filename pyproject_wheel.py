@@ -13,7 +13,13 @@ def parse_config_settings_args(config_settings):
     new_config_settings = {}
     for arg in config_settings:
         key, _, value = arg.partition('=')
-        new_config_settings[key] = value
+        if key in new_config_settings:
+            if not isinstance(new_config_settings[key], list):
+                # convert the existing value to a list
+                new_config_settings[key] = [new_config_settings[key]]
+            new_config_settings[key].append(value)
+        else:
+            new_config_settings[key] = value
     return new_config_settings
 
 
@@ -24,11 +30,14 @@ def get_config_settings_args(config_settings):
     """
     if not config_settings:
         return
-    for key, value in config_settings.items():
-        if value == '':
-            yield f'--config-settings={key}'
-        else:
-            yield f'--config-settings={key}={value}'
+    for key, values in config_settings.items():
+        if not isinstance(values, list):
+            values = [values]
+        for value in values:
+            if value == '':
+                yield f'--config-settings={key}'
+            else:
+                yield f'--config-settings={key}={value}'
 
 
 def build_wheel(*, wheeldir, stdout=None, config_settings=None):

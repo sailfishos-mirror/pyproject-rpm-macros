@@ -27,7 +27,7 @@ cat <<'EOF' >pyproject.toml
 [build-system]
 build-backend = "config_settings_test_backend"
 backend-path = ["."]
-requires = ["flit-core"]
+requires = ["flit-core", "packaging", "pip"]
 
 [project]
 name = "config_settings"
@@ -37,12 +37,12 @@ EOF
 
 
 %generate_buildrequires
-%pyproject_buildrequires -C abc=123 -C xyz=456 -C--option-with-dashes=1
-%pyproject_buildrequires -C abc=123 -C xyz=456 -C--option-with-dashes=1 -w
+%pyproject_buildrequires -C abc=123 -C xyz=456 -C--option-with-dashes=1 -C--option-with-dashes=2
+%{!?el9:%pyproject_buildrequires -C abc=123 -C xyz=456 -C--option-with-dashes=1 -C--option-with-dashes=2 -w}
 
 
 %build
-%pyproject_wheel -C abc=123 -C xyz=456 -C--option-with-dashes=1
+%{!?el9:%pyproject_wheel -C abc=123 -C xyz=456 -C--option-with-dashes=1 -C--option-with-dashes=2}
 
 
 %changelog
