@@ -28,26 +28,28 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n virtualenv-%{version}
-# Relax the upper bounds of some dependencies to their known available versions in Fedora 36
-# This can be reduced once Fedora 36 goes EOL, but might still be partially needed on Fedora 37
-sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.4/' \
+# Relax the upper bounds of some dependencies to their known available versions in EL 9
+sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.2/' \
        -e 's/filelock<4,>=3.4.1/filelock<4,>=3.3.1/' \
        -e 's/platformdirs<4,>=2.4/platformdirs<4,>=2.3/' \
+       -e 's/hatchling>=1.12.2/hatchling>=0.25/' \
+       -e 's/hatch-vcs>=0.3/hatch-vcs>=0.2.1/' \
     pyproject.toml
 
 
 %generate_buildrequires
-%pyproject_buildrequires
+%pyproject_buildrequires -w
 
 
 %build
-%pyproject_wheel
+# %%pyproject_buildrequires -w makes this redundant
+# %%pyproject_wheel
 
 
 %install
 %pyproject_install
 %pyproject_save_files virtualenv
-%{?fc36:
+%{?el9:
 # old version of setuptools_scm produces files incompatible with
 # assumptions in virtualenv code, we append the expected attributes:
 echo '__version__, __version_tuple__ = version, version_tuple' >> %{buildroot}%{python3_sitelib}/virtualenv/version.py
