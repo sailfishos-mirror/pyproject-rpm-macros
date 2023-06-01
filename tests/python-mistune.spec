@@ -25,6 +25,8 @@ Building this tests:
 - default build backend without pyproject.toml
 Check %%pyproject_check_import basic functionality.
 
+This package also uses %%{python3_pkgversion} in name and has a very limited
+set of dependencies -- allows to set a different value for it in the CI.
 
 %package -n python%{python3_pkgversion}-mistune
 Summary:        %summary

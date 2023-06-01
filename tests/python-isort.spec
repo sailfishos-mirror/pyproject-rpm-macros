@@ -20,6 +20,9 @@ This package contains executables.
 Building this tests that executables are not listed when +auto is not used
 with %%pyproject_save_files.
 
+This package also uses %%{python3_pkgversion} in name and has a very limited
+set of dependencies -- allows to set a different value for it in the CI.
+
 %package -n python%{python3_pkgversion}-%{modname}
 Summary:            %{summary}
 
