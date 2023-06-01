@@ -8,11 +8,11 @@ URL:            https://github.com/lepture/mistune
 Source0:        %{url}/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  python3-devel
+BuildRequires:  python%{python3_pkgversion}-devel
 BuildRequires:  pyproject-rpm-macros
 
 # optional dependency, listed explicitly to have the extension module:
-BuildRequires:  python3-Cython
+BuildRequires:  python%{python3_pkgversion}-Cython
 
 %description
 This package contains an extension module. Does not contain pyproject.toml.
@@ -22,11 +22,13 @@ Building this tests:
 - default build backend without pyproject.toml
 Check %%pyproject_check_import basic functionality.
 
+This package also uses %%{python3_pkgversion} in name and has a very limited
+set of dependencies -- allows to set a different value for it in the CI.
 
-%package -n python3-mistune
+%package -n python%{python3_pkgversion}-mistune
 Summary:        %summary
 
-%description -n python3-mistune
+%description -n python%{python3_pkgversion}-mistune
 %{summary}
 
 
@@ -57,6 +59,6 @@ test -f %{buildroot}%{python3_sitearch}/mistune.py
 test -f %{buildroot}%{python3_sitearch}/mistune.cpython-*.so
 
 
-%files -n python3-mistune -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-mistune -f %{pyproject_files}
 %doc README.rst
 %license LICENSE

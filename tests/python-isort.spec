@@ -9,7 +9,7 @@ License:            MIT
 URL:                https://github.com/timothycrosley/%{modname}
 Source0:            %{url}/archive/%{version}-2/%{modname}-%{version}-2.tar.gz
 BuildArch:          noarch
-BuildRequires:      python3-devel
+BuildRequires:      python%{python3_pkgversion}-devel
 BuildRequires:      pyproject-rpm-macros
 
 %description
@@ -17,10 +17,13 @@ This package contains executables.
 Building this tests that executables are not listed when +auto is not used
 with %%pyproject_save_files.
 
-%package -n python3-%{modname}
+This package also uses %%{python3_pkgversion} in name and has a very limited
+set of dependencies -- allows to set a different value for it in the CI.
+
+%package -n python%{python3_pkgversion}-%{modname}
 Summary:            %{summary}
 
-%description -n python3-%{modname}
+%description -n python%{python3_pkgversion}-%{modname}
 %{summary}.
 
 
@@ -50,7 +53,7 @@ test -d %{buildroot}%{python3_sitelib}/%{modname}-%{version}.dist-info/
 grep -F %{_bindir}/%{modname} %{pyproject_files} && exit 1 || true
 
 
-%files -n python3-%{modname} -f %{pyproject_files}
+%files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
 %license LICENSE
 %{_bindir}/%{modname}
