@@ -58,7 +58,7 @@ grep '/escape_percentages/one' %{pyproject_files}
 
 
 %files -f %{pyproject_files}
-%if 0%{?fedora} >= 39 || 0%{?rhel} >= 10
+%if v"0%{?rpmversion}" >= v"4.18.90"
 /two%%version
 %else
 /two%%%%%%%%version
