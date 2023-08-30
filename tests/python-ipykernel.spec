@@ -1,5 +1,5 @@
 Name:           python-ipykernel
-Version:        5.2.1
+Version:        6.11.0
 Release:        0%{?dist}
 Summary:        IPython Kernel for Jupyter
 License:        BSD
@@ -10,6 +10,9 @@ BuildArch:      noarch
 
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-devel
+
+# some of the nested modules import from this, but upstream does not declare the dependency
+BuildRequires:  python3-ipyparallel
 
 %description
 This package contains data files.
@@ -31,11 +34,9 @@ Summary:        %{summary}
 %prep
 %autosetup -p1 -n ipykernel-%{version}
 
-# Add dependency on IPython genutils
-# https://github.com/ipython/ipykernel/pull/756
-# Patch does not apply, so we dirty-sed it in
-sed -i 's/install_requires=\[/install_requires=["ipython_genutils",/' setup.py
-
+# Remove the dependency on debugpy.
+# See https://github.com/ipython/ipykernel/pull/767
+sed -i '/"debugpy/d' pyproject.toml setup.py
 
 %generate_buildrequires
 %pyproject_buildrequires -r
@@ -48,7 +49,7 @@ sed -i 's/install_requires=\[/install_requires=["ipython_genutils",/' setup.py
 %pyproject_save_files 'ipykernel*' +auto
 
 %check
-%pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.backend_inline'
+%pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.*' -e 'ipykernel.trio*'
 
 %files -n python3-ipykernel -f %{pyproject_files}
 %license COPYING.md
