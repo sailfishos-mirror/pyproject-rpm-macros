@@ -1,5 +1,5 @@
 Name:           python-poetry-core
-Version:        1.0.0
+Version:        1.1.0
 Release:        0%{?dist}
 Summary:        Poetry PEP 517 Build Backend
 
