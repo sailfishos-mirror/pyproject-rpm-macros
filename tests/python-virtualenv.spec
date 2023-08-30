@@ -35,6 +35,10 @@ sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.2/' \
        -e 's/hatchling>=1.12.2/hatchling>=0.25/' \
        -e 's/hatch-vcs>=0.3/hatch-vcs>=0.2.1/' \
     pyproject.toml
+# Hacky backport of https://src.fedoraproject.org/rpms/python-virtualenv/c/87b1f95664
+%if 0%{?fedora} >= 39 || 0%{?rhel} >= 10
+sed -i 's/_nonwrappers/_hookimpls/' tests/conftest.py
+%endif
 
 
 %generate_buildrequires
