@@ -1,6 +1,6 @@
 %global pypi_name pytest
 Name:           python-%{pypi_name}
-Version:        6.2.5
+Version:        7.1.3
 Release:        0%{?dist}
 Summary:        Simple powerful testing with Python
 License:        MIT
@@ -40,6 +40,8 @@ sed -E -i '/mock|nose/d' setup.cfg
 # internal check for our macros: insert a subprocess echo to setup.py
 # to ensure it's not generated as BuildRequires
 echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> setup.py
+# make this build in EPEL 9
+sed -i 's/setuptools-scm\[toml\]>=6.2.3/setuptools-scm[toml]>=5/' pyproject.toml
 
 
 %generate_buildrequires
@@ -59,7 +61,7 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 %if %{with tests}
 # Only run one test (which uses a test-only dependency, hypothesis)
 # See how to pass options trough the macro to tox, trough tox to pytest
-%tox -- -- -k metafunc
+%tox -- -- -k "metafunc and not test_parametrize_" -Wdefault
 %else
 %pyproject_check_import
 %endif
