@@ -58,7 +58,7 @@ Summary:        %{summary}
 %check
 # This tox should run all the toxenvs specified via -e in %%pyproject_buildrequires
 # We only run some of the tests (running all of them requires network connection and is slow)
-%tox -- -- -k test_version | tee toxlog
+%tox -- -- -k test_version -Wdefault | tee toxlog
 
 # Internal check for our macros: Assert both toxenvs were executed.
 grep -E 'py%{python3_version_nodots}-test: (OK|commands succeeded)' toxlog
