@@ -13,8 +13,8 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.9.0
-Release:        2%{?dist}
+Version:        1.10.0
+Release:        1%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -161,6 +161,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Wed Sep 13 2023 Karolina Surma <ksurma@redhat.com> - 1.10.0-1
+- Add %%_pyproject_check_import_allow_no_modules for automated environments
+
 * Fri Jul 21 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1.9.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 

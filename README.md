@@ -342,6 +342,12 @@ The `%pyproject_check_import` macro also accepts positional arguments with
 additional qualified module names to check, useful for example if some modules are installed manually.
 Note that filtering by `-t`/`-e` also applies to the positional arguments.
 
+Another macro, `%_pyproject_check_import_allow_no_modules` allows to pass the import check,
+even if no Python modules are detected in the package.
+This may be a valid case for packages containing e.g. typing stubs.
+Don't use this macro in Fedora packages.
+It's only intended to be used in automated build environments such as Copr.
+
 
 Generating Extras subpackages
 -----------------------------

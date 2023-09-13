@@ -133,6 +133,14 @@ fi
 }
 
 
+%_pyproject_check_import_allow_no_modules(e:t) \
+if [ -z "$(cat %{_pyproject_modules})" ]; then\
+  echo "No modules to check found, exiting check"\
+else\
+  %pyproject_check_import %{?**}\
+fi
+
+
 %default_toxenv py%{python3_version_nodots}
 %toxenv %{default_toxenv}
 
