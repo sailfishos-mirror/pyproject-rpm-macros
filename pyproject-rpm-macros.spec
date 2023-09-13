@@ -15,8 +15,8 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        0.1.8.0
-Release:        2%{?dist}
+Version:        0.1.10.0
+Release:        1%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -137,6 +137,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Thu Jan 25 2024 Karolina Surma <ksurma@redhat.com> - 0.1.10.0-1
+- Add %%_pyproject_check_import_allow_no_modules for automated environments
+
 * Wed Jan 03 2024 Miro Hrončok <mhroncok@redhat.com> - 0.1.8.0-2
 - Add Python 3.12 RPM dependencies
 
