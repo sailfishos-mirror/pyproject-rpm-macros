@@ -386,7 +386,7 @@ def generate_tox_requirements(toxenv, requirements):
         provision_content = provision.read()
         if provision_content and r.returncode != 0:
             provision_requires = json.loads(provision_content)
-            if 'minversion' in provision_requires:
+            if provision_requires.get('minversion') is not None:
                 requirements.add(f'tox >= {provision_requires["minversion"]}',
                                  source='tox provision (minversion)')
             if 'requires' in provision_requires:
