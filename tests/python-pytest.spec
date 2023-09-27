@@ -53,7 +53,7 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 
 %install
 %pyproject_install
-%pyproject_save_files '*pytest' +auto
+%pyproject_save_files -l '*pytest' +auto
 
 
 %check
@@ -69,4 +69,3 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 %files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
 %doc CHANGELOG.rst
-%license LICENSE

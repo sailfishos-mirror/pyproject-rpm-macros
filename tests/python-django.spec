@@ -39,7 +39,7 @@ find -name "*.po" | xargs rm -f
 
 %install
 %pyproject_install
-%pyproject_save_files django
+%pyproject_save_files -l django
 
 
 %check
@@ -55,6 +55,5 @@ diff tested.lang expected.lang
 
 %files -n python%{python3_pkgversion}-django -f %{pyproject_files}
 %doc README.rst
-%license LICENSE
 %{_bindir}/django-admin
 %{_bindir}/django-admin.py

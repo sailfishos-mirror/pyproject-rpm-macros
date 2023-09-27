@@ -44,7 +44,7 @@ sed -i '/mock/d' tests.requires
 
 %install
 %pyproject_install
-%pyproject_save_files %{pypi_name}
+%pyproject_save_files -l %{pypi_name}
 
 
 %check
@@ -53,4 +53,3 @@ sed -i '/mock/d' tests.requires
 
 %files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.*
-%license COPYING

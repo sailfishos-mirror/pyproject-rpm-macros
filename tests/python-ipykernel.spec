@@ -45,12 +45,11 @@ sed -i 's/install_requires=\[/install_requires=["ipython_genutils",/' setup.py
 
 %install
 %pyproject_install
-%pyproject_save_files 'ipykernel*' +auto
+%pyproject_save_files -l 'ipykernel*' +auto
 
 %check
 %pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.backend_inline'
 
 %files -n python%{python3_pkgversion}-ipykernel -f %{pyproject_files}
-%license COPYING.md
 %doc README.md
 

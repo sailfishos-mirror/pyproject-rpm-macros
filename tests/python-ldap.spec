@@ -60,7 +60,7 @@ PYTHONPATH=%{pyproject_build_lib} %{python3} -c 'import _ldap'
 %install
 %pyproject_install
 # We can pass multiple globs
-%pyproject_save_files 'ldap*' '*ldap'
+%pyproject_save_files -l 'ldap*' '*ldap'
 
 
 %check
@@ -101,7 +101,6 @@ test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/build/lib.%{python
 
 
 %files -n python%{python3_pkgversion}-ldap -f %{pyproject_files}
-%license LICENCE
 %doc CHANGES README TODO Demo
 # Explicitly listed files can be combined with automation
 %pycached %{python3_sitearch}/ldif.py

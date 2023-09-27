@@ -31,7 +31,6 @@ Summary:        %{summary}
 
 # In this spec, we put %%files early to test it still works
 %files -n python%{python3_pkgversion}-markupsafe -f %{pyproject_files}
-%license LICENSE.rst
 %doc CHANGES.rst README.rst
 
 
@@ -53,7 +52,7 @@ sed -Ei 's/sphinx\.git@([0-9a-f]+)/sphinx.git@\1#egg=sphinx/' requirements/docs.
 
 %install
 %pyproject_install
-%pyproject_save_files markupsafe
+%pyproject_save_files -l markupsafe
 
 
 %check

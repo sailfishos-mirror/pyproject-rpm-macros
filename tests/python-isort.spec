@@ -40,7 +40,7 @@ Summary:            %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files isort
+%pyproject_save_files -l isort
 
 
 %check
@@ -54,5 +54,4 @@ grep -F %{_bindir}/%{modname} %{pyproject_files} && exit 1 || true
 
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
-%license LICENSE
 %{_bindir}/%{modname}

@@ -103,7 +103,7 @@ fi
 %pyproject_extras_subpkg(n:i:f:F) %{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{?!-i:%{?!-f:%{?!-F: -f %{_pyproject_ghost_distinfo}}}} %**}}}
 
 
-%pyproject_save_files() %{expand:\\\
+%pyproject_save_files(lL) %{expand:\\\
 %{__python3} %{_rpmconfigdir}/redhat/pyproject_save_files.py \\
   --output-files "%{pyproject_files}" \\
   --output-modules "%{_pyproject_modules}" \\
@@ -113,7 +113,7 @@ fi
   --python-version "%{python3_version}" \\
   --pyproject-record "%{_pyproject_record}" \\
   --prefix "%{_prefix}" \\
-  %{*}
+  %{**}
 }
 
 # -t - Process only top-level modules

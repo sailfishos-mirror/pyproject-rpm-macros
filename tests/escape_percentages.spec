@@ -4,6 +4,7 @@ Version:        0
 Release:        0
 Summary:        ...
 License:        MIT
+BuildRequires:  pyproject-rpm-macros
 BuildArch:      noarch
 
 %description
@@ -15,7 +16,16 @@ When this breaks, the function needs to be adapted.
 %install
 # the paths on disk will have 1 percentage sign if we type 2 in the spec
 # we use the word 'version' after the sign, as that is a known existing macro
-touch '%{buildroot}/one%%version'
+touch 'escape_percentages/one%%version'
+
+
+%build
+%pyproject_wheel
+
+
+%install
+%pyproject_install
+%pyproject_save_files -L escape_percentages
 touch '%{buildroot}/two%%version'
 
 # the filelist will contain 8 percentage signs when we type 16 in spec

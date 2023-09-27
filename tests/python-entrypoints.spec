@@ -34,7 +34,8 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files entrypoints
+# the license is not marked as License-File, hence -L
+%pyproject_save_files entrypoints -L
 
 
 %check
