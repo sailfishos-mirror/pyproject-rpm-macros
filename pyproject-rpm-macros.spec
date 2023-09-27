@@ -173,7 +173,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Wed Sep 13 2023 Python Maint <python-maint@redhat.com> - 1.10.0-1
 - Add %%_pyproject_check_import_allow_no_modules for automated environments
-- Fix handling of tox 4 provision without and explicit tox minversion
+- Fix handling of tox 4 provision without an explicit tox minversion
 - Fixes: rhbz#2240590
 
 * Fri Jul 21 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1.9.0-2
