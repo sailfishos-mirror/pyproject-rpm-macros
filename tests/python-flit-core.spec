@@ -42,7 +42,13 @@ cd ..
 
 %install
 %pyproject_install
+# there is no license file marked as License-File, hence not using -l
 %pyproject_save_files flit_core
+
+
+%check
+# internal check for our macros, we assume there is no license
+grep -F %%license %{pyproject_files} && exit 1 || true
 
 
 %files -n python3-flit-core -f %{pyproject_files}

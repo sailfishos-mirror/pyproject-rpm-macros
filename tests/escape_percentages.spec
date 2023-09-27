@@ -48,7 +48,7 @@ touch 'escape_percentages/one%%version'
 
 %install
 %pyproject_install
-%pyproject_save_files escape_percentages
+%pyproject_save_files -L escape_percentages
 touch '%{buildroot}/two%%version'
 
 

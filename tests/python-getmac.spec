@@ -40,7 +40,7 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files '*' +auto
+%pyproject_save_files -l '*' +auto
 
 
 %check

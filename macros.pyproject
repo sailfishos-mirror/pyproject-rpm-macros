@@ -108,7 +108,7 @@ fi
 # See this thread http://lists.rpm.org/pipermail/rpm-list/2021-June/002048.html
 # Since RPM 4.19, 2 signs are needed instead. 4.18.90+ is a pre-release of RPM 4.19.
 # On the CI, we build tests/escape_percentages.spec to verify the assumptions.
-%pyproject_save_files() %{expand:\\\
+%pyproject_save_files(lL) %{expand:\\\
 %{expr:v"0%{?rpmversion}" >= v"4.18.90" ? "RPM_PERCENTAGES_COUNT=2" : "RPM_PERCENTAGES_COUNT=8" } \\
 %{__python3} %{_rpmconfigdir}/redhat/pyproject_save_files.py \\
   --output-files "%{pyproject_files}" \\
@@ -119,7 +119,7 @@ fi
   --python-version "%{python3_version}" \\
   --pyproject-record "%{_pyproject_record}" \\
   --prefix "%{_prefix}" \\
-  %{*}
+  %{**}
 }
 
 # -t - Process only top-level modules

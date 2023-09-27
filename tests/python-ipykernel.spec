@@ -46,12 +46,11 @@ sed -i '/"debugpy/d' pyproject.toml setup.py
 
 %install
 %pyproject_install
-%pyproject_save_files 'ipykernel*' +auto
+%pyproject_save_files -l 'ipykernel*' +auto
 
 %check
 %pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.*' -e 'ipykernel.trio*'
 
 %files -n python3-ipykernel -f %{pyproject_files}
-%license COPYING.md
 %doc README.md
 

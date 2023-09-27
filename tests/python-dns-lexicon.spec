@@ -55,7 +55,8 @@ sed -i \
 
 %install
 %pyproject_install
-%pyproject_save_files lexicon
+# the license is not marked as License-File by poetry-core, hence -L
+%pyproject_save_files -L lexicon
 
 
 %check

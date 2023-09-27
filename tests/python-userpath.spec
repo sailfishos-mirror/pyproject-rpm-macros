@@ -43,7 +43,7 @@ sed -Ei '/^(coverage)$/d' requirements-dev.txt
 
 %install
 %pyproject_install
-%pyproject_save_files userpath
+%pyproject_save_files -l userpath
 
 
 %check

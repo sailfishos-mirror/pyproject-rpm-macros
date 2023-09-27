@@ -52,7 +52,7 @@ sed -i 's/_nonwrappers/_hookimpls/' tests/conftest.py
 
 %install
 %pyproject_install
-%pyproject_save_files virtualenv
+%pyproject_save_files -l virtualenv
 %{?el9:
 # old version of setuptools_scm produces files incompatible with
 # assumptions in virtualenv code, we append the expected attributes:

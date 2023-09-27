@@ -36,7 +36,7 @@ Building this tests:
 
 %install
 %pyproject_install
-%pyproject_save_files tldr +auto
+%pyproject_save_files -l tldr +auto
 
 %check
 # Internal check for our macros: tests we don't ship __pycache__ in bindir
@@ -62,5 +62,4 @@ grep '^/app' %{pyproject_files}
 %endif
 
 %files -f %pyproject_files
-%license LICENSE
 %doc README.md

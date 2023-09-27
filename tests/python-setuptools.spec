@@ -76,7 +76,7 @@ sed -i pytest.ini -e 's/ --flake8//' \
 
 %install
 %pyproject_install
-%pyproject_save_files setuptools pkg_resources _distutils_hack
+%pyproject_save_files setuptools pkg_resources _distutils_hack -l
 
 # https://github.com/pypa/setuptools/issues/2709
 rm -rf %{buildroot}%{python3_sitelib}/pkg_resources/tests/

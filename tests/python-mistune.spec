@@ -46,7 +46,7 @@ Summary:        %summary
 
 %install
 %pyproject_install
-%pyproject_save_files mistune
+%pyproject_save_files -l mistune
 
 
 %check
@@ -61,4 +61,3 @@ test -f %{buildroot}%{python3_sitearch}/mistune.cpython-*.so
 
 %files -n python%{python3_pkgversion}-mistune -f %{pyproject_files}
 %doc README.rst
-%license LICENSE

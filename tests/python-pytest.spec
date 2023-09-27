@@ -54,7 +54,7 @@ sed -i 's/setuptools-scm\[toml\]>=6.2.3/setuptools-scm[toml]>=5/' pyproject.toml
 
 %install
 %pyproject_install
-%pyproject_save_files '*pytest' +auto
+%pyproject_save_files -l '*pytest' +auto
 
 
 %check
@@ -70,4 +70,3 @@ sed -i 's/setuptools-scm\[toml\]>=6.2.3/setuptools-scm[toml]>=5/' pyproject.toml
 %files -n python3-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
 %doc CHANGELOG.rst
-%license LICENSE

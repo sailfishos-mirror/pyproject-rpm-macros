@@ -52,7 +52,7 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files setuptools_scm
+%pyproject_save_files -l setuptools_scm
 
 
 %check
@@ -73,4 +73,3 @@ test "$(cat %{_pyproject_ghost_distinfo})" == "%ghost %{python3_sitelib}/setupto
 %files -n python3-setuptools_scm -f %{pyproject_files}
 %doc README.rst
 %doc CHANGELOG.rst
-%license LICENSE

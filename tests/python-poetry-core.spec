@@ -37,8 +37,11 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files poetry
+# the license is not marked as License-File by poetry-core, hence -L
+%pyproject_save_files -L poetry
 
+# internal check for our macros, -l must fail:
+%pyproject_save_files -l poetry && exit 1 || true
 
 %files -n python3-poetry-core -f %{pyproject_files}
 %doc README.md
