@@ -1,4 +1,7 @@
+# Make zuul rpm-linter happy
+%if 0%{?rhel}
 %global python3_pkgversion 38
+%endif
 
 Name:           pyproject-rpm-macros
 Summary:        RPM macros for PEP 517 Python packages
