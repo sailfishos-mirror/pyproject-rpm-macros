@@ -673,7 +673,7 @@ def load_parsed_record(pyproject_record):
         content = json.load(pyproject_record_file)
 
     if len(content) > 1:
-        raise FileExistsError("%pyproject install has found more than one *.dist-info/RECORD file. "
+        raise FileExistsError("%pyproject_install has found more than one *.dist-info/RECORD file. "
                               "Currently, %pyproject_save_files supports only one wheel → one file list mapping. "
                               "Feel free to open a bugzilla for pyproject-rpm-macros and describe your usecase.")
 
