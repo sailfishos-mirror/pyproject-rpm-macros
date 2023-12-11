@@ -141,6 +141,8 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - Add the -l/-L flag to %%pyproject_save_files
 - The -l flag can be used to assert at least 1 License-File was detected
 - The -L flag explicitly disables this check (which remains the default)
+- Show a better error message when %%pyproject_install finds no wheel
+- Fixes: rhbz#2242452
 
 * Thu Jan 25 2024 Karolina Surma <ksurma@redhat.com> - 0.1.10.0-1
 - Add %%_pyproject_check_import_allow_no_modules for automated environments
