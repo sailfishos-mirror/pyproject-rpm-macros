@@ -156,6 +156,9 @@ fi
 %{?_package_note_flags:%_generate_package_note_file}
 %{-R:
 %{-r:%{error:The -R and -r options are mutually exclusive}}
+%{-x:%{error:The -R and -x options are mutually exclusive}}
+%{-e:%{error:The -R and -e options are mutually exclusive}}
+%{-t:%{error:The -R and -t options are mutually exclusive}}
 %{-w:%{error:The -R and -w options are mutually exclusive}}
 }
 %{-N:
