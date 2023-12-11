@@ -177,6 +177,8 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - The -L flag explicitly disables this check (which remains the default)
 - Prevent incorrect usage of %%pyproject_buildrequires -R with -x/-e/-t
 - Fixes: rhbz#2244282
+- Show a better error message when %%pyproject_install finds no wheel
+- Fixes: rhbz#2242452
 
 * Wed Sep 13 2023 Python Maint <python-maint@redhat.com> - 1.10.0-1
 - Add %%_pyproject_check_import_allow_no_modules for automated environments
