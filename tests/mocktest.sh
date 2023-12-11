@@ -34,6 +34,7 @@ if [ ! -f $config ]; then
   cp $original $config
 
   echo -e '\n\n' >> $config
+  echo -e 'config_opts["package_manager"] = "dnf"' >> $config
   echo -e 'config_opts["package_manager_max_attempts"] = 10' >> $config
   echo -e 'config_opts["package_manager_attempt_delay"] = 60' >> $config
   echo -e '\n\nconfig_opts[f"{config_opts.package_manager}.conf"] += """' >> $config
