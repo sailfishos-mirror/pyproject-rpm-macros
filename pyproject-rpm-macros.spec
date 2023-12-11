@@ -179,6 +179,8 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - Fixes: rhbz#2244282
 - Show a better error message when %%pyproject_install finds no wheel
 - Fixes: rhbz#2242452
+- Fix %%pyproject_buildrequires -w when the build backend is already installed and pip isn't
+- Fixes: rhbz#2169855
 
 * Wed Sep 13 2023 Python Maint <python-maint@redhat.com> - 1.10.0-1
 - Add %%_pyproject_check_import_allow_no_modules for automated environments

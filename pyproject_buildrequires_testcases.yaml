@@ -365,6 +365,7 @@ Run dependencies with extras and build wheel option:
     setuptools: 50
     wheel: 1
     pyyaml: 1
+    pip: 20
   include_runtime: true
   build_wheel: true
   extras:
@@ -375,6 +376,7 @@ Run dependencies with extras and build wheel option:
     python3dist(wheel)
     python3dist(wheel)
     python3dist(setuptools) >= 40
+    python3dist(pip) >= 19
     python3dist(py) >= 1.5
     python3dist(six) >= 1.10
     python3dist(setuptools)
