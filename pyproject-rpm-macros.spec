@@ -16,7 +16,7 @@ License:        MIT
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
 Version:        0.1.8.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -56,10 +56,11 @@ Requires:       python3-rpm-macros
 # This package is incompatible with python36.
 # We use rich dependencies to avoid creating implicit conflicts between
 # python3{8,9}-devel.
-Requires:       (python38-rpm-macros or python39-rpm-macros or python3.11-rpm-macros)
+Requires:       (python38-rpm-macros or python39-rpm-macros or python3.11-rpm-macros or python3.12-rpm-macros)
 Suggests:       (python38-rpm-macros if python38-devel)
 Suggests:       (python39-rpm-macros if python39-devel)
 Suggests:       (python3.11-rpm-macros if python3.11-devel)
+Suggests:       (python3.12-rpm-macros if python3.12-devel)
 
 # We use the following tools outside of coreutils
 Requires:       /usr/bin/find
@@ -70,10 +71,12 @@ Requires:       /usr/bin/sed
 Requires:       (python38-devel if python38-rpm-macros)
 Requires:       (python39-devel if python39-rpm-macros)
 Requires:       (python3.11-devel if python3.11-rpm-macros)
+Requires:       (python3.12-devel if python3.12-rpm-macros)
 
 Requires:       (python3.8dist(pip) if python38-rpm-macros)
 Requires:       (python3.9dist(pip) if python39-rpm-macros)
 Requires:       (python3.11dist(pip) if python3.11-rpm-macros)
+Requires:       (python3.12dist(pip) if python3.12-rpm-macros)
 
 
 %description
@@ -134,6 +137,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Wed Jan 03 2024 Miro Hrončok <mhroncok@redhat.com> - 0.1.8.0-2
+- Add Python 3.12 RPM dependencies
+
 * Wed May 24 2023 Maxwell G <gotmax@e.email> - 0.1.8.0-1
 - Initial stripped down macros for epel8
 
