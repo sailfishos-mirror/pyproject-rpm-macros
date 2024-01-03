@@ -55,7 +55,7 @@ Requires:       python-srpm-macros
 Requires:       python3-rpm-macros
 # This package is incompatible with python36.
 # We use rich dependencies to avoid creating implicit conflicts between
-# python3{8,9}-devel.
+# python3X-devel.
 Requires:       (python38-rpm-macros or python39-rpm-macros or python3.11-rpm-macros or python3.12-rpm-macros)
 Suggests:       (python38-rpm-macros if python38-devel)
 Suggests:       (python39-rpm-macros if python39-devel)
