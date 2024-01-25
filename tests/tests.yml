@@ -97,6 +97,9 @@
     - config-settings-test:
         dir: .
         run: ./mocktest.sh config-settings-test
+    - isort_c9s:
+        dir: .
+        run: NAME="CentOS Stream" VERSION_ID=9 ./mocktest.sh python-isort
     required_packages:
     - mock
     - rpmdevtools
