@@ -15,7 +15,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        0.1.11.0
+Version:        0.1.12.0
 Release:        1%{?dist}
 
 # Macro files
@@ -137,6 +137,11 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Thu Jan 25 2024 Miro Hrončok <mhroncok@redhat.com> - 0.1.12.0-1
+- Namespace pyproject-rpm-macros generated text files with %%{python3_pkgversion}
+- That way, a single-spec can be used to build packages for multiple Python versions
+- Fixes: rhbz#2209055
+
 * Thu Jan 25 2024 Miro Hrončok <mhroncok@redhat.com> - 0.1.11.0-1
 - Add the -l/-L flag to %%pyproject_save_files
 - The -l flag can be used to assert at least 1 License-File was detected

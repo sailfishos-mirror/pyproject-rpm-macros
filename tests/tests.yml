@@ -96,7 +96,7 @@
     #    run: ./mocktest.sh python-virtualenv
     - escape_percentages:
         dir: .
-        run: rpmbuild -ba escape_percentages.spec
+        run: ./mocktest.sh escape_percentages
     required_packages:
     - mock
     - rpmdevtools

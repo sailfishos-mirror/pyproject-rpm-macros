@@ -1,5 +1,7 @@
 #!/usr/bin/bash -eux
-. /etc/os-release
+if [ -z "${VERSION_ID-}" ] && [ -z "${NAME-}" ]; then
+  . /etc/os-release
+fi
 
 version=$(echo "${VERSION_ID}" | cut -d. -f1)
 arch="x86_64"
