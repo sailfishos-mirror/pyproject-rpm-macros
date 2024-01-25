@@ -61,7 +61,10 @@ sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1
 
 %if %{with tests}
 %check
+%if 0%{?fedora} < 40 && 0%{?rhel} < 10
+# this version of httpbin is not compatible with werkzeug 3+
 %tox
+%endif
 
 # Internal check for our macros
 # The runtime dependencies contain raven[flask], we assert we got them.
