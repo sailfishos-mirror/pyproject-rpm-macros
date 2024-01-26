@@ -44,7 +44,7 @@ Summary:        %{summary}
 %install
 %pyproject_install
 # There are no executables, but we are allowed to pass +auto anyway
-%pyproject_save_files pluggy +auto -l
+%pyproject_save_files pluggy +auto
 
 
 %check
@@ -53,3 +53,4 @@ Summary:        %{summary}
 
 %files -n python%{python3_pkgversion}-%{pypi_name} -f %{pyproject_files}
 %doc README.rst
+%license LICENSE

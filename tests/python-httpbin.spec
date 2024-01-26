@@ -55,7 +55,7 @@ sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1
 
 %install
 %pyproject_install
-%pyproject_save_files -l httpbin
+%pyproject_save_files httpbin
 
 
 %if %{with tests}
@@ -71,3 +71,4 @@ sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1
 
 %files -n python%{python3_pkgversion}-httpbin -f %{pyproject_files}
 %doc README*
+%license LICENSE*

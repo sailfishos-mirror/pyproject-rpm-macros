@@ -37,14 +37,7 @@ Summary:            %{summary}
 %description -n python%{python3_pkgversion}-%{modname}
 %{summary}.
 
-%global python3_pkgversion 3.12
-%package -n python%{python3_pkgversion}-%{modname}
-Summary:            %{summary}
-
-%description -n python%{python3_pkgversion}-%{modname}
-%{summary}.
-
-%global python3_pkgversion 3
+%global python3_pkgversion 38
 %endif
 
 
@@ -55,27 +48,21 @@ Summary:            %{summary}
 %build
 %pyproject_wheel
 %if 0%{?rhel} == 8
-%global python3_pkgversion 39
-%pyproject_wheel
 %global python3_pkgversion 3.11
 %pyproject_wheel
-%global python3_pkgversion 3
 %endif
 
 
 %install
 %if 0%{?rhel} == 8
-%global python3_pkgversion 39
-%pyproject_install
-%pyproject_save_files -l isort
 %global python3_pkgversion 3.11
 %pyproject_install
 %pyproject_save_files -l isort
-%global python3_pkgversion 3
+%global python3_pkgversion 38
 %endif
-# we keep this one last so /usr/bin/isort is installed with python3 shebang
+# we keep this one last so /usr/bin/isort is installed with python38 shebang
 %pyproject_install
-%pyproject_save_files -l isort
+%pyproject_save_files isort
 
 
 %check
@@ -88,30 +75,23 @@ grep -F %{_bindir}/%{modname} %{pyproject_files} && exit 1 || true
 
 %if 0%{?rhel} == 8
 # Internal check that correct versions are in correct %%{pyproject_files}s
-diff %{pyproject_files} <(grep -F python3.9/site-packages %{pyproject_files})
-
-%global python3_pkgversion 39
-test -d %{buildroot}%{_usr}/lib/python3.9/site-packages/%{modname}/
-test -d %{buildroot}%{_usr}/lib/python3.9/site-packages/%{modname}-%{version}.dist-info/
-diff %{pyproject_files} <(grep -F python3.9/site-packages %{pyproject_files})
+diff %{pyproject_files} <(grep -F python3.8/site-packages %{pyproject_files})
 
 %global python3_pkgversion 3.11
 test -d %{buildroot}%{_usr}/lib/python3.11/site-packages/%{modname}/
 test -d %{buildroot}%{_usr}/lib/python3.11/site-packages/%{modname}-%{version}.dist-info/
 diff %{pyproject_files} <(grep -F python3.11/site-packages %{pyproject_files})
-%global python3_pkgversion 3
+%global python3_pkgversion 38
 %endif
 
 
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
+%license LICENSE
 %doc README.rst *.md
 %{_bindir}/%{modname}
 %if 0%{?rhel} == 8
-%global python3_pkgversion 39
-%files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
-%doc README.rst *.md
 %global python3_pkgversion 3.11
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
-%global python3_pkgversion 3
+%global python3_pkgversion 38
 %endif

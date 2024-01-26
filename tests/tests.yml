@@ -46,9 +46,10 @@
     #- ldap:
     #    dir: .
     #    run: ./mocktest.sh python-ldap
-    - isort:
-        dir: .
-        run: ./mocktest.sh python-isort
+    # No python 3.11 isort
+    #- isort:
+    #    dir: .
+    #    run: ./mocktest.sh python-isort
     - mistune:
         dir: .
         run: ./mocktest.sh python-mistune

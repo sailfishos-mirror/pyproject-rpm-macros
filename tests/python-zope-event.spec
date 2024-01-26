@@ -1,4 +1,4 @@
-%global python3_pkgversion 38
+%global python3_pkgversion 3.11
 Name:           python-zope-event
 Version:        4.2.0
 Release:        0%{?dist}

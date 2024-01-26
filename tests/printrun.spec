@@ -33,7 +33,7 @@ Building this tests that lang files are marked with %%lang in filelist.
 
 %install
 %pyproject_install
-%pyproject_save_files -l printrun +auto
+%pyproject_save_files printrun +auto
 
 
 %check
@@ -52,3 +52,4 @@ grep -E '/printrun/__pycache__$' %{pyproject_files}
 
 %files -f %{pyproject_files}
 %doc README*
+%license COPYING
