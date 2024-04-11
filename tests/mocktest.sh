@@ -38,7 +38,7 @@ if [ ! -f $config ]; then
   echo -e '\n\n' >> $config
   echo -e 'config_opts["package_manager_max_attempts"] = 10' >> $config
   echo -e 'config_opts["package_manager_attempt_delay"] = 60' >> $config
-  echo -e '\n\nconfig_opts[f"{config_opts.package_manager}.conf"] += """' >> $config
+  echo -e '\n\nconfig_opts["dnf.conf"] += """' >> $config
 
   # The zuul CI has zuul-build.repo
   # The Jenkins CI has test-<pkgname>.repo
