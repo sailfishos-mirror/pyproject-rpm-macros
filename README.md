@@ -148,6 +148,7 @@ or together with `-w`.
 [tox]: https://tox.readthedocs.io/
 [tox-current-env]: https://github.com/fedora-python/tox-current-env/
 [prepare-metadata-for-build-wheel hook]: https://www.python.org/dev/peps/pep-0517/#prepare-metadata-for-build-wheel
+[python-devel list]: https://lists.fedoraproject.org/archives/list/python-devel@lists.fedoraproject.org/
 
 Additionally to generated requirements you can supply multiple file names to `%pyproject_buildrequires` macro.
 Dependencies will be loaded from them:
