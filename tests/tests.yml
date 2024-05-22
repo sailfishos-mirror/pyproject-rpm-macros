@@ -91,9 +91,9 @@
     - virtualenv:
         dir: .
         run: ./mocktest.sh python-virtualenv
-    - escape_percentages:
+    - escape_paths:
         dir: .
-        run: ./mocktest.sh escape_percentages
+        run: ./mocktest.sh escape_paths
     - config-settings-test:
         dir: .
         run: ./mocktest.sh config-settings-test

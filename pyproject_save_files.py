@@ -2,6 +2,7 @@ import argparse
 import fnmatch
 import json
 import os
+import re
 
 from collections import defaultdict
 from keyword import iskeyword
@@ -11,9 +12,15 @@ from importlib.metadata import Distribution
 
 # From RPM's build/files.c strtokWithQuotes delim argument
 RPM_FILES_DELIMETERS = ' \n\t'
+RPM_GLOB_SYMBOLS = '[]{}*?!'
+# Combined for escape_rpm_path_4_19()
+RPM_SPECIAL_SYMBOLS = RPM_FILES_DELIMETERS + RPM_GLOB_SYMBOLS + '"' + "\\"
+RPM_ESCAPE_REGEX = re.compile(f"([{re.escape(RPM_SPECIAL_SYMBOLS)}])")
 
 # See the comment in the macro that wraps this script
-RPM_PERCENTAGES_COUNT = int(os.getenv('RPM_PERCENTAGES_COUNT', '2'))
+RPM_FILES_ESCAPE = os.getenv('RPM_FILES_ESCAPE', '4.19')
+
+PYCACHED_SUFFIX = '{,.opt-?}.pyc'
 
 # RPM hardcodes the lists of manpage extensions and directories,
 # so we have to maintain separate ones :(
@@ -118,8 +125,9 @@ def pycached(script, python_version):
     """
     assert script.suffix == ".py"
     pyver = "".join(python_version.split(".")[:2])
-    pycname = f"{script.stem}.cpython-{pyver}{{,.opt-?}}.pyc"
+    pycname = f"{script.stem}.cpython-{pyver}{PYCACHED_SUFFIX}"
     pyc = pycache_dir(script) / pycname
+    pyc.glob_suffix_len = len(PYCACHED_SUFFIX)
     return [script, pyc]
 
 
@@ -212,10 +220,12 @@ def normalize_manpage_filename(prefix, path):
         if fnmatch.fnmatch(str(path.parent), mandir) and path.name != "dir":
             # "abc.1.gz2" -> "abc.1*"
             if path.suffix[1:] in MANPAGE_EXTENSIONS:
-                return BuildrootPath(path.parent / (path.stem + "*"))
+                path = BuildrootPath(path.parent / (path.stem + "*"))
             # "abc.1 -> abc.1*"
             else:
-                return BuildrootPath(path.parent / (path.name + "*"))
+                path = BuildrootPath(path.parent / (path.name + "*"))
+            path.glob_suffix_len = 1
+            return path
     else:
         return path
 
@@ -424,58 +434,137 @@ def classify_paths(
     return paths
 
 
-def escape_rpm_path(path):
+def escape_rpm_path_4_19(path):
+    r"""
+    Escape special characters in string-paths or BuildrootPaths, RPM >= 4.19
+
+    E.g. a space in path otherwise makes RPM think it's multiple paths,
+    unless we escape it.
+    Or a literal % symbol in path might be expanded as a macro if not escaped by %%.
+
+    See https://github.com/rpm-software-management/rpm/pull/2103
+    and https://github.com/rpm-software-management/rpm/pull/2206
+
+    If the path ends with a glob produced by our other functions,
+    we cannot escape that part.
+    The BuildrootPath.glob_suffix_len attribute is used to indicate such globs.
+    When such suffix exists, it is not escaped.
+    
+
+    Examples:
+
+        >>> escape_rpm_path_4_19(BuildrootPath('/usr/lib/python3.9/site-packages/setuptools'))
+        '/usr/lib/python3.9/site-packages/setuptools'
+
+        >>> escape_rpm_path_4_19('/usr/lib/python3.9/site-packages/setuptools/script (dev).tmpl')
+        '/usr/lib/python3.9/site-packages/setuptools/script\\ (dev).tmpl'
+
+        >>> escape_rpm_path_4_19('/usr/share/data/100%valid.path')
+        '/usr/share/data/100%%valid.path'
+
+        >>> escape_rpm_path_4_19('/usr/share/data/100 % valid.path')
+        '/usr/share/data/100\\ %%\\ valid.path'
+
+        >>> escape_rpm_path_4_19('/usr/share/data/1000 %% valid.path')
+        '/usr/share/data/1000\\ %%%%\\ valid.path'
+
+        >>> escape_rpm_path_4_19('/usr/share/data/spaces and "quotes" and ?')
+        '/usr/share/data/spaces\\ and\\ \\"quotes\\"\\ and\\ \\?'
+
+        >>> escape_rpm_path_4_19('/usr/share/data/spaces and [square brackets]')
+        '/usr/share/data/spaces\\ and\\ \\[square\\ brackets\\]'
+
+        >>> path = BuildrootPath('/whatever/__pycache__/bar.cpython-38{,.opt-?}.pyc')
+        >>> path.glob_suffix_len = len('{,.opt-?}.pyc')
+        >>> escape_rpm_path_4_19(path)
+        '/whatever/__pycache__/bar.cpython-38{,.opt-?}.pyc'
+
+        >>> path = BuildrootPath('/spa ces/__pycache__/bar.cpython-38{,.opt-?}.pyc')
+        >>> path.glob_suffix_len = len('{,.opt-?}.pyc')
+        >>> escape_rpm_path_4_19(path)
+        '/spa\\ ces/__pycache__/bar.cpython-38{,.opt-?}.pyc'
+
+        >>> path = BuildrootPath('/usr/man/man5/ipykernel.5*')
+        >>> path.glob_suffix_len = 1
+        >>> escape_rpm_path_4_19(path)
+        '/usr/man/man5/ipykernel.5*'
     """
-    Escape special characters in string-paths or BuildrootPaths
+    glob_suffix_len = getattr(path, "glob_suffix_len", 0)
+    suffix = ""
+    path = str(path)
+    if glob_suffix_len:
+        suffix = path[-glob_suffix_len:]
+        path = path[:-glob_suffix_len]
+    if "%" in path:
+        path = path.replace("%", "%%")
+    # Prepend all matched/special characters (\1) with a backslash (escaped, hence \\):
+    return RPM_ESCAPE_REGEX.sub(r'\\\1', path) + suffix
+
+
+def escape_rpm_path_4_18(path):
+    """
+    Escape special characters in string-paths or BuildrootPaths, RPM < 4.19
 
     E.g. a space in path otherwise makes RPM think it's multiple paths,
     unless we put it in "quotes".
     Or a literal % symbol in path might be expanded as a macro if not escaped.
 
-    Due to limitations in RPM,
+    Due to limitations in RPM < 4.19,
     some paths with spaces and other special characters are not supported.
+
+    See this thread http://lists.rpm.org/pipermail/rpm-list/2021-June/002048.html
 
     Examples:
 
-        >>> escape_rpm_path(BuildrootPath('/usr/lib/python3.9/site-packages/setuptools'))
+        >>> escape_rpm_path_4_18(BuildrootPath('/usr/lib/python3.9/site-packages/setuptools'))
         '/usr/lib/python3.9/site-packages/setuptools'
 
-        >>> escape_rpm_path('/usr/lib/python3.9/site-packages/setuptools/script (dev).tmpl')
+        >>> escape_rpm_path_4_18('/usr/lib/python3.9/site-packages/setuptools/script (dev).tmpl')
         '"/usr/lib/python3.9/site-packages/setuptools/script (dev).tmpl"'
 
-        >>> escape_rpm_path('/usr/share/data/100%valid.path')
-        '/usr/share/data/100%%valid.path'
+        >>> escape_rpm_path_4_18('/usr/share/data/100%valid.path')
+        '/usr/share/data/100%%%%%%%%valid.path'
 
-        >>> escape_rpm_path('/usr/share/data/100 % valid.path')
-        '"/usr/share/data/100 %% valid.path"'
+        >>> escape_rpm_path_4_18('/usr/share/data/100 % valid.path')
+        '"/usr/share/data/100 %%%%%%%% valid.path"'
 
-        >>> escape_rpm_path('/usr/share/data/1000 %% valid.path')
-        '"/usr/share/data/1000 %%%% valid.path"'
+        >>> escape_rpm_path_4_18('/usr/share/data/1000 %% valid.path')
+        '"/usr/share/data/1000 %%%%%%%%%%%%%%%% valid.path"'
 
-        >>> escape_rpm_path('/usr/share/data/spaces and "quotes"')
+        >>> escape_rpm_path_4_18('/usr/share/data/spaces and "quotes"')
         Traceback (most recent call last):
           ...
         NotImplementedError: ...
 
-        >>> escape_rpm_path('/usr/share/data/spaces and [square brackets]')
+        >>> escape_rpm_path_4_18('/usr/share/data/spaces and [square brackets]')
         Traceback (most recent call last):
           ...
         NotImplementedError: ...
     """
     orig_path = path = str(path)
     if "%" in path:
-        path = path.replace("%", "%" * RPM_PERCENTAGES_COUNT)
+        # Escaping an actual percentage sign in path by 8 signs
+        # has been verified in RPM 4.16 and 4.17:
+        path = path.replace("%", "%" * 8)
     if any(symbol in path for symbol in RPM_FILES_DELIMETERS):
         if '"' in path:
-            # As far as we know, RPM cannot list such file individually
+            # As far as we know, RPM < 4.19 cannot list such file individually
             # See this thread http://lists.rpm.org/pipermail/rpm-list/2021-June/002048.html
-            raise NotImplementedError(f'" symbol in path with spaces is not supported by %pyproject_save_files: {orig_path!r}')
+            raise NotImplementedError(f'" symbol in path with spaces is not supported by %pyproject_save_files on RPM < 4.19: {orig_path!r}')
         if "[" in path or "]" in path:
             # See https://bugzilla.redhat.com/show_bug.cgi?id=1990879
             # and https://github.com/rpm-software-management/rpm/issues/1749
-            raise NotImplementedError(f'[ or ] symbol in path with spaces is not supported by %pyproject_save_files: {orig_path!r}')
+            raise NotImplementedError(f'[ or ] symbol in path with spaces is not supported by %pyproject_save_files on RPM < 4.19: {orig_path!r}')
         return f'"{path}"'
     return path
+
+
+if RPM_FILES_ESCAPE == "4.19":
+    escape_rpm_path = escape_rpm_path_4_19
+elif RPM_FILES_ESCAPE == "4.18":
+    escape_rpm_path = escape_rpm_path_4_18
+else:
+    raise RuntimeError("RPM_FILES_ESCAPE must be 4.18 or 4.19")
 
 
 def generate_file_list(paths_dict, module_globs, include_others=False):

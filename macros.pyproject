@@ -112,12 +112,12 @@ fi
 %pyproject_extras_subpkg(n:i:f:FaA) %{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{?!-i:%{?!-f:%{?!-F: -f %{_pyproject_ghost_distinfo}}}} %**}}}
 
 
-# Escaping an actual percentage sign in path by 8 signs has been verified in RPM 4.16 and 4.17.
-# See this thread http://lists.rpm.org/pipermail/rpm-list/2021-June/002048.html
-# Since RPM 4.19, 2 signs are needed instead. 4.18.90+ is a pre-release of RPM 4.19.
-# On the CI, we build tests/escape_percentages.spec to verify the assumptions.
+# Escaping shell-globs, percentage signs and spaces was reworked in RPM 4.19+
+# https://github.com/rpm-software-management/rpm/issues/1749#issuecomment-1020420616
+# Since we support both ways, we pass either 4.19 or 4.18 to the script, so it knows which one to use
+# Rather than passing the actual version, we let RPM compare the versions, as it is easier done here than in Python
 %pyproject_save_files(lL) %{expand:\\\
-%{expr:v"0%{?rpmversion}" >= v"4.18.90" ? "RPM_PERCENTAGES_COUNT=2" : "RPM_PERCENTAGES_COUNT=8" } \\
+%{expr:v"0%{?rpmversion}" >= v"4.18.90" ? "RPM_FILES_ESCAPE=4.19" : "RPM_FILES_ESCAPE=4.18" } \\
 %{__python3} %{_rpmconfigdir}/redhat/pyproject_save_files.py \\
   --output-files "%{pyproject_files}" \\
   --output-modules "%{_pyproject_modules}" \\

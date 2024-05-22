@@ -25,6 +25,21 @@ TEST_RECORDS = yaml_data["records"]
 TEST_METADATAS = yaml_data["metadata"]
 
 
+# insert glob_suffix_len for .pyc files and man pages globs
+for paths_dict in EXPECTED_DICT.values():
+    for modules in paths_dict["modules"].values():
+        for module in modules:
+            for idx, file in enumerate(module["files"]):
+                if file.endswith(".pyc"):
+                    module["files"][idx] = BuildrootPath(file)
+                    module["files"][idx].glob_suffix_len = len("{,.opt-?}.pyc")
+    if "other" in paths_dict and "files" in paths_dict["other"]:
+        for idx, file in enumerate(paths_dict["other"]["files"]):
+            if file.endswith("*"):
+                paths_dict["other"]["files"][idx] = BuildrootPath(file)
+                paths_dict["other"]["files"][idx].glob_suffix_len = len("*")
+
+
 @pytest.fixture
 def tldr_root(tmp_path):
     prepare_pyproject_record(tmp_path, package="tldr")

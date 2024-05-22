@@ -13,7 +13,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.12.2
+Version:        1.13.0
 Release:        1%{?dist}
 
 # Macro files
@@ -171,6 +171,10 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Tue Jul 02 2024 Miro Hrončok <mhroncok@redhat.com> - 1.13.0-1
+- Properly escape weird characters from paths in %%{pyproject_files} (RPM 4.19+ only)
+- Fixes: rhbz#1990879
+
 * Tue Jun 25 2024 Cristian Le <fedora@lecris.me> - 1.12.2-1
 - %%pyproject_extras_subpkg: Allow passing -a or -A to %%python_extras_subpkg
 

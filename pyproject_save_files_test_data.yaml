@@ -457,7 +457,7 @@ classified:
       - /usr/lib/python3.7/site-packages/comic2pdf-3.1.0.dist-info/top_level.txt
       - /usr/lib/python3.7/site-packages/comic2pdf-3.1.0.dist-info/zip-safe
       licenses: []
-    modules: []
+    modules: {}
     other:
       files:
       - /usr/bin/comic2pdf.py
