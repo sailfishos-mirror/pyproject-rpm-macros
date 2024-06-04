@@ -13,7 +13,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.12.0
+Version:        1.12.1
 Release:        1%{?dist}
 
 # Macro files
@@ -171,6 +171,10 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Tue Jun 04 2024 Miro Hrončok <mhroncok@redhat.com> - 1.12.1-1
+- Add a temporary workaround for RPM 4.20 alpha 2 leaking \x1f (unit separators)
+- Related: rhbz#2284187
+
 * Fri Jan 26 2024 Miro Hrončok <miro@hroncok.cz> - 1.12.0-1
 - Namespace pyproject-rpm-macros generated text files with %%{python3_pkgversion}
 - That way, a single-spec can be used to build packages for multiple Python versions
