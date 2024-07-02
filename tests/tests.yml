@@ -91,6 +91,12 @@
     - virtualenv:
         dir: .
         run: ./mocktest.sh python-virtualenv
+    - pello:
+        dir: .
+        run: ./mocktest.sh python-pello
+    - pello_with_options:
+        dir: .
+        run: ./mocktest.sh python-pello --with options
     - escape_paths:
         dir: .
         run: ./mocktest.sh escape_paths

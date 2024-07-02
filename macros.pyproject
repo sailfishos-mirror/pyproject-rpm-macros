@@ -221,3 +221,13 @@ PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_
 HOSTNAME="rpmbuild" \\
 %{__python3} -m tox --current-env -q --recreate -e "%{-e:%{-e*}}%{!-e:%{toxenv}}" %{?*}
 }
+
+
+# Declarative buildsystem, requires RPM 4.20+ to work
+# https://rpm-software-management.github.io/rpm/manual/buildsystem.html
+%buildsystem_pyproject_conf() %nil
+%buildsystem_pyproject_generate_buildrequires() %pyproject_buildrequires %*
+%buildsystem_pyproject_build() %pyproject_wheel %*
+%buildsystem_pyproject_install() %["%{shrink:%*}" == "" ? "%{error:BuildOption(install) is mandatory with pyproject BuildSystem.}" : "%pyproject_install \
+%pyproject_save_files %*"]
+%buildsystem_pyproject_check() %pyproject_check_import %*

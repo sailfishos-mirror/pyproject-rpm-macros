@@ -13,8 +13,8 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.13.0
-Release:        2%{?dist}
+Version:        1.14.0
+Release:        1%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -172,6 +172,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Tue Jul 23 2024 Miro Hrončok <mhroncok@redhat.com> - 1.14.0-1
+- Add a provisional RPM Declarative Buildsystem (RPM 4.20+)
+
 * Fri Jul 19 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1.13.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 

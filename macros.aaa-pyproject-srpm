@@ -5,3 +5,13 @@
 # When macros.pyproject is installed, it overrides this macro.
 # Note: This needs to maintain the same set of options as the real macro.
 %pyproject_buildrequires(rRxtNwe:C:) echo 'pyproject-rpm-macros' && exit 0
+
+
+# Declarative buildsystem, requires RPM 4.20+ to work
+# https://rpm-software-management.github.io/rpm/manual/buildsystem.html
+# This is the minimal implementation to be in the srpm package,
+# as required even before the BuildRequires are installed
+%buildsystem_pyproject_conf() %nil
+%buildsystem_pyproject_generate_buildrequires() %pyproject_buildrequires %*
+%buildsystem_pyproject_build() %nil
+%buildsystem_pyproject_install() %nil

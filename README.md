@@ -386,6 +386,78 @@ These arguments are still required:
   Multiple subpackages are generated when multiple names are provided.
 
 
+Provisional: Declarative Buildsystem (RPM 4.20+)
+------------------------------------------------
+
+It is possible to reduce some of the spec boilerplate by using the provided
+pyproject [declarative buildsystem].
+This option is only available with RPM 4.20+ (e.g. in Fedora 41+).
+The declarative buildsystem is **provisional** and the behavior might change.
+Please subscribe to Fedora's [python-devel list] if you use the feature.
+
+To enable the pyproject declarative buildsystem, use the following:
+
+    BuildSystem:          pyproject
+    BuildOption(install): <options for %%pyproject_save_files>
+
+That way, RPM will automatically fill-in the `%prep`, `%generate_buildrequires`,
+`%build`, `%install`, and `%check` sections the following defaults:
+
+    %prep
+    %autosetup -p1 -C
+    
+    %generate_buildrequires
+    %pyproject_buildrequires
+    
+    %build
+    %pyproject_wheel
+    
+    %install
+    %pyproject_install
+    %pyproject_save_files <options from BuildOption(install)>
+    
+    %check
+    %pyproject_check_import
+
+To pass options to the individual macros, use `BuildOption` (see the [documentation of declarative buildsystems][declarative buildsystem]).
+
+    # pass options for %%pyproject_save_files (mandatory when not overriding %%install)
+    BuildOption(install): -l _module +auto
+
+    # replace the default options for %%autosetup
+    BuildOption(prep): -S git_am -C
+
+    # pass options to %%pyproject_buildrequires
+    BuildOption(generate_buildrequires): docs-requirements.txt -t
+
+    # pass options to %%pyproject_wheel
+    BuildOption(build): -C--global-option=--no-cython-compile
+
+    # pass options to %%pyproject_check_import
+    BuildOption(check): -e '*.test*'
+
+Alternatively, you can supply your own sections to override the automatic ones:
+
+    BuildOption(generate_buildrequires): -w
+    ...
+    %build
+    # do nothing, the wheel was built in %%generate_buildrequires
+
+You can append to end of the automatic sections:
+
+    %check -a
+    # run %%pytest after %%pyproject_check_import
+    %pytest
+
+Or prepend to the beginning of them:
+
+    %prep -p
+    # run %%gpgverify before %%autosetup
+    %gpgverify -k2 -s1 -d0
+
+[declarative buildsystem]: https://rpm-software-management.github.io/rpm/manual/buildsystem.html
+
+
 Limitations
 -----------
 
