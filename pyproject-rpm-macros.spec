@@ -80,7 +80,8 @@ Requires:       /usr/bin/sed
 # This package requires the %%generate_buildrequires functionality.
 # It has been introduced in RPM 4.15 (4.14.90 is the alpha of 4.15).
 # What we need is rpmlib(DynamicBuildRequires), but that is impossible to (Build)Require.
-Requires:       (rpm-build >= 4.14.90 if rpm-build)
+# Also, we need to avoid 4.19.90..4.19.91-7 due to rhbz#2284187
+Requires:       ((rpm-build >= 4.14.90 with (rpm-build < 4.19.90 or rpm-build >= 4.19.91-8)) if rpm-build)
 BuildRequires:  rpm-build >= 4.14.90
 
 %description
@@ -173,6 +174,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Tue Jul 02 2024 Miro Hrončok <mhroncok@redhat.com> - 1.13.0-1
 - Properly escape weird characters from paths in %%{pyproject_files} (RPM 4.19+ only)
+- Revert the temporary workaround for RPM 4.20 alpha 2 leaking \x1f (unit separators)
 - Fixes: rhbz#1990879
 
 * Tue Jun 25 2024 Cristian Le <fedora@lecris.me> - 1.12.2-1
