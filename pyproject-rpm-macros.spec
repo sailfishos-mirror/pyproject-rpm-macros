@@ -14,7 +14,7 @@ License:        MIT
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
 Version:        1.13.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -172,6 +172,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Fri Jul 19 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1.13.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
+
 * Tue Jul 02 2024 Miro Hrončok <mhroncok@redhat.com> - 1.13.0-1
 - Properly escape weird characters from paths in %%{pyproject_files} (RPM 4.19+ only)
 - Revert the temporary workaround for RPM 4.20 alpha 2 leaking \x1f (unit separators)
