@@ -31,7 +31,7 @@ Summary:        %{summary}
 # Relax the upper bounds of some dependencies to their known available versions in EL 9
 sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.2/' \
        -e 's/filelock<4,>=3.4.1/filelock<4,>=3.3.1/' \
-       -e 's/platformdirs<4,>=2.4/platformdirs<4,>=2.3/' \
+       -e 's/platformdirs<4,>=2.4/platformdirs<5,>=2.3/' \
        -e 's/hatchling>=1.12.2/hatchling>=0.25/' \
        -e 's/hatch-vcs>=0.3/hatch-vcs>=0.2.1/' \
     pyproject.toml
