@@ -1,5 +1,6 @@
 Name:           pyproject-rpm-macros
 Summary:        RPM macros for PEP 517 Python packages
+# SPDX
 License:        MIT
 
 %bcond tests 1
