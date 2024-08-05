@@ -30,6 +30,9 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
+# Avoid pytest 8 for now.
+# Once the compat package is removed from Fedora, we will update pluggy.
+sed -i 's/{env:_PYTEST_DEP:pytest}$/{env:_PYTEST_DEP:pytest<8}/' tox.ini
 
 
 %generate_buildrequires
