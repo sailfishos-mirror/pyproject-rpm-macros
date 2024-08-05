@@ -1,5 +1,11 @@
 # RPM macros, this is expected
 addFilter(r'only-non-binary-in-usr-lib')
 
-# we mention older macro names in the description, they are unexpanded on purpose
-addFilter(r'unexpanded-macro %description .+ %py3_')
+# we mention macro names in the descriptions and summaries
+addFilter(r'[EW]: unexpanded-macro (%description|Summary).+ %(py3_|(generate|pyproject)_buildrequires)')
+
+# terms, not spelling errors
+addFilter(r"[EW]: spelling-error .+'(cfg|toml|setuptools|buildrequires)'")
+
+# the documentation is in the other subpackage
+addFilter(r'pyproject-srpm-macros.noarch: [EW]: no-documentation')
