@@ -13,7 +13,14 @@ case $NAME in
     ;;
 
   "CentOS Stream"|"Red Hat Enterprise Linux")
-    mock="centos-stream+epel-next-${version}-${arch}"
+    case $version in
+      9)
+        mock="centos-stream+epel-next-${version}-${arch}"
+        ;;
+      *)
+        mock="centos-stream+epel-${version}-${arch}"
+        ;;
+    esac
     repos="local,local-centos-stream"
     ;;
 
