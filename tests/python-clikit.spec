@@ -13,7 +13,7 @@ BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-devel
 
 %description
-Tests building with the poetry build backend.
+Tests building with the poetry(-core) build backend.
 
 
 %package -n python3-%{pypi_name}
@@ -25,6 +25,11 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
+%if 0%{?rhel}
+# force the poetry-core build backend, as that is available rather than full poetry
+sed -i 's/"poetry>=0.12"/"poetry-core"/' pyproject.toml
+sed -i 's/"poetry.masonry.api"/"poetry.core.masonry.api"/' pyproject.toml
+%endif
 
 
 %generate_buildrequires
