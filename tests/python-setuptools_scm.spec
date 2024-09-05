@@ -1,5 +1,5 @@
 Name:           python-setuptools_scm
-Version:        6.0.1
+Version:        6.3.2
 
 Release:        0%{?dist}
 Summary:        The blessed package to manage your versions by SCM tags
@@ -12,7 +12,7 @@ BuildRequires:  python3-devel
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  /usr/bin/git
 
-# flake8 is still missing tests deps in EPEL 9
+# flake8 is still missing tests deps in EPEL 9/10
 %if 0%{?fedora}
 %bcond_without flake8
 %else
@@ -58,7 +58,7 @@ Summary:        %{summary}
 %check
 # This tox should run all the toxenvs specified via -e in %%pyproject_buildrequires
 # We only run some of the tests (running all of them requires network connection and is slow)
-%tox -- -- -k test_version -Wdefault | tee toxlog
+%tox -- -- -k test_version -Wdefault --ignore testing/test_hg_git.py | tee toxlog
 
 # Internal check for our macros: Assert both toxenvs were executed.
 grep -E 'py%{python3_version_nodots}-test: (OK|commands succeeded)' toxlog
