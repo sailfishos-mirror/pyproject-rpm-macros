@@ -14,7 +14,7 @@ Fake spec file to test %%pyproject_buildrequires -N works as expected
 %prep
 cat > requirements.txt <<EOF
 click!=5.0.0,>=4.1 # comment to increase test complexity
-toml>=0.10.0
+tomli>=0.10.0
 EOF
 
 %generate_buildrequires
@@ -22,7 +22,7 @@ EOF
 
 
 %check
-pip show toml click
+pip show tomli click
 %if 0%{?fedora} || 0%{?rhel} > 9
 # On RHEL 9, python3-devel requires (python3-setuptools if rpm-build)
 pip show setuptools && exit 1 || true
