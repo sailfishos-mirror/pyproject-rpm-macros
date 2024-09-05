@@ -9,7 +9,6 @@ Source:         %{pypi_source virtualenv}
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
-BuildRequires:  python3-flaky
 BuildRequires:  python3-pytest
 
 %description
@@ -35,6 +34,8 @@ sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.2/' \
        -e 's/hatchling>=1.12.2/hatchling>=0.25/' \
        -e 's/hatch-vcs>=0.3/hatch-vcs>=0.2.1/' \
     pyproject.toml
+# Drop the option for flaky
+sed -i 's/--no-success-flaky-report//' pyproject.toml
 # Hacky backport of https://src.fedoraproject.org/rpms/python-virtualenv/c/87b1f95664
 %if 0%{?fedora} >= 39 || 0%{?rhel} >= 10
 sed -i 's/_nonwrappers/_hookimpls/' tests/conftest.py
@@ -62,8 +63,9 @@ echo '__version__, __version_tuple__ = version, version_tuple' >> %{buildroot}%{
 
 %check
 # test_main fails when .dist-info is not deleted at the end of %%pyproject_buildrequires
+# tests/integration/test_zipapp.py imports flaky
 PIP_CERT=/etc/pki/tls/certs/ca-bundle.crt \
-%pytest -v -k test_main
+%pytest -v -k test_main --ignore tests/integration/test_zipapp.py
 
 
 %files -n python3-virtualenv -f %{pyproject_files}
