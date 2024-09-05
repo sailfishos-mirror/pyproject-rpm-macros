@@ -11,9 +11,6 @@ BuildArch:      noarch
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-devel
 
-# some of the nested modules import from this, but upstream does not declare the dependency
-BuildRequires:  python3-ipyparallel
-
 %description
 This package contains data files.
 Building this tests that data files are not listed when +auto is not used
@@ -49,7 +46,7 @@ sed -i '/"debugpy/d' pyproject.toml setup.py
 %pyproject_save_files -l 'ipykernel*' +auto
 
 %check
-%pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.*' -e 'ipykernel.trio*'
+%pyproject_check_import  -e '*.test*' -e 'ipykernel.gui*' -e 'ipykernel.pylab.*' -e 'ipykernel.trio*' -e 'ipykernel.datapub' -e 'ipykernel.pickleutil' -e 'ipykernel.serialize'
 
 %files -n python3-ipykernel -f %{pyproject_files}
 %doc README.md
