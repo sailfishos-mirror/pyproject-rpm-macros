@@ -11,7 +11,7 @@ BuildArch:      noarch
 
 %description
 This package contains one .py module
-Building this tests the flit build backend.
+Building this tests the flit(_core) build backend.
 This package also has no explicit BuildRequires for python or the macros,
 testing the minimal implementation of %%pyproject_buildrequires
 from pyproject-srpm-macros.
@@ -26,6 +26,10 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
+%if 0%{?rhel}
+# force the flit-core build backend, as that is available rather than full flit
+sed -i 's/"flit/"flit_core/' pyproject.toml
+%endif
 
 
 %generate_buildrequires
