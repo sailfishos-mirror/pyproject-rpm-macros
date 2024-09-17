@@ -10,6 +10,7 @@ import subprocess
 import re
 import tempfile
 import email.parser
+import functools
 import pathlib
 import zipfile
 
@@ -34,6 +35,7 @@ def print_err(*args, **kwargs):
 
 
 try:
+    from packaging.markers import Marker
     from packaging.requirements import Requirement, InvalidRequirement
     from packaging.utils import canonicalize_name
 except ImportError as e:
@@ -99,7 +101,7 @@ class Requirements:
                 return True
         return False
 
-    def add(self, requirement_str, *, package_name=None, source=None):
+    def add(self, requirement_str, *, package_name=None, source=None, extra=None):
         """Output a Python-style requirement string as RPM dep"""
         print_err(f'Handling {requirement_str} from {source}')
 
@@ -118,6 +120,13 @@ class Requirements:
             )
 
         name = canonicalize_name(requirement.name)
+
+        if extra is not None:
+            extra_str = f'extra == "{extra}"'
+            if requirement.marker is not None:
+                extra_str = f'({requirement.marker}) and {extra_str}'
+            requirement.marker = Marker(extra_str)
+
         if (requirement.marker is not None and
                 not self.evaluate_all_environments(requirement)):
             print_err(f'Ignoring alien requirement:', requirement_str)
@@ -215,7 +224,8 @@ def toml_load(opened_binary_file):
     return tomllib.load(opened_binary_file)
 
 
-def get_backend(requirements):
+@functools.cache
+def load_pyproject():
     try:
         f = open('pyproject.toml', 'rb')
     except FileNotFoundError:
@@ -223,6 +233,11 @@ def get_backend(requirements):
     else:
         with f:
             pyproject_data = toml_load(f)
+    return pyproject_data
+
+
+def get_backend(requirements):
+    pyproject_data = load_pyproject()
 
     buildsystem_data = pyproject_data.get('build-system', {})
     requirements.extend(
@@ -310,7 +325,9 @@ def generate_run_requirements_hook(backend, requirements):
         raise ValueError(
             'The build backend cannot provide build metadata '
             '(incl. runtime requirements) before build. '
-            'Use the provisional -w flag to build the wheel and parse the metadata from it, '
+            'If the dependencies are specified in the pyproject.toml [project] '
+            'table, you can use the -p flag to read them.'
+            'Alternatively, use the provisional -w flag to build the wheel and parse the metadata from it, '
             'or use the -R flag not to generate runtime dependencies.'
         )
     dir_basename = prepare_metadata('.', config_settings=requirements.config_settings)
@@ -368,8 +385,35 @@ def generate_run_requirements_wheel(backend, requirements, wheeldir):
             raise RuntimeError('Could not find *.dist-info/METADATA in built wheel.')
 
 
-def generate_run_requirements(backend, requirements, *, build_wheel, wheeldir):
-    if build_wheel:
+def generate_run_requirements_pyproject(requirements):
+    pyproject_data = load_pyproject()
+
+    if not (project_table := pyproject_data.get('project', {})):
+        raise ValueError('Could not find the [project] table in pyproject.toml.')
+
+    dynamic_fields = project_table.get('dynamic', [])
+    if 'dependencies' in dynamic_fields or 'optional-dependencies' in dynamic_fields:
+        raise ValueError('Could not read the dependencies or optional-dependencies '
+            'from the [project] table in pyproject.toml, as the field is dynamic.')
+
+    dependencies = project_table.get('dependencies', [])
+    name = project_table.get('name')
+    requirements.extend(dependencies,
+                        package_name=name,
+                        source=f'pyproject.toml generated metadata: [dependencies] ({name})')
+
+    optional_dependencies = project_table.get('optional-dependencies', {})
+    for extra, dependencies in optional_dependencies.items():
+        requirements.extend(dependencies,
+                            package_name=name,
+                            source=f'pyproject.toml generated metadata: [optional-dependencies] {extra} ({name})',
+                            extra=extra)
+
+
+def generate_run_requirements(backend, requirements, *, build_wheel, read_pyproject_dependencies, wheeldir):
+    if read_pyproject_dependencies:
+        generate_run_requirements_pyproject(requirements)
+    elif build_wheel:
         generate_run_requirements_wheel(backend, requirements, wheeldir)
     else:
         generate_run_requirements_hook(backend, requirements)
@@ -434,6 +478,7 @@ def generate_requires(
     *, include_runtime=False, build_wheel=False, wheeldir=None, toxenv=None, extras=None,
     get_installed_version=importlib.metadata.version,  # for dep injection
     generate_extras=False, python3_pkgversion="3", requirement_files=None, use_build_system=True,
+    read_pyproject_dependencies=False,
     output, config_settings=None,
 ):
     """Generate the BuildRequires for the project in the current directory
@@ -450,8 +495,8 @@ def generate_requires(
     )
 
     try:
-        if (include_runtime or toxenv) and not use_build_system:
-            raise ValueError('-N option cannot be used in combination with -r, -e, -t, -x options')
+        if (include_runtime or toxenv or read_pyproject_dependencies) and not use_build_system:
+            raise ValueError('-N option cannot be used in combination with -r, -e, -t, -x, -p options')
         if requirement_files:
             for req_file in requirement_files:
                 requirements.extend(
@@ -466,7 +511,8 @@ def generate_requires(
             include_runtime = True
             generate_tox_requirements(toxenv, requirements)
         if include_runtime:
-            generate_run_requirements(backend, requirements, build_wheel=build_wheel, wheeldir=wheeldir)
+            generate_run_requirements(backend, requirements, build_wheel=build_wheel,
+                read_pyproject_dependencies=read_pyproject_dependencies, wheeldir=wheeldir)
     except EndPass:
         return
     finally:
@@ -493,7 +539,7 @@ def main(argv):
         help=argparse.SUPPRESS,
     )
     parser.add_argument(
-        '-p', '--python3_pkgversion', metavar='PYTHON3_PKGVERSION',
+        '--python3_pkgversion', metavar='PYTHON3_PKGVERSION',
         default="3", help=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -522,6 +568,11 @@ def main(argv):
         '-w', '--wheel', action='store_true', default=False,
         help=('Generate run-time requirements by building the wheel '
               '(useful for build backends without the prepare_metadata_for_build_wheel hook)'),
+    )
+    parser.add_argument(
+        '-p', '--read-pyproject-dependencies', action='store_true', default=False,
+        help=('Generate dependencies from [project] table of pyproject.toml '
+              'instead of calling prepare_metadata_for_build_wheel hook)'),
     )
     parser.add_argument(
         '-R', '--no-runtime', action='store_false', dest='runtime',
@@ -575,6 +626,7 @@ def main(argv):
             python3_pkgversion=args.python3_pkgversion,
             requirement_files=args.requirement_files,
             use_build_system=args.use_build_system,
+            read_pyproject_dependencies=args.read_pyproject_dependencies,
             output=args.output,
             config_settings=parse_config_settings_args(args.config_settings),
         )

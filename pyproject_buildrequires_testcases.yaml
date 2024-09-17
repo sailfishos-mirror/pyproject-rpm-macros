@@ -906,7 +906,7 @@ pyproject.toml with runtime dependencies and partially selected extras:
     tomli: 1
   extras:
     - tests
-  pyproject.toml: |
+  pyproject.toml: &pyproject_with_extras |
     [build-system]
     requires = ["setuptools"]
     build-backend = "setuptools.build_meta"
@@ -1061,4 +1061,188 @@ config_settings:
         return ["test-no-config-setting"]
   expected: |
     python3dist(test-config-setting)
+  result: 0
+
+pyproject.toml with runtime dependencies read from it:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    dependencies = [
+        "foo",
+        'importlib-metadata; python_version<"3.8"',
+    ]
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(foo)
+  result: 0
+
+pyproject.toml with extras - only runtime dependencies read from it:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  pyproject.toml: *pyproject_with_extras
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(foo)
+  result: 0
+
+pyproject.toml with runtime dependencies and partially selected extras read from it:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  extras:
+    - tests
+  pyproject.toml: *pyproject_with_extras
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(foo)
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+  result: 0
+
+pyproject.toml with runtime dependencies and all extras read from it:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  extras:
+    - tests
+    - docs
+  pyproject.toml: *pyproject_with_extras
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(foo)
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+    python3dist(sphinx)
+    python3dist(python-docs-theme)
+  result: 0
+
+pyproject.toml without dependencies:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+  result: 0
+
+pyproject.toml without project table:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+  except: ValueError
+
+no pyproject.toml:
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+  except: FileNotFoundError
+
+pyproject.toml with dynamic dependencies:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    dynamic = ["dependencies"]
+    [tool.setuptools.dynamic]
+    dependencies = { file = ["deps.txt"] }
+  deps.txt: |
+    foo < 7.0
+    sphinx
+  except: ValueError
+
+pyproject.toml with dynamic optional dependencies:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  extras:
+    - docs
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    dynamic = ["optional-dependencies"]
+    [tool.setuptools.dynamic.optional-dependencies.docs]
+    file = ["deps.txt"]
+  deps.txt: |
+    sphinx~=7.0.1
+  except: ValueError
+
+pyproject.toml with dynamic table and no deps:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    dynamic = ["readme"]
+    [tool.setuptools.dynamic]
+    readme = { file = ["readme.txt"] }
+  readme.txt: |
+    nothing interesting here
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
   result: 0

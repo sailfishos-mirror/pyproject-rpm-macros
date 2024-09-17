@@ -82,6 +82,9 @@
     - userpath:
         dir: .
         run: ./mocktest.sh python-userpath
+    - markdown_it_py:
+        dir: .
+        run: ./mocktest.sh python-markdown-it-py
     - double_install:
         dir: .
         run: ./mocktest.sh double-install

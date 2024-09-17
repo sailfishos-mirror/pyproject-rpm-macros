@@ -79,8 +79,21 @@ using the `-R` flag:
     %generate_buildrequires
     %pyproject_buildrequires -R
 
-Alternatively, the runtime dependencies can be obtained by building the wheel and reading the metadata from the built wheel.
-This can be enabled by using the `-w` flag.
+Alternatively, if the project specifies its dependencies in the pyproject.toml
+`[project]` table (as defined in [PEP 621](https://www.python.org/dev/peps/pep-0621/)),
+the runtime dependencies can be obtained by reading that metadata.
+
+This can be enabled by using the `-p` flag.
+This flag supports reading both the runtime dependencies, and the selected extras
+(see the `-x` flag described below).
+
+Please note that not all build backends which use pyproject.toml support the
+`[project]` table scheme.
+For example, poetry-core (at least in 1.9.0) defines package metadata in the
+custom `[tool.poetry]` table which is not supported by the `%pyproject_buildrequires` macro.
+
+Finally, the runtime dependencies can be obtained by building the wheel and reading the metadata from the built wheel.
+This can be enabled with the `-w` flag and cannot be combined with `-p`.
 Support for building wheels with `%pyproject_buildrequires -w` is **provisional** and the behavior might change.
 Please subscribe to Fedora's [python-devel list] if you use the option.
 
@@ -158,7 +171,7 @@ Dependencies will be loaded from them:
 For packages not using build system you can use `-N` to entirely skip automatical
 generation of requirements and install requirements only from manually specified files.
 `-N` option implies `-R` and cannot be used in combination with other options mentioned above
-(`-w`, `-e`, `-t`, `-x`).
+(`-w`, `-e`, `-t`, `-x`, `-p`).
 
 The `%pyproject_buildrequires` macro also accepts the `-r` flag for backward compatibility;
 it means "include runtime dependencies" which has been the default since version 0-53.

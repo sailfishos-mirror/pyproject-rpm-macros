@@ -154,7 +154,7 @@ fi
 
 
 # Note: Keep the options in sync with this macro from macros.aaa-pyproject-srpm
-%pyproject_buildrequires(rRxtNwe:C:) %{expand:\\\
+%pyproject_buildrequires(rRxtNwpe:C:) %{expand:\\\
 %_set_pytest_addopts
 # The _auto_set_build_flags feature does not do this in %%generate_buildrequires section,
 # but we want to get an environment consistent with %%build:
@@ -168,6 +168,7 @@ fi
 %{-e:%{error:The -R and -e options are mutually exclusive}}
 %{-t:%{error:The -R and -t options are mutually exclusive}}
 %{-w:%{error:The -R and -w options are mutually exclusive}}
+%{-p:%{error:The -R and -p options are mutually exclusive}}
 }
 %{-N:
 %{-r:%{error:The -N and -r options are mutually exclusive}}
@@ -175,7 +176,11 @@ fi
 %{-e:%{error:The -N and -e options are mutually exclusive}}
 %{-t:%{error:The -N and -t options are mutually exclusive}}
 %{-w:%{error:The -N and -w options are mutually exclusive}}
+%{-p:%{error:The -N and -p options are mutually exclusive}}
 %{-C:%{error:The -N and -C options are mutually exclusive}}
+}
+%{-w:
+%{-p:%{error:The -w and -p options are mutually exclusive}}
 }
 %{-e:%{expand:%global toxenv %(%{__python3} -s %{_rpmconfigdir}/redhat/pyproject_construct_toxenv.py %{?**})}}
 echo 'pyproject-rpm-macros'  # first stdout line matches the implementation in macros.aaa-pyproject-srpm

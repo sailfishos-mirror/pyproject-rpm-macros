@@ -6,7 +6,7 @@ import pytest
 import setuptools
 import yaml
 
-from pyproject_buildrequires import generate_requires
+from pyproject_buildrequires import generate_requires, load_pyproject
 
 SETUPTOOLS_VERSION = packaging.version.parse(setuptools.__version__)
 SETUPTOOLS_60 = SETUPTOOLS_VERSION >= packaging.version.parse('60')
@@ -14,6 +14,18 @@ SETUPTOOLS_60 = SETUPTOOLS_VERSION >= packaging.version.parse('60')
 testcases = {}
 with Path(__file__).parent.joinpath('pyproject_buildrequires_testcases.yaml').open() as f:
     testcases = yaml.safe_load(f)
+
+
+@pytest.fixture(autouse=True)
+def clear_pyproject_data():
+    """
+    Clear pyproject data before each test.
+    In reality we build one RPM package at a time, so we can keep the once-loaded
+    pyproject.toml contents.
+    When testing, the cached data would leak the once-loaded data to all the
+    following test cases.
+    """
+    load_pyproject.cache_clear()
 
 
 @pytest.mark.parametrize('case_name', testcases)
@@ -51,6 +63,7 @@ def test_data(case_name, capfd, tmp_path, monkeypatch):
     requirement_files = case.get('requirement_files', [])
     requirement_files = [open(f) for f in requirement_files]
     use_build_system = case.get('use_build_system', True)
+    read_pyproject_dependencies = case.get('read_pyproject_dependencies', False)
     try:
         generate_requires(
             get_installed_version=get_installed_version,
@@ -62,6 +75,7 @@ def test_data(case_name, capfd, tmp_path, monkeypatch):
             generate_extras=case.get('generate_extras', False),
             requirement_files=requirement_files,
             use_build_system=use_build_system,
+            read_pyproject_dependencies=read_pyproject_dependencies,
             output=output,
             config_settings=case.get('config_settings'),
         )
