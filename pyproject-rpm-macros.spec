@@ -15,7 +15,7 @@ License:        MIT
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
 Version:        1.16.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 # Macro files
 Source001:      macros.pyproject
@@ -173,6 +173,10 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Thu Nov 07 2024 Miro Hrončok <miro@hroncok.cz> - 1.16.0-2
+- Support for setuptools 70+
+- wheel is no longer generated as a dependency of the default build system
+
 * Mon Nov 04 2024 Miro Hrončok <mhroncok@redhat.com> - 1.16.0-1
 - %%pyproject_buildrequires: Add support for dependency groups (PEP 735), via the -g flag
 - This is implied when used tox testenvs depend on dependency groups (requires tox 4.22+)

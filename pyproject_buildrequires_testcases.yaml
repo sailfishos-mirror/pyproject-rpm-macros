@@ -23,7 +23,6 @@ Insufficient version of setuptools:
   setup.py: |
   expected: |
     python3dist(setuptools) >= 40.8
-    python3dist(wheel)
   result: 0
 
 No pyproject.toml, empty setup.py:
@@ -32,10 +31,12 @@ No pyproject.toml, empty setup.py:
     wheel: 1
   include_runtime: false
   setup.py: |
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
   result: 0
 
 Default build system, empty setup.py:
@@ -47,10 +48,12 @@ Default build system, empty setup.py:
   pyproject.toml: |
     # empty
   setup.py: |
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
   result: 0
 
 pyproject.toml with build-backend and setup.py:
@@ -212,13 +215,18 @@ Default build system, build dependencies in setup.py:
         setup_requires=['foo', 'bar!=2', 'baz~=1.1.1'],
         install_requires=['inst'],
     )
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(foo)
-    (python3dist(bar) < 2 or python3dist(bar) > 2)
-    (python3dist(baz) >= 1.1.1 with python3dist(baz) < 1.2)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(foo)
+      (python3dist(bar) < 2 or python3dist(bar) > 2)
+      (python3dist(baz) >= 1.1.1 with python3dist(baz) < 1.2)
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(foo)
+      (python3dist(bar) < 2 or python3dist(bar) > 2)
+      (python3dist(baz) >= 1.1.1 with python3dist(baz) < 1.2)
   result: 0
 
 Default build system, run dependencies in setup.py:
@@ -234,13 +242,18 @@ Default build system, run dependencies in setup.py:
         setup_requires=['pyyaml'],  # nb. setuptools will try to install this
         install_requires=['inst > 1', 'inst2 < 3'],
     )
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(pyyaml)
-    python3dist(inst) > 1.0
-    python3dist(inst2) < 3~~
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(pyyaml)
+      python3dist(inst) > 1.0
+      python3dist(inst2) < 3~~
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(pyyaml)
+      python3dist(inst) > 1.0
+      python3dist(inst2) < 3~~
   result: 0
 
 Run dependencies with extras (not selected):
@@ -287,18 +300,28 @@ Run dependencies with extras (not selected):
 
         if __name__ == "__main__":
             main()
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(setuptools) >= 40
-    python3dist(py) >= 1.5
-    python3dist(six) >= 1.10
-    python3dist(setuptools)
-    python3dist(attrs) >= 17.4
-    python3dist(atomicwrites) >= 1
-    python3dist(pluggy) >= 0.11
-    python3dist(more-itertools) >= 4
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(setuptools) >= 40
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(setuptools) >= 40
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
   result: 0
 
 Run dependencies with extras (selected):
@@ -310,22 +333,36 @@ Run dependencies with extras (selected):
   extras:
     - testing
   setup.py: *pytest_setup_py
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(setuptools) >= 40
-    python3dist(py) >= 1.5
-    python3dist(six) >= 1.10
-    python3dist(setuptools)
-    python3dist(attrs) >= 17.4
-    python3dist(atomicwrites) >= 1
-    python3dist(pluggy) >= 0.11
-    python3dist(more-itertools) >= 4
-    python3dist(argcomplete)
-    python3dist(hypothesis) >= 3.56
-    python3dist(nose)
-    python3dist(requests)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(setuptools) >= 40
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
+      python3dist(argcomplete)
+      python3dist(hypothesis) >= 3.56
+      python3dist(nose)
+      python3dist(requests)
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(setuptools) >= 40
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
+      python3dist(argcomplete)
+      python3dist(hypothesis) >= 3.56
+      python3dist(nose)
+      python3dist(requests)
   result: 0
 
 Run dependencies with multiple extras:
@@ -348,16 +385,24 @@ Run dependencies with multiple extras:
             'cool-feature': ['dep4[FOO,BAR]'],
         },
     )
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(dep4)
-    python3dist(dep4[bar])
-    python3dist(dep4[foo])
-    python3dist(dep3)
-    python3dist(dep2)
-    python3dist(dep1)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(dep4)
+      python3dist(dep4[bar])
+      python3dist(dep4[foo])
+      python3dist(dep3)
+      python3dist(dep2)
+      python3dist(dep1)
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(dep4)
+      python3dist(dep4[bar])
+      python3dist(dep4[foo])
+      python3dist(dep3)
+      python3dist(dep2)
+      python3dist(dep1)
   result: 0
 
 Run dependencies with extras and build wheel option:
@@ -371,23 +416,38 @@ Run dependencies with extras and build wheel option:
   extras:
     - testing
   setup.py: *pytest_setup_py
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
-    python3dist(setuptools) >= 40
-    python3dist(pip) >= 19
-    python3dist(py) >= 1.5
-    python3dist(six) >= 1.10
-    python3dist(setuptools)
-    python3dist(attrs) >= 17.4
-    python3dist(atomicwrites) >= 1
-    python3dist(pluggy) >= 0.11
-    python3dist(more-itertools) >= 4
-    python3dist(argcomplete)
-    python3dist(hypothesis) >= 3.56
-    python3dist(nose)
-    python3dist(requests)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+      python3dist(setuptools) >= 40
+      python3dist(pip) >= 19
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
+      python3dist(argcomplete)
+      python3dist(hypothesis) >= 3.56
+      python3dist(nose)
+      python3dist(requests)
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+      python3dist(setuptools) >= 40
+      python3dist(pip) >= 19
+      python3dist(py) >= 1.5
+      python3dist(six) >= 1.10
+      python3dist(setuptools)
+      python3dist(attrs) >= 17.4
+      python3dist(atomicwrites) >= 1
+      python3dist(pluggy) >= 0.11
+      python3dist(more-itertools) >= 4
+      python3dist(argcomplete)
+      python3dist(hypothesis) >= 3.56
+      python3dist(nose)
+      python3dist(requests)
   result: 0
   stderr_contains: "Reading metadata from {wheeldir}/pytest-6.6.6-py3-none-any.whl"
 
@@ -416,17 +476,22 @@ tox dependencies:
     commands =
         true
   expected:
-    - |  # tox 3
+    - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(toxdep1)
       python3dist(toxdep2)
       python3dist(inst)
-    - |  # tox 4
+    - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox)
+      python3dist(toxdep1)
+      python3dist(toxdep2)
+      python3dist(inst)
+    - |  # tox 4 with setuptools < 70
+      python3dist(setuptools) >= 40.8
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(tox)
@@ -468,9 +533,8 @@ tox extras:
     commands =
         true
   expected:
-    - |  # tox 3
+    - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(toxdep)
@@ -482,9 +546,21 @@ tox extras:
       python3dist(dep23)
       python3dist(extra-dep)
       python3dist(extra-dep[extra_dep])
-    - |  # tox 4
+    - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox)
+      python3dist(toxdep)
+      python3dist(inst)
+      python3dist(dep11) > 11.0
+      python3dist(dep12)
+      python3dist(dep21)
+      python3dist(dep22)
+      python3dist(dep23)
+      python3dist(extra-dep)
+      python3dist(extra-dep[extra_dep])
+    - |  # tox 4 with setuptools < 70
+      python3dist(setuptools) >= 40.8
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(tox)
@@ -525,17 +601,22 @@ tox provision unsatisfied:
         toxdep1
         toxdep2
   expected:
-    - |  # tox 3
+    - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(tox) >= 3.999
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
-    - |  # tox 4
+    - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox) >= 3.999
+      python3dist(setuptools) > 40.0
+      python3dist(wheel) > 2.0
+      python3dist(tox) >= 3.999
+    - |  # tox 4 with setuptools < 70
+      python3dist(setuptools) >= 40.8
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(tox) >= 3.999
@@ -569,9 +650,8 @@ tox provision satisfied:
         toxdep1
         toxdep2
   expected:
-    - |  # tox 3
+    - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(tox) >= 3.5
@@ -579,9 +659,16 @@ tox provision satisfied:
       python3dist(toxdep1)
       python3dist(toxdep2)
       python3dist(inst)
-    - |  # tox 4
+    - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(setuptools) > 40.0
+      python3dist(tox) >= 3.5
+      python3dist(toxdep1)
+      python3dist(toxdep2)
+      python3dist(inst)
+    - |  # tox 4 with setuptools < 70
+      python3dist(setuptools) >= 40.8
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(setuptools) > 40.0
@@ -611,16 +698,20 @@ tox provision no minversion:
         setuptools > 40
         wheel > 2
   expected:
-    - |  # tox 3
+    - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
-    - |  # tox 4
+    - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(setuptools) > 40.0
+      python3dist(wheel) > 2.0
+      python3dist(tox)
+    - |  # tox 4 with setuptools < 70
+      python3dist(setuptools) >= 40.8
       python3dist(wheel)
       python3dist(tox-current-env) >= 0.0.6
       python3dist(setuptools) > 40.0
@@ -677,15 +768,22 @@ Default build system, met deps in requirements file:
     SQLAlchemy>=1.0.10,<1.1.0  # Zebra protocol service
   requirement_files:
     - requirements.txt
-  expected: |
-    ((python3dist(lxml) < 3.7 or python3dist(lxml) > 3.7) with python3dist(lxml) >= 2.3)
-    python3dist(ncclient)
-    (python3dist(cryptography) < 1.5.2 or python3dist(cryptography) > 1.5.2)
-    python3dist(paramiko)
-    (python3dist(sqlalchemy) < 1.1~~ with python3dist(sqlalchemy) >= 1.0.10)
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      ((python3dist(lxml) < 3.7 or python3dist(lxml) > 3.7) with python3dist(lxml) >= 2.3)
+      python3dist(ncclient)
+      (python3dist(cryptography) < 1.5.2 or python3dist(cryptography) > 1.5.2)
+      python3dist(paramiko)
+      (python3dist(sqlalchemy) < 1.1~~ with python3dist(sqlalchemy) >= 1.0.10)
+      python3dist(setuptools) >= 40.8
+    - |  # setuptools < 70
+      ((python3dist(lxml) < 3.7 or python3dist(lxml) > 3.7) with python3dist(lxml) >= 2.3)
+      python3dist(ncclient)
+      (python3dist(cryptography) < 1.5.2 or python3dist(cryptography) > 1.5.2)
+      python3dist(paramiko)
+      (python3dist(sqlalchemy) < 1.1~~ with python3dist(sqlalchemy) >= 1.0.10)
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
   result: 0
 
 With pyproject.toml, requirements file and with -N option:
@@ -850,11 +948,16 @@ Pre-releases are accepted:
         "cffi",
     ]
     build-backend = "setuptools.build_meta"
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(cffi)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(cffi)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(cffi)
+      python3dist(wheel)
   stderr_contains: "Requirement satisfied: cffi"
   result: 0
 
@@ -869,10 +972,12 @@ Stdout from wrapped subprocess does not appear in output:
     os.system('echo LEAK?')
     from setuptools import setup
     setup(name='test', version='0.1')
-  expected: |
-    python3dist(setuptools) >= 40.8
-    python3dist(wheel)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
   result: 0
 
 pyproject.toml with runtime dependencies:
@@ -892,10 +997,14 @@ pyproject.toml with runtime dependencies:
         "foo",
         'importlib-metadata; python_version<"3.8"',
     ]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
   result: 0
 
 pyproject.toml with runtime dependencies and partially selected extras:
@@ -920,12 +1029,18 @@ pyproject.toml with runtime dependencies and partially selected extras:
     [project.optional-dependencies]
     tests = ["pytest>=5", "pytest-mock"]
     docs = ["sphinx", "python-docs-theme"]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0
 
 Self-referencing extras (sooner):
@@ -951,14 +1066,22 @@ Self-referencing extras (sooner):
     tests = pytest>=5; pytest-mock
     docs = sphinx; python-docs-theme
     dev = my_package[docs,tests]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
-    python3dist(sphinx)
-    python3dist(python-docs-theme)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0
 
 Self-referencing extras (later):
@@ -984,14 +1107,22 @@ Self-referencing extras (later):
     tests = pytest>=5; pytest-mock
     docs = sphinx; python-docs-theme
     xdev = my_package[docs,tests]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
-    python3dist(sphinx)
-    python3dist(python-docs-theme)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0
 
 Self-referencing extras (maze):
@@ -1016,14 +1147,22 @@ Self-referencing extras (maze):
     forward = my_package[backward]; forwarddep
     backward = my_package[left,right]; backwarddep
     never = my_package[forward]; neverdep
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(backwarddep)
-    python3dist(forwarddep)
-    python3dist(leftdep)
-    python3dist(rightdep)
-    python3dist(startdep)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(backwarddep)
+      python3dist(forwarddep)
+      python3dist(leftdep)
+      python3dist(rightdep)
+      python3dist(startdep)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(backwarddep)
+      python3dist(forwarddep)
+      python3dist(leftdep)
+      python3dist(rightdep)
+      python3dist(startdep)
   result: 0
 
 config_settings_control:
@@ -1081,10 +1220,14 @@ pyproject.toml with runtime dependencies read from it:
         "foo",
         'importlib-metadata; python_version<"3.8"',
     ]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
   result: 0
 
 pyproject.toml with extras - only runtime dependencies read from it:
@@ -1095,10 +1238,14 @@ pyproject.toml with extras - only runtime dependencies read from it:
     wheel: 1
     tomli: 1
   pyproject.toml: *pyproject_with_extras
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
   result: 0
 
 pyproject.toml with runtime dependencies and partially selected extras read from it:
@@ -1111,12 +1258,18 @@ pyproject.toml with runtime dependencies and partially selected extras read from
   extras:
     - tests
   pyproject.toml: *pyproject_with_extras
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0
 
 pyproject.toml with runtime dependencies and all extras read from it:
@@ -1130,14 +1283,22 @@ pyproject.toml with runtime dependencies and all extras read from it:
     - tests
     - docs
   pyproject.toml: *pyproject_with_extras
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(foo)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
-    python3dist(sphinx)
-    python3dist(python-docs-theme)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(foo)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+      python3dist(sphinx)
+      python3dist(python-docs-theme)
   result: 0
 
 pyproject.toml without dependencies:
@@ -1154,9 +1315,12 @@ pyproject.toml without dependencies:
     [project]
     name = "my_package"
     version = "0.1"
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
   result: 0
 
 pyproject.toml without project table:
@@ -1242,9 +1406,12 @@ pyproject.toml with dynamic table and no deps:
     readme = { file = ["readme.txt"] }
   readme.txt: |
     nothing interesting here
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
   result: 0
 
 pyproject.toml with self-referencing extras:
@@ -1268,15 +1435,24 @@ pyproject.toml with self-referencing extras:
     bokeh = ["bokeh", "selenium"]
     test = ["contourpy[test-no-images]", "matplotlib", "Pillow"]
     test-no-images = ["pytest", "pytest-rerunfailures", "wurlitzer"]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(numpy) >= 1.23
-    python3dist(matplotlib)
-    python3dist(pillow)
-    python3dist(pytest)
-    python3dist(pytest-rerunfailures)
-    python3dist(wurlitzer)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(numpy) >= 1.23
+      python3dist(matplotlib)
+      python3dist(pillow)
+      python3dist(pytest)
+      python3dist(pytest-rerunfailures)
+      python3dist(wurlitzer)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(numpy) >= 1.23
+      python3dist(matplotlib)
+      python3dist(pillow)
+      python3dist(pytest)
+      python3dist(pytest-rerunfailures)
+      python3dist(wurlitzer)
   result: 0
 
 pyproject.toml with dependency-groups not requested:
@@ -1307,11 +1483,16 @@ pyproject.toml with dependency-groups and build system:
     [dependency-groups]
     tests = ["pytest>=5", "pytest-mock"]
     docs = ["sphinx", "python-docs-theme"]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0
 
 pyproject.toml with dependency-groups one requested:
