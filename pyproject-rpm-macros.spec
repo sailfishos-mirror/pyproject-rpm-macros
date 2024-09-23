@@ -173,9 +173,11 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
-* Tue Sep 17 2024 Karolina Surma <ksurma@redhat.com> - 1.15.0-1
+* Tue Sep 17 2024 Python Maint <python-maint@redhat.com> - 1.15.0-1
 - Add a possibility to read runtime requirements from pyproject.toml [project] table
 - Fixes: rhbz#2261939
+- Don't generate a dependency on pip when %%pyproject_buildrequires -N is used
+- Fixes: rhbz#2294510
 
 * Tue Jul 23 2024 Miro Hrončok <mhroncok@redhat.com> - 1.14.0-1
 - Add a provisional RPM Declarative Buildsystem (RPM 4.20+)

@@ -22,9 +22,9 @@ EOF
 
 
 %check
-pip show tomli click
-%if 0%{?fedora} || 0%{?rhel} > 9
-# On RHEL 9, python3-devel requires (python3-setuptools if rpm-build)
-pip show setuptools && exit 1 || true
-%endif
-pip show wheel && exit 1 || true
+grep '^((python3dist(click) < 5 or python3dist(click) > 5) with python3dist(click) >= 4.1)$' %{_pyproject_buildrequires}
+grep '^python3dist(tomli) >= 0.10$' %{_pyproject_buildrequires}
+
+grep 'python3dist(pip)' %{_pyproject_buildrequires} && exit 1 || true
+grep 'python3dist(wheel)' %{_pyproject_buildrequires} && exit 1 || true
+test -f /usr/bin/pip && exit 1 || true
