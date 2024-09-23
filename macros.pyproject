@@ -25,6 +25,11 @@
 %_pyproject_record %{_builddir}/%{_pyproject_files_prefix}-pyproject-record
 %_pyproject_buildrequires %{_builddir}/%{_pyproject_files_prefix}-pyproject-buildrequires
 
+# Internal macro, takes %%set_build_flags and strips all the exports
+# TODO: Make such a list an actual source of %%set_build_flags (in redhat-rpm-config)
+# Cannot use %%gsub directly to preserve EL 9 compatibility
+%_pyproject_build_flags %{lua:local exports = rpm.expand('%{set_build_flags} ;'); print((exports:gsub('%s*;+%s+export%s+[%u_]+%s*;+%s*', ' ')))}
+
 # Avoid leaking %%{_pyproject_builddir} to pytest collection
 # https://bugzilla.redhat.com/show_bug.cgi?id=1935212
 # The value is read and used by the %%pytest and %%tox macros:
@@ -33,7 +38,8 @@
 %pyproject_wheel(C:) %{expand:\\\
 %_set_pytest_addopts
 mkdir -p "%{_pyproject_builddir}"
-CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}" TMPDIR="%{_pyproject_builddir}" \\\
+%{_pyproject_build_flags} \\\
+TMPDIR="%{_pyproject_builddir}" \\\
 %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_wheel.py %{?**} %{_pyproject_wheeldir}
 }
 
@@ -156,9 +162,6 @@ fi
 # Note: Keep the options in sync with this macro from macros.aaa-pyproject-srpm
 %pyproject_buildrequires(rRxtNwpe:C:) %{expand:\\\
 %_set_pytest_addopts
-# The _auto_set_build_flags feature does not do this in %%generate_buildrequires section,
-# but we want to get an environment consistent with %%build:
-%{?_auto_set_build_flags:%set_build_flags}
 # The default flags expect the package note file to exist
 # see https://bugzilla.redhat.com/show_bug.cgi?id=2097535
 %{?_package_note_flags:%_generate_package_note_file}
@@ -208,7 +211,8 @@ rm -rfv *.dist-info/ >&2
 if [ -f %{__python3} ]; then
   mkdir -p "%{_pyproject_builddir}"
   echo -n > %{_pyproject_buildrequires}
-  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}" TMPDIR="%{_pyproject_builddir}" \\\
+  %{_pyproject_build_flags} \\\
+  TMPDIR="%{_pyproject_builddir}" \\\
   RPM_TOXENV="%{toxenv}" HOSTNAME="rpmbuild" %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{?!_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} --wheeldir %{_pyproject_wheeldir} --output %{_pyproject_buildrequires} %{?**} >&2
   cat %{_pyproject_buildrequires}
 fi

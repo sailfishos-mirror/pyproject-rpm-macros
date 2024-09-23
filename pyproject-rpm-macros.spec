@@ -178,6 +178,8 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - Fixes: rhbz#2261939
 - Don't generate a dependency on pip when %%pyproject_buildrequires -N is used
 - Fixes: rhbz#2294510
+- Even when %%_auto_set_build_flags is disabled, set all compiler flags when building wheels
+- Fixes: rhbz#2293616
 
 * Tue Jul 23 2024 Miro Hrončok <mhroncok@redhat.com> - 1.14.0-1
 - Add a provisional RPM Declarative Buildsystem (RPM 4.20+)
