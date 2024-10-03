@@ -101,18 +101,23 @@ class Requirements:
                 return True
         return False
 
-    def add(self, requirement_str, *, package_name=None, source=None, extra=None):
+    def add(self, requirement, *, package_name=None, source=None, extra=None):
         """Output a Python-style requirement string as RPM dep"""
+
+        requirement_str = str(requirement)
         print_err(f'Handling {requirement_str} from {source}')
 
-        try:
-            requirement = Requirement(requirement_str)
-        except InvalidRequirement:
-            hint = guess_reason_for_invalid_requirement(requirement_str)
-            message = f'Requirement {requirement_str!r} from {source} is invalid.'
-            if hint:
-                message += f' Hint: {hint}'
-            raise ValueError(message)
+        # requirements read initially from the metadata are strings
+        # further on we work with them as Requirement instances
+        if not isinstance(requirement, Requirement):
+            try:
+                requirement = Requirement(requirement)
+            except InvalidRequirement:
+                hint = guess_reason_for_invalid_requirement(requirement)
+                message = f'Requirement {requirement!r} from {source} is invalid.'
+                if hint:
+                    message += f' Hint: {hint}'
+                raise ValueError(message)
 
         if requirement.url:
             print_err(
@@ -130,7 +135,7 @@ class Requirements:
         if (requirement.marker is not None and
                 not self.evaluate_all_environments(requirement)):
             print_err(f'Ignoring alien requirement:', requirement_str)
-            self.ignored_alien_requirements.append(requirement_str)
+            self.ignored_alien_requirements.append(requirement)
             return
 
         # Handle self-referencing requirements

@@ -1246,3 +1246,35 @@ pyproject.toml with dynamic table and no deps:
     python3dist(setuptools)
     python3dist(wheel)
   result: 0
+
+pyproject.toml with self-referencing extras:
+  skipif: not SETUPTOOLS_60
+  read_pyproject_dependencies: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  extras:
+  - test
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "contourpy"
+    version = "0.1"
+    dependencies = ["numpy >= 1.23"]
+    [project.optional-dependencies]
+    bokeh = ["bokeh", "selenium"]
+    test = ["contourpy[test-no-images]", "matplotlib", "Pillow"]
+    test-no-images = ["pytest", "pytest-rerunfailures", "wurlitzer"]
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(numpy) >= 1.23
+    python3dist(matplotlib)
+    python3dist(pillow)
+    python3dist(pytest)
+    python3dist(pytest-rerunfailures)
+    python3dist(wurlitzer)
+  result: 0

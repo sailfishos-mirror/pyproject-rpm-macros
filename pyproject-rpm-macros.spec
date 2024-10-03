@@ -14,7 +14,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.15.0
+Version:        1.15.1
 Release:        1%{?dist}
 
 # Macro files
@@ -173,6 +173,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Thu Oct 03 2024 Karolina Surma <ksurma@redhat.com> - 1.15.1-1
+- Fix handling of self-referencing extras when reading pyproject.toml
+
 * Tue Sep 17 2024 Python Maint <python-maint@redhat.com> - 1.15.0-1
 - Add a possibility to read runtime requirements from pyproject.toml [project] table
 - Fixes: rhbz#2261939
