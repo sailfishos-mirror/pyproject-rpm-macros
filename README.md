@@ -301,7 +301,7 @@ However, in Fedora packages, always list executables explicitly to avoid uninten
 `%pyproject_save_files` can automatically mark license files with `%license` macro
 and  language (`*.mo`) files with `%lang` macro and appropriate language code.
 Only license files declared via [PEP 639] `License-File` field are detected.
-[PEP 639] is still a draft and can be changed in the future.
+[PEP 639] is still provisional and can be changed in the future.
 It is possible to use the `-l` flag to declare that a missing license should
 terminate the build or `-L` (the default) to explicitly disable this check.
 Packagers are encouraged to use the `-l` flag when the `%license` file is not manually listed in `%files`
