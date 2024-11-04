@@ -156,7 +156,7 @@ in worst case, patch/sed the requirement out from the tox configuration.
 Note that neither `-x` or `-t` can be used with `-R`,
 because runtime dependencies are always required for testing.
 You can only use those options if the build backend  supports the [prepare-metadata-for-build-wheel hook],
-or together with `-w`.
+or together with `-p` or `-w`.
 
 [tox]: https://tox.readthedocs.io/
 [tox-current-env]: https://github.com/fedora-python/tox-current-env/
