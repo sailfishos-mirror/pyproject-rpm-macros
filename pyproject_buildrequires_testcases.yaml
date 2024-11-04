@@ -1278,3 +1278,110 @@ pyproject.toml with self-referencing extras:
     python3dist(pytest-rerunfailures)
     python3dist(wurlitzer)
   result: 0
+
+pyproject.toml with dependency-groups not requested:
+  use_build_system: false
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  expected: "\n"
+  result: 0
+
+pyproject.toml with dependency-groups and build system:
+  skipif: not SETUPTOOLS_60
+  use_build_system: true
+  installed:
+    setuptools: 50
+    wheel: 1
+    tomli: 1
+  dependency_groups:
+    - tests
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+  result: 0
+
+pyproject.toml with dependency-groups one requested:
+  use_build_system: false
+  dependency_groups:
+    - tests
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  expected: |
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+  result: 0
+
+pyproject.toml with dependency-groups two requested:
+  use_build_system: false
+  dependency_groups:
+    - tests
+    - docs
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  expected: |
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+    python3dist(sphinx)
+    python3dist(python-docs-theme)
+  result: 0
+
+pyproject.toml with dependency-groups two requested via comma:
+  use_build_system: false
+  dependency_groups:
+    - tests,docs
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  expected: |
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+    python3dist(sphinx)
+    python3dist(python-docs-theme)
+  result: 0
+
+pyproject.toml with include-group:
+  use_build_system: false
+  dependency_groups:
+    - tests_docs
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+    typing = ["mypy"]
+    tests-docs = [{include-group = "tests"}, {include-group = "docs"}, "pytest-sphinx"]
+  expected: |
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+    python3dist(sphinx)
+    python3dist(python-docs-theme)
+    python3dist(pytest-sphinx)
+  result: 0
+
+pyproject.toml with dependency-groups nonexisting requested:
+  use_build_system: false
+  dependency_groups:
+    - typing
+  pyproject.toml: |
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+  except: LookupError

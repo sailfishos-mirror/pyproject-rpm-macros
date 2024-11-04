@@ -468,6 +468,80 @@ def generate_tox_requirements(toxenv, requirements):
                             source=f'tox --print-deps-only: {toxenv}')
 
 
+def generate_dependency_groups(requested_groups, requirements):
+    """Adapted from https://peps.python.org/pep-0735/#reference-implementation (public domain)"""
+    from collections import defaultdict
+
+    def _normalize_name(name: str) -> str:
+        return re.sub(r"[-_.]+", "-", name).lower()
+
+    def _normalize_group_names(dependency_groups: dict) -> dict:
+        original_names = defaultdict(list)
+        normalized_groups = {}
+
+        for group_name, value in dependency_groups.items():
+            normed_group_name = _normalize_name(group_name)
+            original_names[normed_group_name].append(group_name)
+            normalized_groups[normed_group_name] = value
+
+        errors = []
+        for normed_name, names in original_names.items():
+            if len(names) > 1:
+                errors.append(f"{normed_name} ({', '.join(names)})")
+        if errors:
+            raise ValueError(f"Duplicate dependency group names: {', '.join(errors)}")
+
+        return normalized_groups
+
+    def _resolve_dependency_group(
+        dependency_groups: dict, group: str, past_groups: tuple[str, ...] = ()
+    ) -> list[str]:
+        if group in past_groups:
+            raise ValueError(f"Cyclic dependency group include: {group} -> {past_groups}")
+
+        if group not in dependency_groups:
+            raise LookupError(f"Dependency group '{group}' not found")
+
+        raw_group = dependency_groups[group]
+        if not isinstance(raw_group, list):
+            raise ValueError(f"Dependency group '{group}' is not a list")
+
+        realized_group = []
+        for item in raw_group:
+            if isinstance(item, str):
+                realized_group.append(item)
+            elif isinstance(item, dict):
+                if tuple(item.keys()) != ("include-group",):
+                    raise ValueError(f"Invalid dependency group item: {item}")
+
+                include_group = _normalize_name(next(iter(item.values())))
+                realized_group.extend(
+                    _resolve_dependency_group(
+                        dependency_groups, include_group, past_groups + (group,)
+                    )
+                )
+            else:
+                raise ValueError(f"Invalid dependency group item: {item}")
+
+        return realized_group
+
+    def resolve(dependency_groups: dict, group: str) -> list[str]:
+        if not isinstance(dependency_groups, dict):
+            raise TypeError("Dependency Groups table is not a dict")
+        return _resolve_dependency_group(dependency_groups, _normalize_name(group))
+
+    pyproject_data = load_pyproject()
+    dependency_groups_raw = pyproject_data.get("dependency-groups", {})
+    dependency_groups = _normalize_group_names(dependency_groups_raw)
+
+    for group_names in requested_groups:
+        for group_name in group_names.split(","):
+            requirements.extend(
+                resolve(dependency_groups, group_name),
+                source=f"Dependency group {group_name}",
+            )
+
+
 def python3dist(name, op=None, version=None, python3_pkgversion="3"):
     prefix = f"python{python3_pkgversion}dist"
 
@@ -480,7 +554,7 @@ def python3dist(name, op=None, version=None, python3_pkgversion="3"):
 
 
 def generate_requires(
-    *, include_runtime=False, build_wheel=False, wheeldir=None, toxenv=None, extras=None,
+    *, include_runtime=False, build_wheel=False, wheeldir=None, toxenv=None, extras=None, dependency_groups=None,
     get_installed_version=importlib.metadata.version,  # for dep injection
     generate_extras=False, python3_pkgversion="3", requirement_files=None, use_build_system=True,
     read_pyproject_dependencies=False,
@@ -514,7 +588,9 @@ def generate_requires(
             generate_build_requirements(backend, requirements)
         if toxenv:
             include_runtime = True
-            generate_tox_requirements(toxenv, requirements)
+            generate_tox_requirements(toxenv, requirements)  # TODO extend dependency_groups
+        if dependency_groups:
+            generate_dependency_groups(dependency_groups, requirements)
         if include_runtime:
             generate_run_requirements(backend, requirements, build_wheel=build_wheel,
                 read_pyproject_dependencies=read_pyproject_dependencies, wheeldir=wheeldir)
@@ -558,6 +634,11 @@ def main(argv):
         '-x', '--extras', metavar='EXTRAS', action='append',
         help='comma separated list of "extras" for runtime requirements '
              '(e.g. -x testing,feature-x) (implies --runtime, can be repeated)',
+    )
+    parser.add_argument(
+        '-g', '--dependency-groups', metavar='GROUPS', action='append',
+        help='comma separated list of dependency groups (PEP 735) for requirements '
+             '(e.g. -g tests,docs) (can be repeated)',
     )
     parser.add_argument(
         '-t', '--tox', action='store_true',
@@ -627,6 +708,7 @@ def main(argv):
             wheeldir=args.wheeldir,
             toxenv=args.toxenv,
             extras=args.extras,
+            dependency_groups=args.dependency_groups,
             generate_extras=args.generate_extras,
             python3_pkgversion=args.python3_pkgversion,
             requirement_files=args.requirement_files,

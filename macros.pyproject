@@ -158,9 +158,16 @@ fi
 %default_toxenv py%{python3_version_nodots}
 %toxenv %{default_toxenv}
 
+%_pyproject_tomlidep %["%{python3_pkgversion}" == "3"\
+    ? "echo '(python%{python3_pkgversion}dist(tomli) if python%{python3_pkgversion}-devel < 3.11)'"\
+    : "%[v"%{python3_pkgversion}" < v"3.11"\
+       ? "echo 'python%{python3_pkgversion}dist(tomli)'"\
+       : "true # will use tomllib, echo nothing"\
+    ]"\
+  ]
 
 # Note: Keep the options in sync with this macro from macros.aaa-pyproject-srpm
-%pyproject_buildrequires(rRxtNwpe:C:) %{expand:\\\
+%pyproject_buildrequires(rRxtNwpe:g:C:) %{expand:\\\
 %_set_pytest_addopts
 # The default flags expect the package note file to exist
 # see https://bugzilla.redhat.com/show_bug.cgi?id=2097535
@@ -181,6 +188,9 @@ fi
 %{-w:%{error:The -N and -w options are mutually exclusive}}
 %{-p:%{error:The -N and -p options are mutually exclusive}}
 %{-C:%{error:The -N and -C options are mutually exclusive}}
+%{-g:if [ -f pyproject.toml ]; then
+  %_pyproject_tomlidep
+fi}
 }
 %{-w:
 %{-p:%{error:The -w and -p options are mutually exclusive}}
@@ -191,13 +201,7 @@ echo 'python%{python3_pkgversion}-devel'
 echo 'python%{python3_pkgversion}dist(packaging)'
 %{!-N:echo 'python%{python3_pkgversion}dist(pip) >= 19'
 if [ -f pyproject.toml ]; then
-  %["%{python3_pkgversion}" == "3"
-    ? "echo '(python%{python3_pkgversion}dist(tomli) if python%{python3_pkgversion}-devel < 3.11)'"
-    : "%[v"%{python3_pkgversion}" < v"3.11"
-       ? "echo 'python%{python3_pkgversion}dist(tomli)'"
-       : "true # will use tomllib, echo nothing"
-    ]"
-  ]
+  %_pyproject_tomlidep
 elif [ -f setup.py ]; then
   # Note: If the default requirements change, also change them in the script!
   echo 'python%{python3_pkgversion}dist(setuptools) >= 40.8'

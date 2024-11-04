@@ -71,6 +71,7 @@ def test_data(case_name, capfd, tmp_path, monkeypatch):
             build_wheel=case.get('build_wheel', False),
             wheeldir=str(wheeldir),
             extras=case.get('extras', []),
+            dependency_groups=case.get('dependency_groups', []),
             toxenv=case.get('toxenv', None),
             generate_extras=case.get('generate_extras', False),
             requirement_files=requirement_files,
