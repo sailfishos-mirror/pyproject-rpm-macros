@@ -468,6 +468,29 @@ def generate_tox_requirements(toxenv, requirements):
                             source=f'tox --print-deps-only: {toxenv}')
 
 
+def tox_dependency_groups(toxenv):
+    # We call this command separately instead of folding it into the previous one
+    # becasue --print-dependency-groups-to only works with tox 4.22+ and tox-current-env 0.0.14+.
+    # We handle failure gracefully: upstreams using dependency_groups should require tox >= 4.22.
+    toxenv = ','.join(toxenv)
+    with tempfile.NamedTemporaryFile('r') as groups:
+        r = subprocess.run(
+            [sys.executable, '-m', 'tox',
+             '--print-dependency-groups-to', groups.name,
+             '-q', '-e', toxenv],
+            check=False,
+            encoding='utf-8',
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        if r.returncode == 0:
+            if r.stdout:
+                print_err(r.stdout, end='')
+            if output := groups.read().strip():
+                return output.splitlines()
+    return []
+
+
 def generate_dependency_groups(requested_groups, requirements):
     """Adapted from https://peps.python.org/pep-0735/#reference-implementation (public domain)"""
     from collections import defaultdict
@@ -573,6 +596,7 @@ def generate_requires(
         config_settings=config_settings,
     )
 
+    dependency_groups = dependency_groups or []
     try:
         if (include_runtime or toxenv or read_pyproject_dependencies) and not use_build_system:
             raise ValueError('-N option cannot be used in combination with -r, -e, -t, -x, -p options')
@@ -588,7 +612,8 @@ def generate_requires(
             generate_build_requirements(backend, requirements)
         if toxenv:
             include_runtime = True
-            generate_tox_requirements(toxenv, requirements)  # TODO extend dependency_groups
+            generate_tox_requirements(toxenv, requirements)
+            dependency_groups.extend(tox_dependency_groups(toxenv))
         if dependency_groups:
             generate_dependency_groups(dependency_groups, requirements)
         if include_runtime:

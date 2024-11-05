@@ -175,6 +175,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Mon Nov 04 2024 Miro Hrončok <mhroncok@redhat.com> - 1.16.0-1
 - %%pyproject_buildrequires: Add support for dependency groups (PEP 735), via the -g flag
+- This is implied when used tox testenvs depend on dependency groups (requires tox 4.22+)
 - Fixes: rhbz#2318849
 
 * Thu Oct 03 2024 Karolina Surma <ksurma@redhat.com> - 1.15.1-1

@@ -11,6 +11,14 @@ from pyproject_buildrequires import generate_requires, load_pyproject
 SETUPTOOLS_VERSION = packaging.version.parse(setuptools.__version__)
 SETUPTOOLS_60 = SETUPTOOLS_VERSION >= packaging.version.parse('60')
 
+try:
+    import tox
+except ImportError:
+    TOX_4_22 = False
+else:
+    TOX_VERSION = packaging.version.parse(tox.__version__)
+    TOX_4_22 = TOX_VERSION >= packaging.version.parse('4.22')
+
 testcases = {}
 with Path(__file__).parent.joinpath('pyproject_buildrequires_testcases.yaml').open() as f:
     testcases = yaml.safe_load(f)

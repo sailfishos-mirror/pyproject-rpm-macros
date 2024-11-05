@@ -1385,3 +1385,37 @@ pyproject.toml with dependency-groups nonexisting requested:
     tests = ["pytest>=5", "pytest-mock"]
     docs = ["sphinx", "python-docs-theme"]
   except: LookupError
+
+tox with dependency_groups:
+  skipif: not (SETUPTOOLS_60 and TOX_4_22)
+  installed:
+    setuptools: 50
+    wheel: 1
+    tox: 4.22
+    tox-current-env: 0.0.14
+  toxenv:
+    - py3
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [project]
+    name = "my_package"
+    version = "0.1"
+    [dependency-groups]
+    tests = ["pytest>=5", "pytest-mock"]
+    docs = ["sphinx", "python-docs-theme"]
+    [tool.tox]
+    requires = ["tox>=4.22"]
+    [tool.tox.env_run_base]
+    dependency_groups = ["tests"]
+    commands = [["pytest"]]
+  expected: |
+    python3dist(setuptools)
+    python3dist(wheel)
+    python3dist(tox-current-env) >= 0.0.6
+    python3dist(tox) >= 4.22
+    python3dist(tox)
+    python3dist(pytest) >= 5
+    python3dist(pytest-mock)
+  result: 0

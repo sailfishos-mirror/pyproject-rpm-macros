@@ -155,6 +155,9 @@ The `-e` option redefines `%{toxenv}` for further reuse.
 Use `%{default_toxenv}` to get the default value.
 
 The `-t`/`-e` option uses [tox-current-env]'s `--print-deps-to-file` behind the scenes.
+It generates dependencies listed directly in `deps`,
+dependencies defined through `extras`,
+and on tox 4.22+ also dependencies defined through `dependency_groups`.
 
 If your package specifies some tox plugins in `tox.requires`,
 such plugins will be BuildRequired as well.
