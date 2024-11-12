@@ -166,7 +166,6 @@ fi
     ]"\
   ]
 
-# Note: Keep the options in sync with this macro from macros.aaa-pyproject-srpm
 %pyproject_buildrequires(rRxtNwpe:g:C:) %{expand:\\\
 %_set_pytest_addopts
 # The default flags expect the package note file to exist

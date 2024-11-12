@@ -14,7 +14,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.16.2
+Version:        1.16.3
 Release:        1%{?dist}
 
 # Macro files
@@ -137,15 +137,9 @@ install -pm 644 pyproject_construct_toxenv.py %{buildroot}%{_rpmconfigdir}/redha
 install -pm 644 pyproject_requirements_txt.py %{buildroot}%{_rpmconfigdir}/redhat/
 install -pm 644 pyproject_wheel.py %{buildroot}%{_rpmconfigdir}/redhat/
 
-%check
-# assert the two signatures of %%pyproject_buildrequires match exactly
-signature1="$(grep '^%%pyproject_buildrequires' macros.pyproject | cut -d' ' -f1)"
-signature2="$(grep '^%%pyproject_buildrequires' macros.aaa-pyproject-srpm | cut -d' ' -f1)"
-test "$signature1" == "$signature2"
-# but also assert we are not comparing empty strings
-test "$signature1" != ""
 
 %if %{with tests}
+%check
 export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856356
 %pytest -vv --doctest-modules %{?with_pytest_xdist:-n auto} %{!?with_tox_tests:-k "not tox"}
 
@@ -173,6 +167,10 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Tue Dec 03 2024 Miro Hrončok <mhroncok@redhat.com> - 1.16.3-1
+- Accept arbitrary options from %%pyproject_buildrequires in pyproject-srpm-macros
+- This will make future additions smoother
+
 * Wed Nov 13 2024 Miro Hrončok <mhroncok@redhat.com> - 1.16.2-1
 - Fix one remaining test for setuptools 70+
 
