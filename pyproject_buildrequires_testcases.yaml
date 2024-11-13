@@ -1591,12 +1591,20 @@ tox with dependency_groups:
     [tool.tox.env_run_base]
     dependency_groups = ["tests"]
     commands = [["pytest"]]
-  expected: |
-    python3dist(setuptools)
-    python3dist(wheel)
-    python3dist(tox-current-env) >= 0.0.6
-    python3dist(tox) >= 4.22
-    python3dist(tox)
-    python3dist(pytest) >= 5
-    python3dist(pytest-mock)
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox) >= 4.22
+      python3dist(tox)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(wheel)
+      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox) >= 4.22
+      python3dist(tox)
+      python3dist(pytest) >= 5
+      python3dist(pytest-mock)
   result: 0

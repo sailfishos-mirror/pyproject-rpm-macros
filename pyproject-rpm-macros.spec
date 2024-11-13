@@ -14,7 +14,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.16.1
+Version:        1.16.2
 Release:        1%{?dist}
 
 # Macro files
@@ -173,6 +173,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Wed Nov 13 2024 Miro Hrončok <mhroncok@redhat.com> - 1.16.2-1
+- Fix one remaining test for setuptools 70+
+
 * Thu Nov 07 2024 Miro Hrončok <miro@hroncok.cz> - 1.16.1-1
 - Support for setuptools 70+
 - wheel is no longer generated as a dependency of the default build system
