@@ -49,11 +49,7 @@ head -n1 %{buildroot}%{_bindir}/%{name}.py | grep -E '#!\s*%{python3}\s+%{py3_sh
 test ! -e %{buildroot}%{python3_sitelib}/*.dist-info/direct_url.json
 
 # Internal check for the value of %%{pyproject_build_lib} in a noarch package
-%if 0%{?rhel} == 9
-test "%{pyproject_build_lib}" == "$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib)"
-%else
 test "%{pyproject_build_lib}" == "${PWD}/build/lib"
-%endif
 
 %if 0%{?rhel} != 9
 # Internal check for custom prefix

@@ -46,13 +46,8 @@ cd ..
 
 %check
 # Internal check for the value of %%{pyproject_build_lib}
-%if 0%{?rhel} == 9
-for dir in . markupsafe-%{markupsafe_version} tldr-%{tldr_version}; do
-  (cd $dir && test "%{pyproject_build_lib}" == "$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib.%{python3_platform}-%{python3_version}):$(echo %{_pyproject_builddir}/pip-req-build-*/build/lib)")
-done
-%else
 cd markupsafe-%{markupsafe_version}
-%if 0%{?fedora} == 36
+%if 0%{?rhel} == 9
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{markupsafe_version}/build/lib.%{python3_platform}-%{python3_version}"
 %else
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{markupsafe_version}/build/lib.%{python3_platform}-cpython-%{python3_version_nodots}"
@@ -60,7 +55,6 @@ test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{marku
 cd ../tldr-%{tldr_version}
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/tldr-%{tldr_version}/build/lib"
 cd ..
-%endif
 
 
 %files
