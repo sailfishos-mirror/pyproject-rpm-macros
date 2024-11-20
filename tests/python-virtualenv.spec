@@ -37,7 +37,7 @@ sed -i -e 's/distlib<1,>=0.3.6/distlib<1,>=0.3.2/' \
 # Drop the option for flaky
 sed -i 's/--no-success-flaky-report//' pyproject.toml
 # Hacky backport of https://src.fedoraproject.org/rpms/python-virtualenv/c/87b1f95664
-%if 0%{?fedora} >= 39 || 0%{?rhel} >= 10
+%if 0%{?rhel} != 9
 sed -i 's/_nonwrappers/_hookimpls/' tests/conftest.py
 %endif
 

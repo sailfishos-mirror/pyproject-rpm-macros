@@ -10,8 +10,8 @@ BuildArch:      noarch
 BuildRequires:  python3-devel
 BuildRequires:  pyproject-rpm-macros
 
-%if 0%{?fedora} >= 37 || 0%{?rhel} >= 10
-# Wekrzeug in Fedora 37 isn't compatible with our httpbin
+%if 0%{?rhel} != 9
+# Wekrzeug in Fedora and EL10+ isn't compatible with our httpbin
 Patch:          https://src.fedoraproject.org/rpms/python-httpbin/raw/0e4a7e2812/f/0001-Fix-disabling-of-location-header-autocorrect-for-wer.patch
 %endif
 
@@ -61,7 +61,7 @@ sed -Ei 's/\bdef (test_(relative_)?redirect_(to_post|n_(equals_to|higher_than)_1
 
 %if %{with tests}
 %check
-%if 0%{?fedora} < 40 && 0%{?rhel} < 10
+%if 0%{?rhel} == 9
 # this version of httpbin is not compatible with werkzeug 3+
 %tox
 %endif
