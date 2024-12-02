@@ -15,9 +15,9 @@ Source:         %{pypi_source setuptools %{version}}
 
 # Patch from Fedora proper
 %if 0%{?rhel} != 9
-Patch:          https://src.fedoraproject.org/rpms/python-setuptools/raw/8ae9b2a777c/f/Remove-optional-or-unpackaged-test-deps.patch
+Patch:          Remove-optional-or-unpackaged-test-deps.patch
 %else
-Patch:          https://src.fedoraproject.org/rpms/python-setuptools/raw/6fc093d6b3d/f/0001-Remove-optional-or-unpackaged-test-deps.patch
+Patch:          0001-Remove-optional-or-unpackaged-test-deps.patch
 %endif
 
 BuildArch:      noarch

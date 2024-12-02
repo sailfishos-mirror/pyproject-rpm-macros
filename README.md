@@ -565,11 +565,11 @@ For each `$PKG.spec` in `tests/`:
 
   - download the sources:
 
-        spectool -g -R $PKG.spec
+        spectool -g $PKG.spec
 
   - build a SRPM:
 
-        rpmbuild -bs $PKG.spec
+        rpmbuild -bs --define '_sourcedir .' $PKG.spec
 
   - build in mock, using the path from the command above as `$SRPM`:
 

@@ -8,7 +8,7 @@ Source0:        %{pypi_source}
 # OpenLDAP 2.5+ is not yet supported by python-ldap
 # https://github.com/python-ldap/python-ldap/issues/432
 # Fedora has this patch to make it build, but the tests will fail anyway
-Patch0:         https://src.fedoraproject.org/rpms/python-ldap/raw/a237d9b212bd1581e07f4f1a8f54c26a7190843c/f/python-ldap-always-use-ldap-library.patch
+Patch0:         python-ldap-always-use-ldap-library.patch
 
 BuildRequires:  python3-devel
 BuildRequires:  pyproject-rpm-macros
