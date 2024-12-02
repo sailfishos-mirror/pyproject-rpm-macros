@@ -12,7 +12,7 @@ BuildRequires:  pyproject-rpm-macros
 
 %if 0%{?rhel} != 9
 # Wekrzeug in Fedora and EL10+ isn't compatible with our httpbin
-Patch:          0001-Fix-disabling-of-location-header-autocorrect-for-wer.patch
+Patch:          python-httpbin-werkzeug-2.1.patch
 %endif
 
 # no flask, itsdangerous, raven, werkzeug packaged for EPEL 9 yet

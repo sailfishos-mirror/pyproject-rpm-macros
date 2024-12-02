@@ -14,11 +14,7 @@ URL:            https://pypi.python.org/pypi/setuptools
 Source:         %{pypi_source setuptools %{version}}
 
 # Patch from Fedora proper
-%if 0%{?rhel} != 9
-Patch:          Remove-optional-or-unpackaged-test-deps.patch
-%else
-Patch:          0001-Remove-optional-or-unpackaged-test-deps.patch
-%endif
+Patch:          python-setuptools-%{version}-remove-optional-or-unpackaged-test-deps.patch
 
 BuildArch:      noarch
 
