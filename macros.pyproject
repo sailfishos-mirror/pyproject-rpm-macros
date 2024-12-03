@@ -192,6 +192,10 @@ fi
 fi}
 }
 %{-w:
+%{!?__pyproject_buildrequires_w_warned:%{warn:The %%pyproject_buildrequires -w option is deprecated.
+It's not efficient to build the wheel several times during the build.
+The option is not scheduled for removal, but packagers should use the -p option instead.
+}%global __pyproject_buildrequires_w_warned 1}
 %{-p:%{error:The -w and -p options are mutually exclusive}}
 }
 %{-e:%{expand:%global toxenv %(%{__python3} -s %{_rpmconfigdir}/redhat/pyproject_construct_toxenv.py %{?**})}}

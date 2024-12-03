@@ -80,7 +80,7 @@ using the `-R` flag:
     %pyproject_buildrequires -R
 
 Alternatively, if the project specifies its dependencies in the pyproject.toml
-`[project]` table (as defined in [PEP 621](https://www.python.org/dev/peps/pep-0621/)),
+`[project]` table (as defined in [PEP 621]),
 the runtime dependencies can be obtained by reading that metadata.
 
 This can be enabled by using the `-p` flag.
@@ -91,28 +91,6 @@ Please note that not all build backends which use pyproject.toml support the
 `[project]` table scheme.
 For example, poetry-core (at least in 1.9.0) defines package metadata in the
 custom `[tool.poetry]` table which is not supported by the `%pyproject_buildrequires` macro.
-
-Finally, the runtime dependencies can be obtained by building the wheel and reading the metadata from the built wheel.
-This can be enabled with the `-w` flag and cannot be combined with `-p`.
-Support for building wheels with `%pyproject_buildrequires -w` is **provisional** and the behavior might change.
-Please subscribe to Fedora's [python-devel list] if you use the option.
-
-    %generate_buildrequires
-    %pyproject_buildrequires -w
-
-When this is used, the wheel is going to be built at least twice,
-becasue the `%generate_buildrequires` section runs repeatedly.
-To avoid accidentally reusing a wheel leaking from a previous (different) build,
-it cannot be reused between `%generate_buildrequires` rounds.
-Contrarily to that, rebuilding the wheel again in the `%build` section is redundant
-and the packager can omit the `%build` section entirely
-to reuse the wheel built from the last round of `%generate_buildrequires`.
-Be extra careful when attempting to modify the sources after `%pyproject_buildrequires`,
-e.g. when running extra commands in the `%build` section:
-
-    %build
-    cython src/wrong.pyx  # this is too late with %%pyproject_buildrequires -w
-    %pyproject_wheel
 
 For projects that specify test requirements using an [`extra`
 provide](https://packaging.python.org/specifications/core-metadata/#provides-extra-multiple-use),
@@ -167,7 +145,7 @@ in worst case, patch/sed the requirement out from the tox configuration.
 Note that neither `-x` or `-t` can be used with `-R` or `-N`,
 because runtime dependencies are always required for testing.
 You can only use those options if the build backend  supports the [prepare-metadata-for-build-wheel hook],
-or together with `-p` or `-w`.
+or together with `-p`.
 However, using `-g` with `-R` or `-N` is supported because dependency groups don't need to be used for testing
 and can be obtained by reading `pyproject.toml` only.
 
@@ -184,7 +162,7 @@ Dependencies will be loaded from them:
 For packages not using build system you can use `-N` to entirely skip automatical
 generation of requirements and install requirements only from manually specified files.
 `-N` option implies `-R` and cannot be used in combination with other options mentioned above
-(`-w`, `-e`, `-t`, `-x`, `-p`).
+(`-e`, `-t`, `-x`, `-p`).
 
 The `%pyproject_buildrequires` macro also accepts the `-r` flag for backward compatibility;
 it means "include runtime dependencies" which has been the default since version 0-53.
@@ -532,6 +510,7 @@ so be prepared for problems.
 [PEP 508]: https://www.python.org/dev/peps/pep-0508/
 [PEP 517]: https://www.python.org/dev/peps/pep-0517/
 [PEP 518]: https://www.python.org/dev/peps/pep-0518/
+[PEP 621]: https://www.python.org/dev/peps/pep-0621/
 [PEP 639]: https://www.python.org/dev/peps/pep-0639/
 [PEP 735]: https://www.python.org/dev/peps/pep-0735/
 [pip's documentation]: https://pip.pypa.io/en/stable/cli/pip_install/#vcs-support
@@ -541,6 +520,11 @@ Deprecated
 ----------
 
 The `%{pyproject_build_lib}` macro is deprecated, don't use it.
+
+The `%pyproject_buildrequires` `-w` option is deprecated, don't use it.
+If the build backend does not support the [prepare-metadata-for-build-wheel hook],
+consider using the `-p` flag to read the metadata from the pyproject.toml
+`[project]` table (as defined in [PEP 621]) instead.
 
 
 Testing the macros

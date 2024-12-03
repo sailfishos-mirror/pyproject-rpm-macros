@@ -322,9 +322,8 @@ def generate_run_requirements_hook(backend, requirements):
             'The build backend cannot provide build metadata '
             '(incl. runtime requirements) before build. '
             'If the dependencies are specified in the pyproject.toml [project] '
-            'table, you can use the -p flag to read them.'
-            'Alternatively, use the provisional -w flag to build the wheel and parse the metadata from it, '
-            'or use the -R flag not to generate runtime dependencies.'
+            'table, you can use the -p flag to read them. '
+            'Alternatively, use the -R flag not to generate runtime dependencies.'
         )
     dir_basename = prepare_metadata('.', config_settings=requirements.config_settings)
     with open(dir_basename + '/METADATA') as metadata_file:
@@ -669,7 +668,7 @@ def main(argv):
     parser.add_argument(
         '-w', '--wheel', action='store_true', default=False,
         help=('Generate run-time requirements by building the wheel '
-              '(useful for build backends without the prepare_metadata_for_build_wheel hook)'),
+              '(useful for build backends without the prepare_metadata_for_build_wheel hook, deprecated)'),
     )
     parser.add_argument(
         '-p', '--read-pyproject-dependencies', action='store_true', default=False,
