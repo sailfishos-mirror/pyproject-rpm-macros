@@ -289,6 +289,14 @@ However, in Fedora packages, always list executables explicitly to avoid uninten
     %doc README.rst
     %{_bindir}/downloader
 
+If the package has no Python modules in it, you can explicitly use `-M` to denote that.
+
+    %install
+    %pyproject_install
+    %pyproject_save_files -M
+
+Otherwise, at least one module-glob argument is required.
+
 `%pyproject_save_files` can automatically mark license files with `%license` macro
 and  language (`*.mo`) files with `%lang` macro and appropriate language code.
 Only license files declared via [PEP 639] `License-File` field are detected.

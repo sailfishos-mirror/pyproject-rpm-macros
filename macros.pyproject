@@ -122,7 +122,7 @@ fi
 # https://github.com/rpm-software-management/rpm/issues/1749#issuecomment-1020420616
 # Since we support both ways, we pass either 4.19 or 4.18 to the script, so it knows which one to use
 # Rather than passing the actual version, we let RPM compare the versions, as it is easier done here than in Python
-%pyproject_save_files(lL) %{expand:\\\
+%pyproject_save_files(lLM) %{expand:\\\
 %{expr:v"0%{?rpmversion}" >= v"4.18.90" ? "RPM_FILES_ESCAPE=4.19" : "RPM_FILES_ESCAPE=4.18" } \\
 %{__python3} %{_rpmconfigdir}/redhat/pyproject_save_files.py \\
   --output-files "%{pyproject_files}" \\

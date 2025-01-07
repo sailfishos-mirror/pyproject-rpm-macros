@@ -94,6 +94,9 @@
     - virtualenv:
         dir: .
         run: ./mocktest.sh python-virtualenv
+    - coverage_pth:
+        dir: .
+        run: ./mocktest.sh python-coverage-pth
     - pello:
         dir: .
         run: ./mocktest.sh python-pello

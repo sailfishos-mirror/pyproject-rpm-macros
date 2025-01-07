@@ -614,8 +614,10 @@ def generate_file_list(paths_dict, module_globs, include_others=False):
     # Users using '*' don't care about the files in the package, so it's ok
     # not to fail the build when no modules are detected
     # There can be legitimate reasons to create a package without Python modules
-    if not modules and fnmatch.fnmatchcase("", glob):
-        done_globs.add(glob)
+    if not modules:
+        for glob in module_globs:
+            if fnmatch.fnmatchcase("", glob):
+                done_globs.add(glob)
 
     missed = module_globs - done_globs
     if missed:
@@ -782,7 +784,7 @@ def dist_metadata(buildroot, record_path):
     return dist.metadata
 
 
-def pyproject_save_files_and_modules(buildroot, sitelib, sitearch, python_version, pyproject_record, prefix, assert_license, varargs):
+def pyproject_save_files_and_modules(buildroot, sitelib, sitearch, python_version, pyproject_record, prefix, assert_license, allow_no_modules, varargs):
     """
     Takes arguments from the %{pyproject_save_files} macro
 
@@ -797,6 +799,15 @@ def pyproject_save_files_and_modules(buildroot, sitelib, sitearch, python_versio
     sitedirs = sorted({sitelib, sitearch})
 
     globs, include_auto = parse_varargs(varargs)
+    if not globs and not allow_no_modules:
+        raise ValueError(
+            "At least one module glob needs to be provided to %pyproject_save_files. "
+            "Alternatively, use -M to indicate no Python modules should be saved."
+        )
+    if globs and allow_no_modules:
+        raise ValueError(
+            "%pyproject_save_files -M cannot be used together with module globs."
+        )
     parsed_records = load_parsed_record(pyproject_record)
 
     final_file_list = []
@@ -840,6 +851,7 @@ def main(cli_args):
         cli_args.pyproject_record,
         cli_args.prefix,
         cli_args.assert_license,
+        cli_args.allow_no_modules,
         cli_args.varargs,
     )
 
@@ -853,7 +865,7 @@ def argparser():
         prog="%pyproject_save_files",
         add_help=False,
         # custom usage to add +auto
-        usage="%(prog)s  [-l|-L] MODULE_GLOB [MODULE_GLOB ...] [+auto]",
+        usage="%(prog)s  [-l|-L] MODULE_GLOB|-M [MODULE_GLOB ...] [+auto]",
     )
     parser.add_argument(
         '--help', action='help',
@@ -878,7 +890,11 @@ def argparser():
         help="Don't fail when no License-File (PEP 639) is found (the default).",
     )
     parser.add_argument(
-        "varargs", nargs="+", metavar="MODULE_GLOB",
+        "-M", "--allow-no-modules", action="store_true", default=False,
+        help="Don't fail when no globs are provided, only include non-modules data in the generated filelist.",
+    )
+    parser.add_argument(
+        "varargs", nargs="*", metavar="MODULE_GLOB",
         help="Shell-like glob matching top-level module names to save into %%{pyproject_files}",
     )
     return parser
