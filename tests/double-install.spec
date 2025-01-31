@@ -2,7 +2,7 @@ Name:           double-install
 Version:        0
 Release:        0%{?dist}
 Summary:        Install 2 wheels
-License:        BSD and MIT
+License:        BSD-3-Clause AND MIT
 %global         markupsafe_version 2.0.1
 %global         tldr_version 0.4.4
 Source1:        https://github.com/pallets/markupsafe/archive/%{markupsafe_version}/MarkupSafe-%{markupsafe_version}.tar.gz

@@ -2,7 +2,7 @@ Name:             python-distroinfo
 Version:          0.3.2
 Release:          0%{?dist}
 Summary:          Parsing and querying distribution metadata stored in text/YAML files
-License:          ASL 2.0
+License:          Apache-2.0
 URL:              https://github.com/softwarefactory-project/distroinfo
 Source0:          %{pypi_source distroinfo}
 BuildArch:        noarch

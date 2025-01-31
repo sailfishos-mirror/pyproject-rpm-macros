@@ -3,7 +3,7 @@ Version:        2.0.0~rc6
 %global upstream_version 2.0.0rc6
 Release:        0%{?dist}
 Summary:        RepRap printer interface and tools
-License:        GPLv3+ and FSFAP
+License:        GPL-3.0-or-later AND FSFAP
 URL:            https://github.com/kliment/Printrun
 Source0:        https://github.com/kliment/Printrun/archive/%{name}-%{upstream_version}.tar.gz
 

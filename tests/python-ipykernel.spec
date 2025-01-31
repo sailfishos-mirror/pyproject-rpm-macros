@@ -2,7 +2,7 @@ Name:           python-ipykernel
 Version:        6.11.0
 Release:        0%{?dist}
 Summary:        IPython Kernel for Jupyter
-License:        BSD
+License:        BSD-3-Clause
 URL:            https://github.com/ipython/ipykernel
 Source0:        https://github.com/ipython/ipykernel/archive/v%{version}/ipykernel-%{version}.tar.gz
 

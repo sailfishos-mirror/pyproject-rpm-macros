@@ -3,7 +3,7 @@ Version:        0.8.3
 Release:        11%{?dist}
 Summary:        Markdown parser for Python
 
-License:        BSD
+License:        BSD-3-Clause
 URL:            https://github.com/lepture/mistune
 Source0:        %{url}/archive/v%{version}.tar.gz
 

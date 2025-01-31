@@ -2,7 +2,7 @@ Name:           python-coverage-pth
 Version:        0.0.2
 Release:        0%{?dist}
 Summary:        Coverage PTH file to enable coverage at the virtualenv level
-License:        BSD
+License:        BSD-2-Clause
 URL:            https://github.com/dougn/coverage_pth
 Source:         %{pypi_source coverage_pth}
 

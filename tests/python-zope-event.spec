@@ -2,7 +2,7 @@ Name:           python-zope-event
 Version:        4.2.0
 Release:        0%{?dist}
 Summary:        Zope Event Publication
-License:        ZPLv2.1
+License:        ZPL-2.1
 URL:            https://pypi.python.org/pypi/zope.event/
 Source0:        %{pypi_source zope.event}
 BuildArch:      noarch

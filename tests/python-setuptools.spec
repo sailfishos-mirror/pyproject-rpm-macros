@@ -9,7 +9,7 @@ Version:        59.6.0
 Release:        0%{?dist}
 Summary:        Easily build and distribute Python packages
 # see the real Fedora package for explanation:
-License:        MIT and (BSD or ASL 2.0)
+License:        MIT AND (BSD-2-Clause OR Apache-2.0)
 URL:            https://pypi.python.org/pypi/setuptools
 Source:         %{pypi_source setuptools %{version}}
 

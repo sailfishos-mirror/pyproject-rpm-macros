@@ -1,7 +1,7 @@
 Name:           python-ldap
 Version:        3.3.0
 Release:        0%{?dist}
-License:        Python
+License:        python-ldap
 Summary:        An object-oriented API to access LDAP directory servers
 Source0:        %{pypi_source}
 

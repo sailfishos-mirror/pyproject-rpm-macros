@@ -3,7 +3,7 @@ Version:        3.0.0
 Release:        0%{?dist}
 Summary:        Distribution-building parts of Flit
 
-License:        BSD
+License:        BSD-3-Clause AND BSD-2-Clause
 URL:            https://pypi.org/project/flit-core/
 Source0:        https://github.com/takluyver/flit/archive/%{version}/flit-%{version}.tar.gz
 

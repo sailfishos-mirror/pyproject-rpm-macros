@@ -2,7 +2,7 @@ Name:           python-django
 Version:        3.0.7
 Release:        0%{?dist}
 Summary:        A high-level Python Web framework
-License:        BSD
+License:        BSD-3-Clause
 URL:            https://www.djangoproject.com/
 Source0:        %{pypi_source Django}
 BuildArch:      noarch
