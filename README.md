@@ -402,7 +402,7 @@ Provisional: Declarative Buildsystem (RPM 4.20+)
 
 It is possible to reduce some of the spec boilerplate by using the provided
 pyproject [declarative buildsystem].
-This option is only available with RPM 4.20+ (e.g. in Fedora 41+).
+This option is only available with RPM 4.20+ (e.g. in Fedora 41+, ELN/CentOS Stream 11+).
 The declarative buildsystem is **provisional** and the behavior might change.
 Please subscribe to Fedora's [python-devel list] if you use the feature.
 
