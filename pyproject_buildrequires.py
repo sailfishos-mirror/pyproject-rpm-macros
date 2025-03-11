@@ -416,7 +416,7 @@ def generate_run_requirements(backend, requirements, *, build_wheel, read_pyproj
 
 def generate_tox_requirements(toxenv, requirements):
     toxenv = ','.join(toxenv)
-    requirements.add('tox-current-env >= 0.0.6', source='tox itself')
+    requirements.add('tox-current-env >= 0.0.16', source='tox itself')
     requirements.check(source='tox itself')
     with tempfile.NamedTemporaryFile('r') as deps, \
         tempfile.NamedTemporaryFile('r') as extras, \
@@ -426,6 +426,7 @@ def generate_tox_requirements(toxenv, requirements):
              '--print-deps-to', deps.name,
              '--print-extras-to', extras.name,
              '--no-provision', provision.name,
+             '--assert-config',
              '-q', '-r', '-e', toxenv],
             check=False,
             encoding='utf-8',

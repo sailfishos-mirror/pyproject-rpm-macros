@@ -221,7 +221,7 @@ The macro:
      - Always prepends `$PATH` with `%{buildroot}%{_bindir}`
      - If not defined, sets `$PYTHONPATH` to `%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}`
  - If not defined, sets `$TOX_TESTENV_PASSENV` to `*`
- - Runs `tox` with `-q` (quiet), `--recreate` and `--current-env` (from [tox-current-env]) flags
+ - Runs `tox` with `-q` (quiet), `--recreate`, `--current-env` (from [tox-current-env]) and `--assert-config` (from [tox-current-env]) flags
  - Implicitly uses the tox environment name stored in `%{toxenv}` - as overridden by `%pyproject_buildrequires -e`
 
 By using the `-e` flag, you can use a different tox environment(s):

@@ -456,7 +456,7 @@ tox dependencies:
     setuptools: 50
     wheel: 1
     tox: 3.5.3
-    tox-current-env: 0.0.6
+    tox-current-env: 0.0.16
   toxenv:
     - py3
   setup.py: |
@@ -479,13 +479,13 @@ tox dependencies:
     - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(toxdep1)
       python3dist(toxdep2)
       python3dist(inst)
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox)
       python3dist(toxdep1)
       python3dist(toxdep2)
@@ -493,7 +493,7 @@ tox dependencies:
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox)
       python3dist(toxdep1)
       python3dist(toxdep2)
@@ -505,7 +505,7 @@ tox extras:
     setuptools: 50
     wheel: 1
     tox: 3.5.3
-    tox-current-env: 0.0.6
+    tox-current-env: 0.0.16
   generate_extras: true
   toxenv:
     - py3
@@ -536,7 +536,7 @@ tox extras:
     - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(toxdep)
       python3dist(inst)
       python3dist(dep11) > 11.0
@@ -548,7 +548,7 @@ tox extras:
       python3dist(extra-dep[extra_dep])
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox)
       python3dist(toxdep)
       python3dist(inst)
@@ -562,7 +562,7 @@ tox extras:
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox)
       python3dist(toxdep)
       python3dist(inst)
@@ -580,7 +580,7 @@ tox provision unsatisfied:
     setuptools: 50
     wheel: 1
     tox: 3.5.3
-    tox-current-env: 0.0.6
+    tox-current-env: 0.0.16
   toxenv:
     - py3
   setup.py: |
@@ -604,13 +604,13 @@ tox provision unsatisfied:
     - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 3.999
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 3.999
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
@@ -618,7 +618,7 @@ tox provision unsatisfied:
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 3.999
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
@@ -630,7 +630,7 @@ tox provision satisfied:
     setuptools: 50
     wheel: 1
     tox: 3.5.3
-    tox-current-env: 0.0.6
+    tox-current-env: 0.0.16
   toxenv:
     - py3
   setup.py: |
@@ -653,7 +653,7 @@ tox provision satisfied:
     - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 3.5
       python3dist(setuptools) > 40.0
       python3dist(toxdep1)
@@ -661,7 +661,7 @@ tox provision satisfied:
       python3dist(inst)
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(setuptools) > 40.0
       python3dist(tox) >= 3.5
       python3dist(toxdep1)
@@ -670,7 +670,7 @@ tox provision satisfied:
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(setuptools) > 40.0
       python3dist(tox) >= 3.5
       python3dist(toxdep1)
@@ -683,7 +683,7 @@ tox provision no minversion:
     setuptools: 50
     wheel: 1
     tox: 3.5.3
-    tox-current-env: 0.0.6
+    tox-current-env: 0.0.16
   toxenv:
     - py3
   setup.py: |
@@ -701,19 +701,19 @@ tox provision no minversion:
     - |  # tox 3 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
       python3dist(tox)
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
       python3dist(tox)
@@ -1573,7 +1573,7 @@ tox with dependency_groups:
     setuptools: 50
     wheel: 1
     tox: 4.22
-    tox-current-env: 0.0.14
+    tox-current-env: 0.0.16
   toxenv:
     - py3
   pyproject.toml: |
@@ -1594,7 +1594,7 @@ tox with dependency_groups:
   expected:
     - |  # setuptools 70+
       python3dist(setuptools)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 4.22
       python3dist(tox)
       python3dist(pytest) >= 5
@@ -1602,7 +1602,7 @@ tox with dependency_groups:
     - |  # setuptools < 70
       python3dist(setuptools)
       python3dist(wheel)
-      python3dist(tox-current-env) >= 0.0.6
+      python3dist(tox-current-env) >= 0.0.16
       python3dist(tox) >= 4.22
       python3dist(tox)
       python3dist(pytest) >= 5
