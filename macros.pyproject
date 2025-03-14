@@ -219,7 +219,7 @@ if [ -f %{__python3} ]; then
   echo -n > %{_pyproject_buildrequires}
   %{_pyproject_build_flags} \\\
   TMPDIR="%{_pyproject_builddir}" \\\
-  RPM_TOXENV="%{toxenv}" HOSTNAME="rpmbuild" %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{?!_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} --wheeldir %{_pyproject_wheeldir} --output %{_pyproject_buildrequires} %{?**} >&2
+  RPM_TOXENV="%{toxenv}" FEDORA=%{?fedora} HOSTNAME="rpmbuild" %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{?!_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} --wheeldir %{_pyproject_wheeldir} --output %{_pyproject_buildrequires} %{?**} >&2
   cat %{_pyproject_buildrequires}
 fi
 # Incomplete .dist-info dir might confuse importlib.metadata

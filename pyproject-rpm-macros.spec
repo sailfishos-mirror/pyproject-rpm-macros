@@ -169,6 +169,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Tue Mar 11 2025 Miro Hrončok <mhroncok@redhat.com> - 1.18.0-1
 - Make %%pyproject_buildrequires -t/-e and %%tox fail when no suitable tox configuration exists
+- The %%pyproject_buildrequires -t/-e case is temporarily allowed on Fedora 40-42
 - Requires tox-current-env >= 0.0.16
 
 * Thu Jan 30 2025 Miro Hrončok <miro@hroncok.cz> - 1.17.0-1
