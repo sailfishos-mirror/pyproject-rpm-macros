@@ -29,7 +29,7 @@ VERSION_RE = re.compile(r'[a-zA-Z0-9.-]+(\.\*)?')
 # because %tox without config is dangerous (false sense of tests).
 # Running %pyproject_buildrequires -t/-e without tox config is wrong, but not dangerous.
 FEDORA = int(os.getenv('FEDORA') or 0)
-TOX_ASSERT_CONFIG_OPTS = ('--assert-config',) if 40 <= FEDORA < 43 else ()
+TOX_ASSERT_CONFIG_OPTS = () if 40 <= FEDORA < 43 else ('--assert-config',)
 
 
 class EndPass(Exception):

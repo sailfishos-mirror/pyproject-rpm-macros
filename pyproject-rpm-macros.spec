@@ -14,7 +14,7 @@ License:        MIT
 #   Increment Y and reset Z when new macros or features are added
 #   Increment Z when this is a bugfix or a cosmetic change
 # Dropping support for EOL Fedoras is *not* considered a breaking change
-Version:        1.18.0
+Version:        1.18.1
 Release:        1%{?dist}
 
 # Macro files
@@ -167,6 +167,9 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 
 
 %changelog
+* Fri Mar 21 2025 Miro Hrončok <mhroncok@redhat.com> - 1.18.1-1
+- Fix reverted conditional in %%pyproject_buildrequires -t/-e Fedora version comparison
+
 * Tue Mar 11 2025 Miro Hrončok <mhroncok@redhat.com> - 1.18.0-1
 - Make %%pyproject_buildrequires -t/-e and %%tox fail when no suitable tox configuration exists
 - The %%pyproject_buildrequires -t/-e case is temporarily allowed on Fedora 40-42
