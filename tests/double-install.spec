@@ -61,5 +61,5 @@ cd ..
 %{_bindir}/tldr*
 %pycached %{python3_sitelib}/tldr.py
 %{python3_sitelib}/tldr-%{tldr_version}.dist-info/
-%{python3_sitearch}/MarkupSafe-%{markupsafe_version}.dist-info/
+%{python3_sitearch}/[Mm]arkup[Ss]afe-%{markupsafe_version}.dist-info/
 %{python3_sitearch}/markupsafe/
