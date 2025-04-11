@@ -357,7 +357,7 @@ def classify_paths(
     license_files = metadata.get_all('License-File')
     license_directory = distinfo / 'licenses'  # See PEP 639 "Root License Directory"
     # setuptools was the first known build backend to implement License-File.
-    # Unfortunately they don't put licenses to the license directory (yet):
+    # Unfortunately they didn't put licenses to the license directory in setuptools<78:
     #     https://github.com/pypa/setuptools/issues/3596
     # Hence, we check licenses in both licenses and dist-info
     license_directories = (license_directory, distinfo)
