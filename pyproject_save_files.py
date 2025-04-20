@@ -348,7 +348,7 @@ def classify_paths(
             "docs": [],  # to be used once there is upstream way to recognize READMEs
             "licenses": [],  # %license entries parsed from dist-info METADATA file
         },
-        "lang": {}, # %lang entries: [module_name or None][language_code] lists of .mo files
+        "lang": {}, # %lang entries: [module_name or None][language_code] lists of .mo and .qm files
         "modules": defaultdict(list),  # each importable module (directory, .py, .so)
         "module_names": set(),  # qualified names of each importable module ("foo.bar.baz")
         "other": {"files": []},  # regular %file entries we could not parse :(
@@ -412,7 +412,7 @@ def classify_paths(
                     for parent in list(path.parents)[:index]:  # no direct slice until Python 3.10
                         add_file_to_module(paths, module_dir.name, "package", "dirs", parent)
                     is_lang = False
-                    if path.suffix == ".mo":
+                    if path.suffix == ".mo" or path.suffix == ".qm":
                         is_lang = add_lang_to_module(paths, module_dir.name, path)
                     if not is_lang:
                         if path.suffix == ".py":
@@ -425,7 +425,7 @@ def classify_paths(
                             add_file_to_module(paths, module_dir.name, "package", "files", path)
                 break
         else:
-            if path.suffix == ".mo":
+            if path.suffix == ".mo" or path.suffix == ".qm":
                 add_lang_to_module(paths, None, path) or paths["other"]["files"].append(path)
             else:
                 path = normalize_manpage_filename(prefix, path)
