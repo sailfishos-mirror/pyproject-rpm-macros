@@ -299,7 +299,7 @@ def get_backend(requirements):
 def generate_build_requirements(backend, requirements):
     get_requires = getattr(backend, 'get_requires_for_build_wheel', None)
     if get_requires:
-        new_reqs = get_requires(config_settings=requirements.config_settings)
+        new_reqs = get_requires(requirements.config_settings)
         requirements.extend(new_reqs, source='get_requires_for_build_wheel')
         requirements.check(source='get_requires_for_build_wheel')
 
@@ -334,7 +334,7 @@ def generate_run_requirements_hook(backend, requirements):
             'table, you can use the -p flag to read them. '
             'Alternatively, use the -R flag not to generate runtime dependencies.'
         )
-    dir_basename = prepare_metadata('.', config_settings=requirements.config_settings)
+    dir_basename = prepare_metadata('.', requirements.config_settings)
     with open(dir_basename + '/METADATA') as metadata_file:
         name, requires = package_name_and_requires_from_metadata_file(metadata_file)
         for key, req in requires.items():
