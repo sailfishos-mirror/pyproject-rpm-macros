@@ -1,6 +1,6 @@
 %global pypi_name pytest
 Name:           python-%{pypi_name}
-Version:        7.2.0
+Version:        8.0.2
 Release:        0%{?dist}
 Summary:        Simple powerful testing with Python
 License:        MIT
@@ -20,7 +20,7 @@ BuildRequires:  pyproject-rpm-macros
 
 %description
 This is a pure Python package with executables. It has a test suite in tox.ini
-and test dependencies specified via the [test] extra.
+and test dependencies specified via the [testing] extra.
 Building this tests:
 - generating runtime and test dependencies by both tox.ini and extras
 - pyproject.toml with the setuptools backend and setuptools-scm
@@ -37,9 +37,6 @@ Summary:        %{summary}
 %autosetup -p1 -n %{pypi_name}-%{version}
 # remove optional test dependencies we don't like to pull in
 sed -E -i '/mock|nose/d' setup.cfg
-# internal check for our macros: insert a subprocess echo to setup.py
-# to ensure it's not generated as BuildRequires
-echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> setup.py
 
 
 %generate_buildrequires

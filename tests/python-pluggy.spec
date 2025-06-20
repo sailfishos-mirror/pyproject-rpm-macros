@@ -30,6 +30,9 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
+# internal check for our macros: insert a subprocess echo to setup.py
+# to ensure it's not generated as BuildRequires
+echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> setup.py
 
 
 %generate_buildrequires
