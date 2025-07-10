@@ -75,7 +75,7 @@ echo $(IFS=:; echo "${pyproject_build_lib[*]}")
 
 %pyproject_install() %{expand:\\\
 specifier=$(ls %{_pyproject_wheeldir}/*.whl | xargs basename --multiple | sed -E 's/([^-]+)-([^-]+)-.+\\\.whl/\\\1==\\\2/')
-if [ -z $specifier ]; then
+if [ -z "$specifier" ]; then
   echo 'ERROR: %%%%pyproject_install found no wheel in %%%%{_pyproject_wheeldir} %{_pyproject_wheeldir}' >&2
   exit 1
 fi

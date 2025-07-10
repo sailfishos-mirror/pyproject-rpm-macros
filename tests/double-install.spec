@@ -39,8 +39,10 @@ cd ..
 
 
 %install
+(
 # This should install both the wheels:
 %pyproject_install
+) 2>&1 | tee install.log
 #pyproject_save_files is not possible with 2 dist-infos
 
 
@@ -55,6 +57,9 @@ test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/markupsafe-%{marku
 cd ../tldr-%{tldr_version}
 test "%{pyproject_build_lib}" == "%{_builddir}/%{buildsubdir}/tldr-%{tldr_version}/build/lib"
 cd ..
+# Internal regression check for %%pyproject_install with multiple wheels
+grep 'binary operator expected' install.log && exit 1 || true
+grep 'too many arguments' install.log && exit 1 || true
 
 
 %files
