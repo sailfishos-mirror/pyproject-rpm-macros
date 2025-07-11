@@ -309,7 +309,7 @@ def parse_metadata_file(metadata_file):
 
 
 def requires_from_parsed_metadata_file(message):
-    return {k: message.get_all(k, ()) for k in ('Requires', 'Requires-Dist')}
+    return {k: message.get_all(k, ()) for k in ('Requires-Dist',)}
 
 
 def package_name_from_parsed_metadata_file(message):

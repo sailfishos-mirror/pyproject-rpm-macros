@@ -1608,3 +1608,23 @@ tox with dependency_groups:
       python3dist(pytest) >= 5
       python3dist(pytest-mock)
   result: 0
+
+Plain Requires fields in core metadata is ignored:
+  installed:
+    setuptools: 50
+    wheel: 1
+  include_runtime: true
+  setup.py: |
+    from setuptools import setup
+    setup(
+        name='test',
+        version='0.1',
+        requires=['ignore_me'],
+    )
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools) >= 40.8
+    - |  # setuptools < 70
+      python3dist(setuptools) >= 40.8
+      python3dist(wheel)
+  result: 0
