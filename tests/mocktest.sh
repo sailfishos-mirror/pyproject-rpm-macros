@@ -72,7 +72,7 @@ mock --verbose --isolation=simple -r $config --enablerepo="$repos" init
 mock --verbose --isolation=simple -r $config --enablerepo="$repos" "$@" ~/rpmbuild/SRPMS/${pkgname}-*.src.rpm || res=$?
 
 # move the results to the artifacts directory, so we can examine them
-artifacts=${TEST_ARTIFACTS:-/tmp/artifacts}
+artifacts=${TEST_ARTIFACTS:-${TMT_TEST_DATA:-/tmp/artifacts}}
 
 # on Fedora Rawhide, the directory contains "rawhide" instead of the actual version
 pushd /var/lib/mock/${mock}/result || pushd /var/lib/mock/${mock/${version}/rawhide}/result
