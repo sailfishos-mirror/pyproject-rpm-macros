@@ -172,6 +172,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - Fixes: rhbz#2391290
 - On RPM 4.20+ don't put pyproject-macros-specific files in %%buildsubdir
 - Works around https://github.com/rpm-software-management/rpm/issues/3890
+- Speed %%pyproject_save_files up significantly
 
 * Fri Jul 25 2025 Fedora Release Engineering <releng@fedoraproject.org> - 1.18.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild

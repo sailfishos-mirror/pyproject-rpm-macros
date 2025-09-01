@@ -137,12 +137,11 @@ def add_file_to_module(paths, module_name, module_type, files_dirs, *files):
     """
     for module in paths["modules"][module_name]:
         if module["type"] == module_type:
-            if files[0] not in module[files_dirs]:
-                module[files_dirs].extend(files)
+            module[files_dirs].update(files)
             break
     else:
         paths["modules"][module_name].append(
-            {"type": module_type, "files": [], "dirs": [], files_dirs: list(files)}
+            {"type": module_type, "files": set(), "dirs": set(), files_dirs: set(files)}
         )
 
 
