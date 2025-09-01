@@ -4,7 +4,7 @@
 # this macro will cause the package with the real macro to be installed.
 # When macros.pyproject is installed, it overrides this macro.
 # Note: This takes arbitrary options, to ease addition of new options to the real macro.
-%pyproject_buildrequires(-) echo 'pyproject-rpm-macros' && exit 0
+%pyproject_buildrequires(-) echo 'pyproject-rpm-macros'
 
 
 # Declarative buildsystem, requires RPM 4.20+ to work
