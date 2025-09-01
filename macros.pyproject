@@ -2,8 +2,14 @@
 # For the main Python it's empty, for all others it's "-3.X"
 %_pyproject_files_pkgversion %{expr:"%{python3_pkgversion}" != "3" ? "-%{python3_pkgversion}" : ""}
 
+# In RPM < 4.20 (4.19.9x is 4.20 alpha), there is no guaranteed, RPM-controlled per-build directory (%%mkbuilddir step).
+# Hence we use %%{buildsubdir} if available.
+# On newer RPM 4.20+ this is no longer necessary and breaks the declarative buildsystem:
+#     https://github.com/rpm-software-management/rpm/issues/3890
+%_pyproject_buildsubdir_compat %[ v"0%{?rpmversion}" < v"4.19.90" ? "%{?buildsubdir:/%{buildsubdir}}" : ""]
+
 # This is a directory where wheels are stored and installed from, absolute
-%_pyproject_wheeldir %{_builddir}%{?buildsubdir:/%{buildsubdir}}/pyproject-wheeldir%{_pyproject_files_pkgversion}
+%_pyproject_wheeldir %{_builddir}%{_pyproject_buildsubdir_compat}/pyproject-wheeldir%{_pyproject_files_pkgversion}
 
 # This is a directory used as TMPDIR, where pip copies sources to and builds from, relative to PWD
 # For proper debugsource packages, we create TMPDIR within PWD
@@ -12,7 +18,7 @@
 # This will be used in debugsource package paths (applies to extension modules only)
 # NB: pytest collects tests from here if not hidden
 #     https://docs.pytest.org/en/latest/reference.html#confval-norecursedirs
-%_pyproject_builddir %{_builddir}%{?buildsubdir:/%{buildsubdir}}/.pyproject-builddir%{_pyproject_files_pkgversion}
+%_pyproject_builddir %{_builddir}%{_pyproject_buildsubdir_compat}/.pyproject-builddir%{_pyproject_files_pkgversion}
 
 # We prefix all created files with this value to make them unique
 # Ideally, we would put them into %%{buildsubdir}, but that value changes during the spec

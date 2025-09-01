@@ -94,6 +94,9 @@ discover:
     - name: pello_with_options
       path: /tests
       test: ./mocktest.sh python-pello --with options
+    - name: pello_with_override_install
+      path: /tests
+      test: ./mocktest.sh python-pello --with override_install
     - name: escape_paths
       path: /tests
       test: ./mocktest.sh escape_paths
