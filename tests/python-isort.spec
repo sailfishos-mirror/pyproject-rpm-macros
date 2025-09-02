@@ -39,6 +39,15 @@ Summary:            %{summary}
 
 %description -n python%{python3_pkgversion}-%{modname}
 %{summary}.
+%endif
+
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
+%package -n python%{python3_pkgversion}-%{modname}
+Summary:            %{summary}
+
+%description -n python%{python3_pkgversion}-%{modname}
+%{summary}.
 
 %global python3_pkgversion 3
 %endif
@@ -55,6 +64,10 @@ Summary:            %{summary}
 %pyproject_buildrequires
 %global python3_pkgversion 3.12
 %pyproject_buildrequires
+%endif
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
+%pyproject_buildrequires
 %global python3_pkgversion 3
 %endif
 
@@ -67,6 +80,10 @@ Summary:            %{summary}
 %pyproject_wheel
 %global python3_pkgversion 3.12
 %pyproject_wheel
+%endif
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
+%pyproject_wheel
 %global python3_pkgversion 3
 %endif
 
@@ -77,6 +94,11 @@ Summary:            %{summary}
 %pyproject_install
 %pyproject_save_files -l isort
 %global python3_pkgversion 3.12
+%pyproject_install
+%pyproject_save_files -l isort
+%endif
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
 %pyproject_install
 %pyproject_save_files -l isort
 %global python3_pkgversion 3
@@ -107,6 +129,13 @@ diff %{pyproject_files} <(grep -F python3.11/site-packages %{pyproject_files})
 test -d %{buildroot}%{_usr}/lib/python3.12/site-packages/%{modname}/
 test -d %{buildroot}%{_usr}/lib/python3.12/site-packages/%{modname}-%{version}.dist-info/
 diff %{pyproject_files} <(grep -F python3.12/site-packages %{pyproject_files})
+%endif
+
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
+test -d %{buildroot}%{_usr}/lib/python3.13/site-packages/%{modname}/
+test -d %{buildroot}%{_usr}/lib/python3.13/site-packages/%{modname}-%{version}.dist-info/
+diff %{pyproject_files} <(grep -F python3.13/site-packages %{pyproject_files})
 %global python3_pkgversion 3
 %endif
 
@@ -119,6 +148,11 @@ diff %{pyproject_files} <(grep -F python3.12/site-packages %{pyproject_files})
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
 %global python3_pkgversion 3.12
+%files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
+%doc README.rst *.md
+%endif
+%if 0%{?rhel} == 9 || 0%{?rhel} == 10
+%global python3_pkgversion 3.13
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
 %global python3_pkgversion 3

@@ -106,6 +106,9 @@ discover:
     - name: isort_c9s
       path: /tests
       test: NAME="CentOS Stream" VERSION_ID=9 ./mocktest.sh python-isort
+    - name: isort_c10s
+      path: /tests
+      test: NAME="CentOS Stream" VERSION_ID=10 ./mocktest.sh python-isort
 prepare:
   - name: Install dependencies
     how: install
