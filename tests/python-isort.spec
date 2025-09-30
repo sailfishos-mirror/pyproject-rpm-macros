@@ -49,6 +49,13 @@ Summary:            %{summary}
 %description -n python%{python3_pkgversion}-%{modname}
 %{summary}.
 
+%global python3_pkgversion 3.14
+%package -n python%{python3_pkgversion}-%{modname}
+Summary:            %{summary}
+
+%description -n python%{python3_pkgversion}-%{modname}
+%{summary}.
+
 %global python3_pkgversion 3
 %endif
 
@@ -68,6 +75,8 @@ Summary:            %{summary}
 %if 0%{?rhel} == 9 || 0%{?rhel} == 10
 %global python3_pkgversion 3.13
 %pyproject_buildrequires
+%global python3_pkgversion 3.14
+%pyproject_buildrequires
 %global python3_pkgversion 3
 %endif
 
@@ -84,6 +93,8 @@ Summary:            %{summary}
 %if 0%{?rhel} == 9 || 0%{?rhel} == 10
 %global python3_pkgversion 3.13
 %pyproject_wheel
+%global python3_pkgversion 3.14
+%pyproject_wheel
 %global python3_pkgversion 3
 %endif
 
@@ -99,6 +110,9 @@ Summary:            %{summary}
 %endif
 %if 0%{?rhel} == 9 || 0%{?rhel} == 10
 %global python3_pkgversion 3.13
+%pyproject_install
+%pyproject_save_files -l isort
+%global python3_pkgversion 3.14
 %pyproject_install
 %pyproject_save_files -l isort
 %global python3_pkgversion 3
@@ -136,6 +150,11 @@ diff %{pyproject_files} <(grep -F python3.12/site-packages %{pyproject_files})
 test -d %{buildroot}%{_usr}/lib/python3.13/site-packages/%{modname}/
 test -d %{buildroot}%{_usr}/lib/python3.13/site-packages/%{modname}-%{version}.dist-info/
 diff %{pyproject_files} <(grep -F python3.13/site-packages %{pyproject_files})
+
+%global python3_pkgversion 3.14
+test -d %{buildroot}%{_usr}/lib/python3.14/site-packages/%{modname}/
+test -d %{buildroot}%{_usr}/lib/python3.14/site-packages/%{modname}-%{version}.dist-info/
+diff %{pyproject_files} <(grep -F python3.14/site-packages %{pyproject_files})
 %global python3_pkgversion 3
 %endif
 
@@ -153,6 +172,9 @@ diff %{pyproject_files} <(grep -F python3.13/site-packages %{pyproject_files})
 %endif
 %if 0%{?rhel} == 9 || 0%{?rhel} == 10
 %global python3_pkgversion 3.13
+%files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
+%doc README.rst *.md
+%global python3_pkgversion 3.14
 %files -n python%{python3_pkgversion}-%{modname} -f %{pyproject_files}
 %doc README.rst *.md
 %global python3_pkgversion 3
