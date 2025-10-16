@@ -103,7 +103,7 @@ fi
 # Process all *.dist-info dirs in sitelib/sitearch
 for site_dir in ${site_dirs[@]}; do
   for distinfo in %{buildroot}$site_dir/*.dist-info; do
-    echo "%ghost ${distinfo#%{buildroot}}" >> %{_pyproject_ghost_distinfo}
+    echo "%ghost %dir ${distinfo#%{buildroot}}" >> %{_pyproject_ghost_distinfo}
     sed -i 's/pip/rpm/' ${distinfo}/INSTALLER
     PYTHONPATH=%{_rpmconfigdir}/redhat \\
       %{__python3} -B %{_rpmconfigdir}/redhat/pyproject_preprocess_record.py \\

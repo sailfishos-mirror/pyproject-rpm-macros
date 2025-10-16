@@ -67,7 +67,7 @@ grep -E 'flake8: (OK|commands succeeded)' toxlog %{?!with_flake8:&& exit 1 || tr
 # Internal check for our macros
 # making sure that %%{_pyproject_ghost_distinfo} has the right content
 test -f %{_pyproject_ghost_distinfo}
-test "$(cat %{_pyproject_ghost_distinfo})" == "%ghost %{python3_sitelib}/setuptools_scm-%{version}.dist-info"
+test "$(cat %{_pyproject_ghost_distinfo})" == "%ghost %dir %{python3_sitelib}/setuptools_scm-%{version}.dist-info"
 
 
 %files -n python3-setuptools_scm -f %{pyproject_files}
