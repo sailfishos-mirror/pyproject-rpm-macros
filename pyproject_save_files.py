@@ -395,6 +395,9 @@ def classify_paths(
                         # extension modules can have 2 suffixes
                         name = BuildrootPath(path.stem).stem
                         add_file_to_module(paths, name, "extension", "files", path)
+                    elif path.suffix == ".pyi":
+                        name = path.stem
+                        add_file_to_module(paths, name, "stub", "files", path)
                     elif path.suffix == ".py":
                         name = path.stem
                         # we add the .pyc files, but not top-level __pycache__

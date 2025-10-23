@@ -103,6 +103,7 @@ def test_parse_record_tldr():
         str(SITELIB / "tldr-0.5.dist-info/WHEEL"),
         str(SITELIB / "tldr-0.5.dist-info/top_level.txt"),
         str(SITELIB / "tldr.py"),
+        str(SITELIB / "tldr.pyi"),
     ]
     assert output == expected
 

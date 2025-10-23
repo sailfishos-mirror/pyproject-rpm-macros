@@ -170,6 +170,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 * Thu Oct 16 2025 Miro Hrončok <mhroncok@redhat.com> - 1.18.5-1
 - %%pyproject_extras_subpkg: Only %%ghost the dist-info directory, not the content
 - That way, accidentally unpackaged files within are reported as errors
+- %%pyproject_save_files: Also save top level typing stub files (.pyi)
 
 * Mon Sep 01 2025 Miro Hrončok <mhroncok@redhat.com> - 1.18.4-1
 - Don't exit from pyproject-srpm-macros implementation of %%pyproject_buildrequires
