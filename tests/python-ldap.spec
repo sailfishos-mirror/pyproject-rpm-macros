@@ -17,7 +17,6 @@ BuildRequires:  cyrus-sasl-devel
 BuildRequires:  gcc
 BuildRequires:  openldap-clients
 BuildRequires:  openldap-devel
-BuildRequires:  openldap-servers
 BuildRequires:  openssl-devel
 
 
@@ -40,7 +39,7 @@ Summary:        %{summary}
 
 %prep
 %autosetup
-# Hack: We remove tests that are broken by OpenLDAP 2.5+
+# Hack: We remove tests that are broken by OpenLDAP 2.5+ and/or require openldap-servers
 # Don't do this in the regular Fedora package, please
 rm Tests/t_ldapobject.py Tests/t_cext.py Tests/t_edit.py Tests/t_ldap_sasl.py Tests/t_ldap_syncrepl.py Tests/t_slapdobject.py Tests/t_bind.py Tests/t_ldap_options.py Tests/t_ldap_schema_subentry.py
 
