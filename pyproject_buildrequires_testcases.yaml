@@ -457,6 +457,7 @@ tox dependencies:
     wheel: 1
     tox: 3.5.3
     tox-current-env: 0.0.16
+    inst: 1
   toxenv:
     - py3
   setup.py: |
@@ -506,6 +507,7 @@ tox extras:
     wheel: 1
     tox: 3.5.3
     tox-current-env: 0.0.16
+    inst: 1
   generate_extras: true
   toxenv:
     - py3
@@ -581,6 +583,7 @@ tox provision unsatisfied:
     wheel: 1
     tox: 3.5.3
     tox-current-env: 0.0.16
+    inst: 1
   toxenv:
     - py3
   setup.py: |
@@ -608,6 +611,7 @@ tox provision unsatisfied:
       python3dist(tox) >= 3.999
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
+      python3dist(inst)
     - |  # tox 4 with setuptools 70+
       python3dist(setuptools) >= 40.8
       python3dist(tox-current-env) >= 0.0.16
@@ -615,6 +619,7 @@ tox provision unsatisfied:
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
       python3dist(tox) >= 3.999
+      python3dist(inst)
     - |  # tox 4 with setuptools < 70
       python3dist(setuptools) >= 40.8
       python3dist(wheel)
@@ -623,6 +628,7 @@ tox provision unsatisfied:
       python3dist(setuptools) > 40.0
       python3dist(wheel) > 2.0
       python3dist(tox) >= 3.999
+      python3dist(inst)
   result: 0
 
 tox provision satisfied:
@@ -631,6 +637,7 @@ tox provision satisfied:
     wheel: 1
     tox: 3.5.3
     tox-current-env: 0.0.16
+    inst: 1
   toxenv:
     - py3
   setup.py: |
@@ -1607,6 +1614,83 @@ tox with dependency_groups:
       python3dist(tox)
       python3dist(pytest) >= 5
       python3dist(pytest-mock)
+  result: 0
+
+pyproject.toml with dependency-groups self-reference expansion:
+  generate_extras: true
+  installed:
+    setuptools: 50
+    wheel: 1
+  use_build_system: true
+  dependency_groups:
+    - test
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [dependency-groups]
+    test = ["anyio[trio]", "pytest"]
+  setup.cfg: |
+    [metadata]
+    name = anyio
+    version = 0.1
+    [options.extras_require]
+    trio = trio>=0.31.0
+    test = anyio[trio]; pytest
+  expected:
+    - |  # setuptools 70+
+      python3dist(setuptools)
+      python3dist(trio) >= 0.31
+      python3dist(pytest)
+    - |  # setuptools < 70
+      python3dist(setuptools)
+      python3dist(trio) >= 0.31
+      python3dist(pytest)
+      python3dist(wheel)
+  result: 0
+
+pyproject.toml with dependency-groups self-reference multiple extras:
+  generate_extras: true
+  installed:
+    setuptools: 50
+    wheel: 1
+  use_build_system: true
+  dependency_groups:
+    - test
+  extras:
+    - extra4
+    - extra1
+  pyproject.toml: |
+    [build-system]
+    requires = ["setuptools"]
+    build-backend = "setuptools.build_meta"
+    [dependency-groups]
+    test = ["myproject[extra1,extra2]", "pytest"]
+  setup.cfg: |
+    [metadata]
+    name = myproject
+    version = 0.1
+    [options.extras_require]
+    extra1 = dep1
+    extra2 = dep2;dep3>=1.0
+    extra3 = unused-dep
+    extra4 = dep4
+  expected:
+    - |  # setuptools 70+
+      python3dist(dep1)
+      python3dist(dep2)
+      python3dist(dep3) >= 1
+      python3dist(dep4)
+      python3dist(pytest)
+      python3dist(setuptools)
+    - |  # setuptools < 70
+      python3dist(dep1)
+      python3dist(dep2)
+      python3dist(dep3) >= 1
+      python3dist(dep4)
+      python3dist(pytest)
+      python3dist(setuptools)
+      python3dist(wheel)
   result: 0
 
 Plain Requires fields in core metadata is ignored:

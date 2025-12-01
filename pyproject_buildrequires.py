@@ -95,6 +95,8 @@ class Requirements:
         self.python3_pkgversion = python3_pkgversion
         self.config_settings = config_settings
 
+        self.package_name = None
+
     def add_extras(self, *extras):
         self.extras |= set(e.strip() for e in extras)
 
@@ -110,7 +112,16 @@ class Requirements:
                 return True
         return False
 
-    def add(self, requirement, *, package_name=None, source=None, extra=None):
+    def set_package_name(self, name):
+        canonical_name = canonicalize_name(name)
+        if self.package_name is None:
+            self.package_name = canonical_name
+        else:
+            # This really shouldn't happen, but it's better to be safe than sorry
+            if canonical_name != self.package_name:
+                raise ValueError(f'Package name mismatch: {canonical_name} != {self.package_name}')
+
+    def add(self, requirement, *, source=None, extra=None):
         """Output a Python-style requirement string as RPM dep"""
 
         requirement_str = str(requirement)
@@ -148,7 +159,7 @@ class Requirements:
             return
 
         # Handle self-referencing requirements
-        if package_name and canonicalize_name(package_name) == name:
+        if self.package_name and self.package_name == name:
             # Self-referential extras need to be handled specially
             if requirement.extras:
                 if not (requirement.extras <= self.extras):  # only handle it if needed
@@ -156,7 +167,7 @@ class Requirements:
                     self.add_extras(*requirement.extras)
                     # re-add all of the alien requirements ignored in the past
                     # they might no longer be alien now
-                    self.readd_ignored_alien_requirements(package_name=package_name)
+                    self.readd_ignored_alien_requirements()
             else:
                 print_err(f'Ignoring self-referential requirement without extras:', requirement_str)
             return
@@ -337,10 +348,10 @@ def generate_run_requirements_hook(backend, requirements):
     dir_basename = prepare_metadata('.', requirements.config_settings)
     with open(dir_basename + '/METADATA') as metadata_file:
         name, requires = package_name_and_requires_from_metadata_file(metadata_file)
+        requirements.set_package_name(name)
         for key, req in requires.items():
             requirements.extend(req,
-                                package_name=name,
-                                source=f'hook generated metadata: {key} ({name})')
+                                source=f'hook generated metadata: {key} ({requirements.package_name})')
 
 
 def find_built_wheel(wheeldir):
@@ -380,9 +391,9 @@ def generate_run_requirements_wheel(backend, requirements, wheeldir):
             if name.count('/') == 1 and name.endswith('.dist-info/METADATA'):
                 with io.TextIOWrapper(wheelfile.open(name), encoding='utf-8') as metadata_file:
                     name, requires = package_name_and_requires_from_metadata_file(metadata_file)
+                    requirements.set_package_name(name)
                     for key, req in requires.items():
                         requirements.extend(req,
-                                            package_name=name,
                                             source=f'built wheel metadata: {key} ({name})')
                 break
         else:
@@ -402,14 +413,13 @@ def generate_run_requirements_pyproject(requirements):
 
     dependencies = project_table.get('dependencies', [])
     name = project_table.get('name')
+    requirements.set_package_name(name)
     requirements.extend(dependencies,
-                        package_name=name,
                         source=f'pyproject.toml generated metadata: [dependencies] ({name})')
 
     optional_dependencies = project_table.get('optional-dependencies', {})
     for extra, dependencies in optional_dependencies.items():
         requirements.extend(dependencies,
-                            package_name=name,
                             source=f'pyproject.toml generated metadata: [optional-dependencies] {extra} ({name})',
                             extra=extra)
 
@@ -461,9 +471,13 @@ def generate_tox_requirements(toxenv, requirements):
         else:
             r.check_returncode()
 
+        tox_extras = {e for e in extras.read().splitlines() if e}
+        if not (tox_extras <= requirements.extras):
+            requirements.add_extras(*tox_extras)
+            requirements.readd_ignored_alien_requirements(source=f'tox added extras: {toxenv}')
+
         deplines = deps.read().splitlines()
         packages = convert_requirements_txt(deplines)
-        requirements.add_extras(*extras.read().splitlines())
         requirements.extend(packages,
                             source=f'tox --print-deps-only: {toxenv}')
 
@@ -610,15 +624,14 @@ def generate_requires(
         if use_build_system:
             backend = get_backend(requirements)
             generate_build_requirements(backend, requirements)
+        if include_runtime or toxenv:
+            generate_run_requirements(backend, requirements, build_wheel=build_wheel,
+                read_pyproject_dependencies=read_pyproject_dependencies, wheeldir=wheeldir)
         if toxenv:
-            include_runtime = True
             generate_tox_requirements(toxenv, requirements)
             dependency_groups.extend(tox_dependency_groups(toxenv))
         if dependency_groups:
             generate_dependency_groups(dependency_groups, requirements)
-        if include_runtime:
-            generate_run_requirements(backend, requirements, build_wheel=build_wheel,
-                read_pyproject_dependencies=read_pyproject_dependencies, wheeldir=wheeldir)
     except EndPass:
         return
     finally:
