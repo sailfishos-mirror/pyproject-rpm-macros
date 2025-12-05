@@ -4,6 +4,12 @@ discover:
   - name: same_repo
     how: shell
     tests:
+    - name: c9s_mockbuild
+      path: /
+      test: NAME="CentOS Stream" VERSION_ID=9 tests/mocktest.sh pyproject-rpm-macros
+    - name: c10s_mockbuild
+      path: /
+      test: NAME="CentOS Stream" VERSION_ID=10 tests/mocktest.sh pyproject-rpm-macros
     - name: pytest
       path: /tests
       test: ./mocktest.sh python-pytest
