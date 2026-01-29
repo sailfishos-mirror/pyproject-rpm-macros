@@ -4,7 +4,7 @@ if [ -z "${VERSION_ID-}" ] && [ -z "${NAME-}" ]; then
 fi
 
 version=$(echo "${VERSION_ID}" | cut -d. -f1)
-arch="x86_64"
+arch=$(rpm --eval '%{_arch}')
 
 case $NAME in
   "Fedora Linux"|"Fedora")
