@@ -8,6 +8,9 @@ arch=$(rpm --eval '%{_arch}')
 
 case $NAME in
   "Fedora Linux"|"Fedora")
+    if [ "${VARIANT_ID-}" == "eln" ]; then
+      version="eln"
+    fi
     mock="fedora-${version}-${arch}"
     repos="local"
     ;;
