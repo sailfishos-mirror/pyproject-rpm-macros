@@ -34,6 +34,7 @@ tar xf %{SOURCE2}
 
 
 %install
+set -o pipefail
 (
 # This should install both the wheels:
 %pyproject_install
