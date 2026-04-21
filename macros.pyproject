@@ -126,7 +126,7 @@ fi
 
 
 # Note: the three times nested questionmarked -i -f -F pattern means: If none of those options was used -- in that case, we inject our own -f
-%pyproject_extras_subpkg(n:i:f:FaA) %{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{?!-i:%{?!-f:%{?!-F: -f %{_pyproject_ghost_distinfo}}}} %**}}}
+%pyproject_extras_subpkg(n:i:f:FaA) %{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{!?-i:%{!?-f:%{!?-F: -f %{_pyproject_ghost_distinfo}}}} %**}}}
 
 
 # Escaping shell-globs, percentage signs and spaces was reworked in RPM 4.19+
@@ -231,7 +231,7 @@ if [ -f %{__python3} ]; then
   echo -n > %{_pyproject_buildrequires}
   %{_pyproject_build_flags} \\\
   TMPDIR="%{_pyproject_builddir}" \\\
-  RPM_TOXENV="%{toxenv}" FEDORA=%{?fedora} HOSTNAME="rpmbuild" %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{?!_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} --wheeldir %{_pyproject_wheeldir} --output %{_pyproject_buildrequires} --dep-overrides-file %{_pyproject_dep_overrides} %{?**} >&2
+  RPM_TOXENV="%{toxenv}" FEDORA=%{?fedora} HOSTNAME="rpmbuild" %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{!?_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} --wheeldir %{_pyproject_wheeldir} --output %{_pyproject_buildrequires} --dep-overrides-file %{_pyproject_dep_overrides} %{?**} >&2
   cat %{_pyproject_buildrequires}
 fi
 # Incomplete .dist-info dir might confuse importlib.metadata
@@ -242,7 +242,7 @@ rm -rfv *.dist-info/ >&2
 
 %tox(e:) %{expand:\\\
 TOX_TESTENV_PASSENV="${TOX_TESTENV_PASSENV:-*}" \\
-%{?py3_test_envvars}%{?!py3_test_envvars:PYTHONDONTWRITEBYTECODE=1 \\
+%{?py3_test_envvars}%{!?py3_test_envvars:PYTHONDONTWRITEBYTECODE=1 \\
 PATH="%{buildroot}%{_bindir}:$PATH" \\
 PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}}" \\
 %{?__pytest_addopts:PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} %{__pytest_addopts}"}} \\
