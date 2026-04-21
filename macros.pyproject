@@ -143,6 +143,7 @@ fi
     {short="l", long="assert-license"},
     {short="L", long="no-assert-license"},
     {short="M", long="allow-no-modules"},
+    {short="a", long="auto"},
 })}\
 %{expand:\\\
 %{expr:v"0%{?rpmversion}" >= v"4.18.90" ? "RPM_FILES_ESCAPE=4.19" : "RPM_FILES_ESCAPE=4.18" } \\

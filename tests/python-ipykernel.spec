@@ -43,7 +43,7 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files --assert-license 'ipykernel*' +auto
+%pyproject_save_files --assert-license 'ipykernel*' --auto
 
 %check
 %pyproject_check_import  --exclude '*.test*' --exclude 'ipykernel.gui*' --exclude 'ipykernel.pylab.*' --exclude 'ipykernel.trio*' --exclude 'ipykernel.datapub' --exclude 'ipykernel.pickleutil' --exclude 'ipykernel.serialize'

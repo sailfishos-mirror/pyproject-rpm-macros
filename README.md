@@ -371,11 +371,11 @@ You can use globs in the module names if listing them explicitly would be too te
 
 In fully automated environments, you can use the `*` glob to include all modules (put it in single quotes to prevent Shell from expanding it). In Fedora however, you should always use a more specific glob to avoid accidentally packaging unwanted files (for example, a top level module named `test`).
 
-Speaking about automated environments, some files cannot be classified with `%pyproject_save_files`, but it is possible to list all unclassified files by adding a special `+auto` argument.
+Speaking about automated environments, some files cannot be classified with `%pyproject_save_files`, but it is possible to list all unclassified files by adding `-a`/`--auto` (or the legacy `+auto` argument).
 
     %install
     %pyproject_install
-    %pyproject_save_files '*' +auto
+    %pyproject_save_files '*' --auto
     
     %files -n python3-requests -f %{pyproject_files}
 
@@ -533,7 +533,7 @@ That way, RPM will automatically fill-in the `%prep`, `%generate_buildrequires`,
 To pass options to the individual macros, use `BuildOption` (see the [documentation of declarative buildsystems][declarative buildsystem]).
 
     # pass options for %%pyproject_save_files (mandatory when not overriding %%install)
-    BuildOption(install): --assert-license _module +auto
+    BuildOption(install): --assert-license _module --auto
 
     # replace the default options for %%autosetup
     BuildOption(prep): -S git_am -C
@@ -603,11 +603,12 @@ Here is a complete reference of all options:
 
 ### `%pyproject_save_files`
 
-| Short | Long                   | Description                                     |
-|-------|------------------------|-------------------------------------------------|
-| `-l`  | `--assert-license`     | Fail when no License-File (PEP 639) is found    |
-| `-L`  | `--no-assert-license`  | Don't fail on missing License-File (default)     |
-| `-M`  | `--allow-no-modules`   | Allow no module globs                            |
+| Short | Long                  | Description                                     |
+|-------|-----------------------|-------------------------------------------------|
+| `-l`  | `--assert-license`    | Fail when no License-File (PEP 639) is found    |
+| `-L`  | `--no-assert-license` | Don't fail on missing License-File (default)    |
+| `-M`  | `--allow-no-modules`  | Allow no module globs                           |
+| `-a`  | `--auto`              | Include non-module files (same as `+auto`)      |
 
 ### `%pyproject_check_import`
 
