@@ -36,7 +36,7 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 
 
 %generate_buildrequires
-%pyproject_buildrequires -t
+%pyproject_buildrequires --tox
 
 
 %build
@@ -46,7 +46,7 @@ echo 'import os; os.system("echo if-this-is-generated-the-build-will-fail")' >> 
 %install
 %pyproject_install
 # There are no executables, but we are allowed to pass +auto anyway
-%pyproject_save_files pluggy +auto -l
+%pyproject_save_files pluggy +auto --assert-license
 
 
 %check
