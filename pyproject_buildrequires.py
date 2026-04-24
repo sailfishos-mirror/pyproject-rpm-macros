@@ -694,8 +694,8 @@ def generate_requires(
         if requirement_files:
             for req_file in requirement_files:
                 requirements.extend(
-                    convert_requirements_txt(req_file, pathlib.Path(req_file.name)),
-                    source=f'requirements file {req_file.name}'
+                    convert_requirements_txt(req_file.read_text().splitlines(), req_file),
+                    source=f'requirements file {req_file}'
                 )
             requirements.check(source='all requirements files')
         if use_build_system:
@@ -797,7 +797,7 @@ def argparser():
         action='store_false', help='Use -N to indicate that project does not use any build system',
     )
     parser.add_argument(
-        'requirement_files', nargs='*', type=argparse.FileType('r'),
+        'requirement_files', nargs='*', type=pathlib.Path,
         metavar='REQUIREMENTS.TXT',
         help=('Add buildrequires from file'),
     )
@@ -818,6 +818,10 @@ def argparser():
 def main(argv):
     parser = argparser()
     args = parser.parse_args(argv)
+
+    for req_file in args.requirement_files:
+        if not req_file.exists():
+            parser.error(f"can't open '{req_file}': No such file or directory")
 
     if not args.use_build_system:
         args.runtime = False

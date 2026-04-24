@@ -181,6 +181,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 %changelog
 * Thu May 14 2026 Miro Hrončok <mhroncok@redhat.com> - 1.22.2-1
 - %%pyproject_buildrequires: Fix "Requirement satisfied/not satisfied" messages to show overridden constraints from %%pyproject_patch_dependency
+- %%pyproject_buildrequires: Stop using deprecated argparse.FileType
 
 * Thu May 07 2026 Miro Hrončok <mhroncok@redhat.com> - 1.22.1-1
 - Fix a regression wrt option parsing for macros with backslash-escaped newlines in argument list
