@@ -111,6 +111,7 @@ if [ -z "$specifier" ]; then
   echo 'ERROR: %%%%pyproject_install found no wheel in %%%%{_pyproject_wheeldir} %{_pyproject_wheeldir}' >&2
   exit 1
 fi
+PIP_CONFIG_FILE="${PIP_CONFIG_FILE:-/dev/null}" \
 TMPDIR="%{_pyproject_builddir}" %{__python3} -m pip install --root %{buildroot} --prefix %{_prefix} --no-deps --disable-pip-version-check --progress-bar off --verbose --ignore-installed --no-warn-script-location --no-index --no-cache-dir --find-links %{_pyproject_wheeldir} $specifier
 if [ -d %{buildroot}%{_bindir} ]; then
   %py3_shebang_fix %{buildroot}%{_bindir}/*
