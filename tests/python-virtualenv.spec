@@ -8,7 +8,6 @@ URL:            http://pypi.python.org/pypi/virtualenv
 Source:         %{pypi_source virtualenv}
 
 BuildArch:      noarch
-BuildRequires:  python3-devel
 BuildRequires:  python3-pytest
 
 %description
@@ -16,6 +15,9 @@ This specfile was added as a regression test to
 https://src.fedoraproject.org/rpms/pyproject-rpm-macros/pull-request/363
 
 It uses hatchling without %%pyproject_buildrequires -w.
+
+It also uses %%pyproject_patch_dependency without an explicit BR on either
+python3-devel or pyproject-rpm-macros.
 
 
 %package -n     python3-virtualenv
