@@ -183,6 +183,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 - Add long option support for all public parametric macros
 - E.g. %%pyproject_buildrequires --no-runtime is equivalent to %%pyproject_buildrequires -R
 - %%pyproject_save_files: Allow to use --auto instead of +auto
+- %%pyproject_patch_dependency: Validate arguments early, in %%prep
 
 * Wed Apr 29 2026 Tomáš Hrnčiar <thrnciar@redhat.com> - 1.21.0-1
 - Implement extras validation
