@@ -14,9 +14,7 @@ BuildRequires:  python3-pytest
 This specfile was added as a regression test to
 https://src.fedoraproject.org/rpms/pyproject-rpm-macros/pull-request/363
 
-It uses hatchling without %%pyproject_buildrequires -w.
-
-It also uses %%pyproject_patch_dependency without an explicit BR on either
+It uses %%pyproject_patch_dependency without an explicit BR on either
 python3-devel or pyproject-rpm-macros.
 
 
