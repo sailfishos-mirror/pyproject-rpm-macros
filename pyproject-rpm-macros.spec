@@ -21,26 +21,28 @@ Release:        1%{?dist}
 Source:         macros.pyproject
 Source:         macros.aaa-pyproject-srpm
 
-# Implementation files
+# Implementation files, Python
 Source:         pyproject_buildrequires.py
-Source:         pyproject_save_files.py
 Source:         pyproject_convert.py
+Source:         pyproject_dependency_overrides.py
+Source:         pyproject_patch_metadata.py
 Source:         pyproject_preprocess_record.py
 Source:         pyproject_requirements_txt.py
+Source:         pyproject_save_files.py
 Source:         pyproject_wheel.py
-Source:         pyproject_patch_metadata.py
-Source:         pyproject_dependency_overrides.py
+
+# Implementation files, Lua
 Source:         pyproject_getopt.lua
 
 # Tests
-Source:         test_pyproject_buildrequires.py
-Source:         test_pyproject_save_files.py
-Source:         test_pyproject_requirements_txt.py
+Source:         compare_mandata.py
 Source:         test_dependency_overrides.py
+Source:         test_pyproject_buildrequires.py
+Source:         test_pyproject_getopt.lua
 Source:         test_pyproject_getopt_consistency.py
 Source:         test_pyproject_getopt_parser.py
-Source:         test_pyproject_getopt.lua
-Source:         compare_mandata.py
+Source:         test_pyproject_requirements_txt.py
+Source:         test_pyproject_save_files.py
 
 # Test data
 Source:         pyproject_buildrequires_testcases.yaml
