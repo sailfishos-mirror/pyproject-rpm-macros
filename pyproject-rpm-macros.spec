@@ -18,38 +18,38 @@ Version:        1.22.0
 Release:        1%{?dist}
 
 # Macro files
-Source001:      macros.pyproject
-Source002:      macros.aaa-pyproject-srpm
+Source:         macros.pyproject
+Source:         macros.aaa-pyproject-srpm
 
 # Implementation files
-Source101:      pyproject_buildrequires.py
-Source102:      pyproject_save_files.py
-Source103:      pyproject_convert.py
-Source104:      pyproject_preprocess_record.py
-Source106:      pyproject_requirements_txt.py
-Source107:      pyproject_wheel.py
-Source108:      pyproject_patch_metadata.py
-Source109:      pyproject_dependency_overrides.py
-Source110:      pyproject_getopt.lua
+Source:         pyproject_buildrequires.py
+Source:         pyproject_save_files.py
+Source:         pyproject_convert.py
+Source:         pyproject_preprocess_record.py
+Source:         pyproject_requirements_txt.py
+Source:         pyproject_wheel.py
+Source:         pyproject_patch_metadata.py
+Source:         pyproject_dependency_overrides.py
+Source:         pyproject_getopt.lua
 
 # Tests
-Source201:      test_pyproject_buildrequires.py
-Source202:      test_pyproject_save_files.py
-Source203:      test_pyproject_requirements_txt.py
-Source204:      test_dependency_overrides.py
-Source205:      test_pyproject_getopt_consistency.py
-Source206:      test_pyproject_getopt_parser.py
-Source207:      test_pyproject_getopt.lua
-Source208:      compare_mandata.py
+Source:         test_pyproject_buildrequires.py
+Source:         test_pyproject_save_files.py
+Source:         test_pyproject_requirements_txt.py
+Source:         test_dependency_overrides.py
+Source:         test_pyproject_getopt_consistency.py
+Source:         test_pyproject_getopt_parser.py
+Source:         test_pyproject_getopt.lua
+Source:         compare_mandata.py
 
 # Test data
-Source301:      pyproject_buildrequires_testcases.yaml
-Source302:      pyproject_save_files_test_data.yaml
-Source303:      test_RECORD
+Source:         pyproject_buildrequires_testcases.yaml
+Source:         pyproject_save_files_test_data.yaml
+Source:         test_RECORD
 
 # Metadata
-Source901:      README.md
-Source902:      LICENSE
+Source:         README.md
+Source:         LICENSE
 
 URL:            https://src.fedoraproject.org/rpms/pyproject-rpm-macros
 
@@ -119,8 +119,7 @@ takes precedence.
 
 
 %prep
-# Not strictly necessary but allows working on file names instead
-# of source numbers in install section
+# Allows working on file names, as sources have no meaningful numbers
 %setup -c -T
 cp -p %{sources} .
 
