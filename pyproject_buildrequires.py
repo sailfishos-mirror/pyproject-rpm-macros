@@ -237,6 +237,7 @@ class Requirements:
         # Apply dependency overrides before the installed-version check,
         # so the check reflects the constraints we will actually output.
         requirement = self._apply_dependency_overrides(requirement)
+        requirement_str = str(requirement)
 
         # We need to always accept pre-releases as satisfying the requirement
         # Otherwise e.g. installed cffi version 1.15.0rc2 won't even satisfy the requirement for "cffi"
