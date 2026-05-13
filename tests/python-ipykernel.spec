@@ -10,6 +10,7 @@ BuildArch:      noarch
 
 BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-devel
+BuildRequires:  python3-pkg-resources
 
 %description
 This package contains data files.
