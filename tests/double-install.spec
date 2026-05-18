@@ -14,7 +14,23 @@ BuildRequires:  python3-devel
 %description
 This package tests that we can build and install 2 wheels at once.
 One of them is "noarch" and one has an extension module.
-This also tests the -d option for %%pyproject_buildrequires/%%pyproject_wheel.
+This also tests the -d option for %%pyproject_buildrequires/%%pyproject_wheel
+and the -D option for %%pyproject_save_files/%%pyproject_check_import.
+
+
+%package -n python3-double-markupsafe
+Summary:        MarkupSafe from double-install test
+
+%description -n python3-double-markupsafe
+MarkupSafe subpackage.
+
+
+%package -n python3-double-tldr
+Summary:        tldr from double-install test
+BuildArch:      noarch
+
+%description -n python3-double-tldr
+tldr subpackage.
 
 
 %prep
@@ -25,7 +41,7 @@ tar xf %{SOURCE2}
 
 %generate_buildrequires
 %pyproject_buildrequires --no-runtime --directory markupsafe-%{markupsafe_version}
-%pyproject_buildrequires --no-runtime --directory tldr-%{tldr_version}
+%pyproject_buildrequires --directory tldr-%{tldr_version}
 
 
 %build
@@ -39,7 +55,8 @@ set -o pipefail
 # This should install both the wheels:
 %pyproject_install
 ) 2>&1 | tee install.log
-#pyproject_save_files is not possible with 2 dist-infos
+%pyproject_save_files --dist-name markupsafe markupsafe
+%pyproject_save_files -D tldr tldr +auto
 
 
 %check
@@ -56,11 +73,11 @@ cd ..
 # Internal regression check for %%pyproject_install with multiple wheels
 grep 'binary operator expected' install.log && exit 1 || true
 grep 'too many arguments' install.log && exit 1 || true
+# Check that %%pyproject_check_import -D works
+%pyproject_check_import -D markupsafe
+%pyproject_check_import -D tldr
 
 
-%files
-%{_bindir}/tldr*
-%pycached %{python3_sitelib}/tldr.py
-%{python3_sitelib}/tldr-%{tldr_version}.dist-info/
-%{python3_sitearch}/[Mm]arkup[Ss]afe-%{markupsafe_version}.dist-info/
-%{python3_sitearch}/markupsafe/
+%files -n python3-double-markupsafe -f %{pyproject_files -D markupsafe}
+
+%files -n python3-double-tldr -f %{pyproject_files --dist-name tldr}
