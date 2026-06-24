@@ -23,6 +23,8 @@
 # PEP 503 name normalization: lowercase, one or more [-_.] → single -
 %__pyproject_normalize_name(-) %{lua:print((rpm.expand("%1"):lower():gsub("[%-_.]+", "-")))}
 
+%__pyproject_getopt_restore %{lua:require("fedora.rpm.pyproject_getopt").restore()}
+
 %_pyproject_files_base %{_builddir}/%{_pyproject_files_prefix}-pyproject-files
 %_pyproject_modules_base %{_builddir}/%{_pyproject_files_prefix}-pyproject-modules
 %_pyproject_ghost_distinfo_base %{_builddir}/%{_pyproject_files_prefix}-pyproject-ghost-distinfo
@@ -30,17 +32,17 @@
 %pyproject_files(-) %{lua:
 require("fedora.rpm.pyproject_getopt").getopt({
     {short="D", long="dist-name", value=true},
-})}%{_pyproject_files_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}
+})}%{_pyproject_files_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}%{__pyproject_getopt_restore}
 
 %_pyproject_modules(-) %{lua:
 require("fedora.rpm.pyproject_getopt").getopt({
     {short="D", long="dist-name", value=true},
-})}%{_pyproject_modules_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}
+})}%{_pyproject_modules_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}%{__pyproject_getopt_restore}
 
 %_pyproject_ghost_distinfo(-) %{lua:
 require("fedora.rpm.pyproject_getopt").getopt({
     {short="D", long="dist-name", value=true},
-})}%{_pyproject_ghost_distinfo_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}
+})}%{_pyproject_ghost_distinfo_base}%{?__pyproject_opt_D:-%{__pyproject_normalize_name %{__pyproject_opt_D}}}%{__pyproject_getopt_restore}
 
 %_pyproject_record %{_builddir}/%{_pyproject_files_prefix}-pyproject-record
 %_pyproject_buildrequires %{_builddir}/%{_pyproject_files_prefix}-pyproject-buildrequires
@@ -71,7 +73,7 @@ mkdir -p "%{_pyproject_builddir}"
 TMPDIR="%{_pyproject_builddir}" \\\
 %{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_wheel.py %{?**} %{_pyproject_wheeldir}
 %{?__pyproject_opt_d:popd}
-}
+%{__pyproject_getopt_restore}}
 
 
 %pyproject_build_lib %{!?__pyproject_build_lib_warned:%{warn:The %%{pyproject_build_lib} macro is deprecated.
@@ -183,7 +185,7 @@ fi
   --pyproject-record "%{_pyproject_record}" \\
   --prefix "%{_prefix}" \\
   %{**}
-}
+%{__pyproject_getopt_restore}}
 
 %pyproject_check_import(-) \
 %{lua:require("fedora.rpm.pyproject_getopt").getopt({
@@ -204,7 +206,7 @@ if [ ! -f "%{_pyproject_modules %{?__pyproject_optflag_D}}" ]; then
   exit 1
 fi
 %py3_check_import -f "%{_pyproject_modules %{?__pyproject_optflag_D}}" %{?__pyproject_optflag_e} %{?__pyproject_optflag_t} %{?__pyproject_positional_args}
-}
+%{__pyproject_getopt_restore}}
 
 
 %_pyproject_check_import_allow_no_modules(-) \
@@ -217,7 +219,8 @@ if [ -z "$(cat %{_pyproject_modules %{?__pyproject_optflag_D}})" ]; then\
   echo "No modules to check found, exiting check"\
 else\
   %pyproject_check_import %{?**}\
-fi
+fi\
+%{__pyproject_getopt_restore}
 
 
 %default_toxenv py%{python3_version_nodots}
@@ -293,7 +296,7 @@ fi
 # Incomplete .dist-info dir might confuse importlib.metadata
 rm -rfv *.dist-info/ >&2
 %{?__pyproject_opt_d:popd >&2}
-}
+%{__pyproject_getopt_restore}}
 
 
 %tox(-) \
@@ -308,7 +311,7 @@ PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_
 %{?__pytest_addopts:PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} %{__pytest_addopts}"}} \\
 HOSTNAME="rpmbuild" \\
 %{__python3} -m tox --current-env --assert-config -q --recreate -e "%{?__pyproject_opt_e}%{!?__pyproject_opt_e:%{toxenv}}" %{?__pyproject_positional_args}
-}
+%{__pyproject_getopt_restore}}
 
 
 # Declarative buildsystem, requires RPM 4.20+ to work
