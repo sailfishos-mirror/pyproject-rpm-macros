@@ -156,9 +156,31 @@ fi
 }
 
 
-# Note: the three times nested questionmarked -i -f -F pattern means: If none of those options was used -- in that case, we inject our own -f
+# Note: the three times nested __pyproject_opt_{i,f,F} pattern means: If none of those options was used -- in that case, we inject our own -f
 # -D selects the per-package ghost distinfo file for multi-wheel installs
-%pyproject_extras_subpkg(n:i:f:FaAD:) %{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{!?-i:%{!?-f:%{!?-F: -f %{_pyproject_ghost_distinfo %{?-D}}}}} %{?-n} %{?-i} %{?-f} %{?-F} %{?-a} %{?-A} %*}}}
+%pyproject_extras_subpkg(-) \
+%{lua:require("fedora.rpm.pyproject_getopt").getopt({
+    {short="n", long="name", value=true},
+    {short="i", long="dist-info-path", value=true},
+    {short="f", long="filelist", value=true},
+    {short="F", long="no-filelist"},
+    {short="a", long="noarch"},
+    {short="A", long="no-noarch"},
+    {short="D", long="dist-name", value=true},
+})}\
+%{expand:\\\
+%{?python_extras_subpkg:\\\
+%{python_extras_subpkg\\\
+  %{!?__pyproject_opt_i:%{!?__pyproject_opt_f:%{!?__pyproject_opt_F:\\\
+    -f %{_pyproject_ghost_distinfo %{?__pyproject_optflag_D}}}}}\\\
+  %{?__pyproject_optflag_n}\\\
+  %{?__pyproject_optflag_i}\\\
+  %{?__pyproject_optflag_f}\\\
+  %{?__pyproject_optflag_F}\\\
+  %{?__pyproject_optflag_a}\\\
+  %{?__pyproject_optflag_A}\\\
+  %{?__pyproject_positional_args}\\\
+}}%{__pyproject_getopt_restore}}
 
 
 # Escaping shell-globs, percentage signs and spaces was reworked in RPM 4.19+
