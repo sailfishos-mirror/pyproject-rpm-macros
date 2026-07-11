@@ -167,6 +167,8 @@ fi
     {short="a", long="noarch"},
     {short="A", long="no-noarch"},
     {short="D", long="dist-name", value=true},
+}, {
+    {"D", {"i", "f", "F"}},
 })}\
 %{expand:\\\
 %{?python_extras_subpkg:\\\

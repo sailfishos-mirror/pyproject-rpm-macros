@@ -651,15 +651,15 @@ Here is a complete reference of all options:
 
 ### `%pyproject_extras_subpkg`
 
-| Short      | Long                      | Description                                                                                 |
-|------------|---------------------------|---------------------------------------------------------------------------------------------|
-| `-n NAME`  | `--name NAME`             | Name of the base RPM package (required)                                                     |
-| `-D NAME`  | `--dist-name NAME`        | Select %ghost .dist-info for a specific distribution package (not applicable with -i/-f/-F) |
-| `-a`       | `--noarch`                | Insert BuildArch: noarch                                                                    |
-| `-A`       | `--no-noarch`             | Do not insert BuildArch: noarch (default)                                                   |
-| `-i PATH`  | `--dist-info-path PATH`   | Custom buildroot path to the .dist-info metadata folder (optional, advanced usage)          |
-| `-f FILE`  | `--filelist FILE`         | Custom path to a filelist (optional, advanced usage)                                        |
-| `-F`       | `--no-filelist`           | Skip %files section entirely (optional, advanced usage)                                     |
+| Short      | Long                      | Description                                                                                     |
+|------------|---------------------------|-------------------------------------------------------------------------------------------------|
+| `-n NAME`  | `--name NAME`             | Name of the base RPM package (required)                                                         |
+| `-D NAME`  | `--dist-name NAME`        | Select %ghost .dist-info for a specific distribution package (mutually exclusive with -i/-f/-F) |
+| `-a`       | `--noarch`                | Insert BuildArch: noarch                                                                        |
+| `-A`       | `--no-noarch`             | Do not insert BuildArch: noarch (default)                                                       |
+| `-i PATH`  | `--dist-info-path PATH`   | Custom buildroot path to the .dist-info metadata folder (optional, advanced usage)              |
+| `-f FILE`  | `--filelist FILE`         | Custom path to a filelist (optional, advanced usage)                                            |
+| `-F`       | `--no-filelist`           | Skip %files section entirely (optional, advanced usage)                                         |
 
 ### `%tox`
 

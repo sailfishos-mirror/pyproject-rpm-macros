@@ -182,6 +182,7 @@ export HOSTNAME="rpmbuild"  # to speedup tox in network-less mock, see rhbz#1856
 * Thu Jul 23 2026 Miro Hrončok <mhroncok@redhat.com> - 1.23.1-1
 - getopt: Fix global macro clobbering with save/restore stack
 - %%pyproject_extras_subpkg: Add long options support
+- %%pyproject_extras_subpkg: Make -D/--dist-name mutually exclusive with -i/-f/-F
 
 * Thu Jul 16 2026 Fedora Release Engineering <releng@fedoraproject.org> - 1.23.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
