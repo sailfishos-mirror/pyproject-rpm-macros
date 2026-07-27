@@ -39,6 +39,7 @@ Source:         pyproject_getopt.lua
 Source:         compare_mandata.py
 Source:         test_dependency_overrides.py
 Source:         test_pyproject_buildrequires.py
+Source:         test_pyproject_evals.py
 Source:         test_pyproject_getopt.lua
 Source:         test_pyproject_getopt_consistency.py
 Source:         test_pyproject_getopt_parser.py
