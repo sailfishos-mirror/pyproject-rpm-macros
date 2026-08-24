@@ -26,10 +26,9 @@ Summary:        %{summary}
 
 %prep
 %autosetup -p1 -n %{pypi_name}-%{version}
-%if 0%{?rhel}
-# force the flit-core build backend, as that is available rather than full flit
-sed -i 's/"flit/"flit_core/' pyproject.toml
-%endif
+# force the flit-core build backend, as that is available even in RHEL
+# also, pin to < 4 becasue this project uses [tool.flit.metadata]
+sed -i -e 's/"flit"/"flit_core<4"/' -e 's/"flit.buildapi"/"flit_core.buildapi"/' pyproject.toml
 
 
 %generate_buildrequires

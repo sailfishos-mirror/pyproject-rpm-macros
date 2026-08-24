@@ -25,6 +25,9 @@ Summary:        %{summary}
 %prep
 %autosetup -p1 -n markdown-it-py-%{version}
 
+# This package builds successfully with flit-core 4
+%pyproject_patch_dependency flit_core:set_upper:5
+
 %generate_buildrequires
 %pyproject_buildrequires --extras testing,linkify --pyproject-dependencies
 
