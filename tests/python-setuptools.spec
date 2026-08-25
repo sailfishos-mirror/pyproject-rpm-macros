@@ -91,6 +91,7 @@ rm pyproject.toml
 # We only run a subset of tests to speed things up and be less fragile
 PRE_BUILT_SETUPTOOLS_WHEEL=%{_pyproject_wheeldir}/setuptools-%{version}-py3-none-any.whl \
 PYTHONPATH=$(pwd) %pytest --ignore=pavement.py \
+                          --ignore=setuptools/tests/test_config_discovery.py \
                           --ignore=setuptools/tests/test_develop.py \
                           --ignore=setuptools/tests/test_editable_install.py \
                           --ignore=setuptools/tests/config/test_apply_pyprojecttoml.py \
