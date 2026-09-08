@@ -408,8 +408,8 @@ def generate_run_requirements_hook(backend, requirements):
             'The build backend cannot provide build metadata '
             '(incl. runtime requirements) before build. '
             'If the dependencies are specified in the pyproject.toml [project] '
-            'table, you can use the -p flag to read them. '
-            'Alternatively, use the -R flag not to generate runtime dependencies.'
+            'table, you can use the -p/--pyproject-dependencies flag to read them. '
+            'Alternatively, use the -R/--no-runtime flag not to generate runtime dependencies.'
         )
     dir_basename = prepare_metadata('.', requirements.config_settings)
     with open(dir_basename + '/METADATA') as metadata_file:
@@ -427,7 +427,7 @@ def find_built_wheel(wheeldir):
         return None
     if len(wheels) > 1:
         raise RuntimeError('Found multiple wheels in %{_pyproject_wheeldir}, '
-                           'this is not supported with %pyproject_buildrequires -w.')
+                           'this is not supported with %pyproject_buildrequires -w/--wheel.')
     return wheels[0]
 
 
@@ -438,8 +438,8 @@ def generate_run_requirements_wheel(backend, requirements, wheeldir):
         # pip is already echoed from the macro
         # but we need to explicitly restart if has not yet been installed
         # see https://bugzilla.redhat.com/2169855
-        requirements.add('pip >= 19', source='%pyproject_buildrequires -w')
-        requirements.check(source='%pyproject_buildrequires -w')
+        requirements.add('pip >= 19', source='%pyproject_buildrequires -w/--wheel')
+        requirements.check(source='%pyproject_buildrequires -w/--wheel')
         import pyproject_wheel
         returncode = pyproject_wheel.build_wheel(
             wheeldir=wheeldir,
@@ -447,10 +447,10 @@ def generate_run_requirements_wheel(backend, requirements, wheeldir):
             config_settings=requirements.config_settings,
         )
         if returncode != 0:
-            raise RuntimeError('Failed to build the wheel for %pyproject_buildrequires -w.')
+            raise RuntimeError('Failed to build the wheel for %pyproject_buildrequires -w/--wheel.')
         wheel = find_built_wheel(wheeldir)
     if not wheel:
-        raise RuntimeError('Cannot locate the built wheel for %pyproject_buildrequires -w.')
+        raise RuntimeError('Cannot locate the built wheel for %pyproject_buildrequires -w/--wheel.')
 
     print_err(f'Reading metadata from {wheel}')
     with zipfile.ZipFile(wheel) as wheelfile:
@@ -683,7 +683,10 @@ def generate_requires(
     dependency_groups = dependency_groups or []
     try:
         if (include_runtime or toxenv or pyproject_dependencies) and not use_build_system:
-            raise ValueError('-N option cannot be used in combination with -r, -e, -t, -x, -p options')
+            raise ValueError(
+                '-N/--no-use-build-system option cannot be used in combination with '
+                '-r/--runtime, -e/--toxenv, -t/--tox, -x/--extras, -p/--pyproject-dependencies options'
+            )
         if requirement_files:
             for req_file in requirement_files:
                 requirements.extend(
@@ -783,11 +786,12 @@ def argparser():
     )
     parser.add_argument(
         '-R', '--no-runtime', action='store_false', dest='runtime',
-        help="Don't generate run-time requirements (implied by -N)",
+        help="Don't generate run-time requirements (implied by -N/--no-use-build-system)",
     )
     parser.add_argument(
         '-N', '--no-use-build-system', dest='use_build_system',
-        action='store_false', help='Use -N to indicate that project does not use any build system',
+        action='store_false',
+        help='Use this to indicate that project does not use any build system',
     )
     parser.add_argument(
         'requirement_files', nargs='*', type=pathlib.Path,
@@ -821,7 +825,7 @@ def main(argv):
 
     if args.wheel:
         if not args.wheeldir:
-            raise ValueError('--wheeldir must be set when -w.')
+            raise ValueError('--wheeldir must be set when -w/--wheel.')
 
     if args.toxenv:
         args.tox = True

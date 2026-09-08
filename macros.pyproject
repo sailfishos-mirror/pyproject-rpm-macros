@@ -211,8 +211,8 @@ if [ ! -f "%{_pyproject_modules %{?__pyproject_optflag_D}}" ]; then
   _modules_glob=( %{_pyproject_modules_base}-* )
   if [ -e "${_modules_glob[0]}" ]; then
     _available=$(printf '%%s\n' "${_modules_glob[@]}" | sed 's|.*-pyproject-modules-||' | tr '\n' ' ')
-    echo "ERROR: %%%%pyproject_check_import requires -D <name> when %%%%pyproject_save_files was called with -D" >&2
-    echo "Available -D values: ${_available}" >&2
+    echo "ERROR: %%%%pyproject_check_import requires -D/--dist-name <name> when %%%%pyproject_save_files was called with -D/--dist-name" >&2
+    echo "Available -D/--dist-name values: ${_available}" >&2
   else
     echo 'ERROR: %%%%pyproject_check_import only works when %%%%pyproject_save_files is used' >&2
   fi

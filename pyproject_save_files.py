@@ -801,7 +801,7 @@ def load_parsed_record(pyproject_record, dist_name=None):
     elif len(content) > 1:
         raise ValueError(
             "%pyproject_install has found more than one *.dist-info/RECORD file. "
-            "Use %pyproject_save_files -D <name> to select a package. "
+            "Use %pyproject_save_files -D/--dist-name <name> to select a package. "
             f"Available: {', '.join(available)}"
         )
 
@@ -840,11 +840,11 @@ def pyproject_save_files_and_modules(buildroot, sitelib, sitearch, python_versio
     if not globs and not allow_no_modules:
         raise ValueError(
             "At least one module glob needs to be provided to %pyproject_save_files. "
-            "Alternatively, use -M to indicate no Python modules should be saved."
+            "Alternatively, use -M/--allow-no-modules to indicate no Python modules should be saved."
         )
     if globs and allow_no_modules:
         raise ValueError(
-            "%pyproject_save_files -M cannot be used together with module globs."
+            "%pyproject_save_files -M/--allow-no-modules cannot be used together with module globs."
         )
     parsed_records = load_parsed_record(pyproject_record, dist_name)
 
@@ -873,7 +873,7 @@ def pyproject_save_files_and_modules(buildroot, sitelib, sitearch, python_versio
             "No License-File (PEP 639) in upstream metadata found. "
             "Adjust the upstream metadata "
             "if the project's build backend supports PEP 639 "
-            "or use `%pyproject_save_files -L` "
+            "or use `%pyproject_save_files -L/--no-assert-license` "
             "and include the %license file in %files manually."
         )
 
