@@ -109,6 +109,9 @@ discover:
     - name: config-settings-test
       path: /tests
       test: ./mocktest.sh config-settings-test
+    - name: verify_license
+      path: /tests
+      test: ./mocktest.sh verify-license-test
     - name: isort_c9s
       path: /tests
       test: ID=centos VERSION_ID=9 ./mocktest.sh python-isort

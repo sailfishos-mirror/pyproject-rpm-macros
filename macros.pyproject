@@ -236,6 +236,21 @@ fi\
 %{__pyproject_getopt_restore}
 
 
+# Compares the spec %%license tag (or an explicitly given expression) against
+# the upstream PEP 639 project.license string in pyproject.toml, failing the
+# build on any mismatch or ambiguity.
+%pyproject_verify_license(-) \
+%{lua:require("fedora.rpm.pyproject_getopt").getopt({
+    {short="d", long="directory", value=true},
+})}\
+%{expand:\\\
+%{?__pyproject_opt_d:pushd "%{__pyproject_opt_d}"}
+%{__python3} -Bs %{_rpmconfigdir}/redhat/pyproject_verify_license.py \\
+  '%{?__pyproject_positional_args}%{!?__pyproject_positional_args:%{license}}'
+%{?__pyproject_opt_d:popd}
+%{__pyproject_getopt_restore}}
+
+
 %default_toxenv py%{python3_version_nodots}
 %toxenv %{default_toxenv}
 

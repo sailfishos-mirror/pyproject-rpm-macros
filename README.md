@@ -428,6 +428,101 @@ in `%pyproject_save_files` and `%{pyproject_files}`:
     %files -n python3-package-b -f %{pyproject_files -D package_b}
 
 
+Verifying the License: tag against upstream
+-------------------------------------------
+
+[PEP 639] lets upstream projects declare a normalized SPDX license expression
+in the `project.license` key of `pyproject.toml`.
+`%pyproject_verify_license` compares that declaration against the spec's `License:` tag
+and fails the build if they don't semantically agree.
+The is useful to notice upstream changed their license declaration and
+the License: tag needs to be updated accordingly.
+It only needs `pyproject.toml` to be present, so it can be run at any point once the sources
+are unpacked.
+Put it as early as the constraints below allow, so that a license mismatch fails the build
+before any expensive work (the test suite, the build, or the `%generate_buildrequires` rounds).
+
+* **At the start of `%check`**, before the test suite runs:
+
+```
+%check
+%pyproject_verify_license
+# ... tests follow
+```
+
+* **At the start of `%build` (or `%conf`)**, before the potentially long build runs:
+
+```
+%build
+%pyproject_verify_license
+# ... build follows
+```
+
+* **In `%prep`**, before any expensive `%generate_buildrequires` rounds. However, if you
+do that, you need to explicitly declare BuildRequires for `pyproject-rpm-macros`,
+`python3-devel` and, if your Python 3 version is lower than 3.11, also `python3-tomli`:
+
+```
+BuildRequires:  pyproject-rpm-macros
+BuildRequires:  python3-devel
+# only on Python < 3.11, where tomllib is not in the standard library:
+BuildRequires:  (python3dist(tomli) if python3-devel < 3.11)
+...
+%prep
+%autosetup -p1
+%pyproject_verify_license
+```
+
+The comparison is semantic, not textual: operand order (`MIT OR BSD-3-Clause` vs `BSD-3-Clause OR MIT`)
+and identifier/operator case are treated as equal.
+It does not resolve deprecated SPDX ids and their replacements (e.g. `GPL-2.0+` vs `GPL-2.0-or-later`),
+validate identifiers against the SPDX list, or perform boolean absorption/distribution
+(`(MIT OR BSD-3-Clause) AND MIT` is not reduced to `MIT`).
+
+`%pyproject_verify_license` always fails the build when:
+
+* `pyproject.toml` is not present or is not valid TOML,
+* `project.license` is missing from `pyproject.toml`,
+* `license` is listed in `project.dynamic` (its value isn't statically known),
+* `project.license` is not a string (e.g. the deprecated `{text = …}`/`{file = …}` table form),
+* either the upstream or the spec license expression fails to parse, or
+* the two expressions are parseable but not semantically equivalent.
+
+If `pyproject.toml` is not in the current directory, point at its directory with `-d`/`--directory`:
+
+    %pyproject_verify_license --directory subdir
+
+By default, the spec's `License:` tag (`%{license}`) is the value compared against upstream.
+To compare a different expression instead (for example, when a subpackage's license differs
+from the main package's `License:` tag), pass it as a positional argument:
+
+    %pyproject_verify_license MIT AND BSD-3-Clause
+
+In many cases, using RPM macros for this is more convenient:
+
+    # Upstream just declares partial license, but we also bundle libfoo with extra licenses
+    %global upstream_license MIT
+    License: %{upstream_license} AND BSD-3-Clause
+
+    ...
+    %pyproject_verify_license %{upstream_license}
+
+A common pitfall: if the spec declares more than one `License:` tag (for example, one per
+subpackage), `%{license}` expands to the *last* one defined, which may not be the expression
+you want to compare against upstream.
+In that case, don't rely on the implicit `%{license}` default.
+Instead, pin the expression to compare in a `%global upstream_license` (as shown above)
+and pass it explicitly:
+
+    %global upstream_license MIT
+    License: %{upstream_license}
+    ...
+    %package doc
+    License: CC-BY-SA-4.0
+    ...
+    %pyproject_verify_license %{upstream_license}
+
+
 Performing an import check on all importable modules
 ----------------------------------------------------
 
@@ -660,6 +755,12 @@ Here is a complete reference of all options:
 | `-i PATH`  | `--dist-info-path PATH`   | Custom buildroot path to the .dist-info metadata folder (optional, advanced usage)              |
 | `-f FILE`  | `--filelist FILE`         | Custom path to a filelist (optional, advanced usage)                                            |
 | `-F`       | `--no-filelist`           | Skip %files section entirely (optional, advanced usage)                                         |
+
+### `%pyproject_verify_license`
+
+| Short    | Long              | Description                                                    |
+|----------|-------------------|----------------------------------------------------------------|
+| `-d DIR` | `--directory DIR` | Source root directory containing pyproject.toml (default: CWD) |
 
 ### `%tox`
 

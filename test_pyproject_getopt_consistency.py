@@ -23,6 +23,7 @@ MACROS_README = (
     "pyproject_check_import",
     "pyproject_extras_subpkg",
     "pyproject_save_files",
+    "pyproject_verify_license",
     "pyproject_wheel",
     "tox",
 )
