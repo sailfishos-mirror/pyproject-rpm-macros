@@ -439,10 +439,8 @@ The is useful to notice upstream changed their license declaration and
 the License: tag needs to be updated accordingly.
 It only needs `pyproject.toml` to be present, so it can be run at any point once the sources
 are unpacked.
-Put it as early as the constraints below allow, so that a license mismatch fails the build
-before any expensive work (the test suite, the build, or the `%generate_buildrequires` rounds).
 
-* **At the start of `%check`**, before the test suite runs:
+Semantically, `%check` is a reasonable place to put this macro:
 
 ```
 %check
@@ -450,17 +448,13 @@ before any expensive work (the test suite, the build, or the `%generate_buildreq
 # ... tests follow
 ```
 
-* **At the start of `%build` (or `%conf`)**, before the potentially long build runs:
+You may choose to put it earlier, at the beginning of `%build` or `%conf`,
+so that less expensive work happens before a license mismatch fails the build.
 
-```
-%build
-%pyproject_verify_license
-# ... build follows
-```
-
-* **In `%prep`**, before any expensive `%generate_buildrequires` rounds. However, if you
-do that, you need to explicitly declare BuildRequires for `pyproject-rpm-macros`,
-`python3-devel` and, if your Python 3 version is lower than 3.11, also `python3-tomli`:
+You may even put it in `%prep`, before any `%generate_buildrequires` rounds,
+but you will need explicit `BuildRequires`
+for `pyproject-rpm-macros`, `python3-devel`,
+and, if your Python 3 version is lower than 3.11, also `python3-tomli`:
 
 ```
 BuildRequires:  pyproject-rpm-macros
